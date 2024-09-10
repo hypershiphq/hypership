@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc && node ../post-build.js && npm link"
+    "build": "tsc && node ../../post-build.js cli && npm link"
   },
   "keywords": [],
   "type": "module",
