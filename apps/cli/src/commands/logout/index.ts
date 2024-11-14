@@ -1,16 +1,14 @@
 import * as p from '@clack/prompts'
 import color = require('picocolors')
 
-import {
-  deleteStoredPassword,
-  deleteStoredToken
-} from './utils.js'
+import { deleteStoredPassword } from '../../util/logout/keychain.js'
+import { deleteStoredToken } from '../../util/logout/deleteToken.js'
+
 
 export const logout = async () => {
   console.clear()
 
   try {
-
     p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Logout '))}`)
   
     await deleteStoredPassword()

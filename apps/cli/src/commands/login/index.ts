@@ -2,14 +2,10 @@ import * as p from '@clack/prompts'
 import validator from 'email-validator'
 import color = require('picocolors')
 
-import {
-  checkKeychainCompatibility,
-  deleteStoredPassword,
-  getPasswordFromKeychain,
-  signIn,
-  storePassword,
-  storeToken
-} from './utils.js'
+import { standardLogin } from '../../util/login/login.js'
+import { storeToken } from '../../util/login/storeToken.js'
+import { checkKeychainCompatibility, deleteStoredPassword, getPasswordFromKeychain, storePassword } from '../../util/login/keychain.js'
+
 
 export const login = async (options: any) => {
   console.clear()
@@ -52,7 +48,8 @@ export const login = async (options: any) => {
         const user = { email, password }
 
         try {
-          const accessToken = await signIn(user.email, user.password)
+          const accessToken = await standardLogin(user.email, user.password)
+
           storeToken(accessToken)
 
           if (!accessToken) {
@@ -94,7 +91,7 @@ export const login = async (options: any) => {
       try {
         const s = p.spinner()
         s.start('Authenticating...')
-        const accessToken = await signIn(user.email as string, user.password as string)
+        const accessToken = await standardLogin(user.email as string, user.password as string)
         storeToken(accessToken)
 
         if (!accessToken) {

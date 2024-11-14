@@ -30,6 +30,7 @@
     "email-validator": "^2.0.4",
     "jszip": "^3.10.1",
     "keytar": "^7.9.0",
-    "ora": "^8.0.1"
+    "ora": "^8.0.1",
+    "xdg-app-paths": "^5.1.0"
   }
 }
