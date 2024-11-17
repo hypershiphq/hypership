@@ -7,7 +7,7 @@ import { createNewProject } from './commands/new/index.js';
 import { login } from './commands/login/index.js';
 import { logout } from './commands/logout/index.js';
 import { deployProject } from './commands/deploy/index.js';
-import { cloneProject } from './commands/clone/index.js';
+import { initProject } from './commands/init/index.js';
 
 const muteStream = new Writable({
   write(chunk, encoding, callback) {
@@ -57,10 +57,10 @@ program
   });
 
 program
-  .command('clone')
-  .description('Clone your Hypership project')
-  .action(async () => {
-    await cloneProject();
+  .command('init [projectId]')
+  .description('Initialize your Hypership project')
+  .action(async (projectId: string) => {
+    await initProject(projectId);
   });
 
 program.parse(process.argv);

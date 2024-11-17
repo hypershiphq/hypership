@@ -50,10 +50,10 @@ export const cloneHypershipFramework = async (project: { name: string }, appFram
   }
 }
 
-export const createHypershipConfig = async (projectSlug: string, project: { name: string }) => {
+export const createHypershipConfig = async (projectId: string, project: { name: string }) => {
   try {
     const config = {
-      projectSlug: projectSlug
+      hypershipId: projectId
     }
 
     await fs.promises.mkdir(`${project.name}/.hypership`, { recursive: true })

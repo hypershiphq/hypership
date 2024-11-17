@@ -6,9 +6,12 @@ import { standardLogin } from '../../util/login/login.js'
 import { storeToken } from '../../util/login/storeToken.js'
 import { checkKeychainCompatibility, deleteStoredPassword, getPasswordFromKeychain, storePassword } from '../../util/login/keychain.js'
 
+import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 
 export const login = async (options: any) => {
   console.clear()
+
+  let s = p.spinner()
   
   try {
     p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Login '))}`)
@@ -88,23 +91,25 @@ export const login = async (options: any) => {
 
       const user = { email, password }
 
-      try {
-        const s = p.spinner()
-        s.start('Authenticating...')
-        const accessToken = await standardLogin(user.email as string, user.password as string)
-        storeToken(accessToken)
+      s.start('Authenticating...')
+      const accessToken = await standardLogin(user.email as string, user.password as string)
+      storeToken(accessToken)
 
-        if (!accessToken) {
-          throw new Error('Invalid credentials')
-        }
-
-        s.stop(color.bgGreen(color.black('Login successful!')))
-      } catch (error) {
-        p.cancel(`${color.bgRed(color.white('Authentication failed.'))} Please try again.`)
+      if (!accessToken) {
+        throw new Error('Invalid credentials')
       }
+
+      s.stop(color.bgGreen(color.black('Login successful!')))
     }
   } catch (error) {
-    p.cancel('An error occurred while logging in. Please try again.')
+    const message = error instanceof Error ? error.message : 'default'
+
+    if (s) {
+      s.stop(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogin)
+    } else {
+      p.cancel(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogin)
+    }
+
     process.exit(1)
   }
 }

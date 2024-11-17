@@ -2,9 +2,10 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export class HypershipClient {
   private client: AxiosInstance;
-  private baseURL = process.env.HYPERSHIP_CLI_API_URL || 'https://cli.hypership.dev/v1';
+  // private baseURL = process.env.HYPERSHIP_CLI_API_URL || 'https://cli.hypership.dev/v1';
+  private baseURL = 'http://localhost:3003/v1'
 
-  constructor(private apiKey?: string) {
+  constructor(private authToken?: string) {
     this.client = axios.create({
       baseURL: this.baseURL,
       headers: this.getHeaders(),
@@ -13,6 +14,7 @@ export class HypershipClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
+        console.error(error)
         if (error.response) {
           const { status, data } = error.response;
           if (status === 401) {
@@ -30,16 +32,16 @@ export class HypershipClient {
       'Content-Type': 'application/json',
     };
 
-    if (this.apiKey) {
-      headers['Authorization'] = `Bearer ${this.apiKey}`;
+    if (this.authToken) {
+      headers['Authorization'] = `Bearer ${this.authToken}`;
     }
 
     return headers;
   }
 
-  public setApiKey(apiKey: string) {
-    this.apiKey = apiKey;
-    this.client.defaults.headers['Authorization'] = `Bearer ${apiKey}`;
+  public setAuthToken(authToken: string) {
+    this.authToken = authToken;
+    this.client.defaults.headers['Authorization'] = `Bearer ${authToken}`;
   }
 
   async get<T = any>(path: string, config?: AxiosRequestConfig) {
