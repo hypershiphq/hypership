@@ -5,13 +5,19 @@ import path from 'path'
 import { HypershipClient } from "../client.js"
 
 
-export const cloneHypershipFramework = async (project: { name: string }, appFramework: string) => {
+export const cloneHypershipFramework = async (authToken: string, project: { name: string }, appFramework: string) => {
   try {
     const hypershipClient = new HypershipClient()
 
     const response = await hypershipClient.post('/deploy/download', {
       framework: appFramework,
-    })
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${authToken}`
+      }
+    }
+  )
 
     const preSignedUrl = response?.data?.url
     if (!preSignedUrl) {
@@ -31,7 +37,7 @@ export const cloneHypershipFramework = async (project: { name: string }, appFram
     for (const [fileName, zipEntry] of Object.entries(zip.files)) {
       if (!zipEntry.dir) {
         const fileData = await zipEntry.async('nodebuffer')
-        const filePath = path.join(`${project.name}/web`, fileName)
+        const filePath = path.join(`${project.name}`, fileName)
         await fs.promises.mkdir(path.dirname(filePath), { recursive: true })
         await fs.promises.writeFile(filePath, fileData)
       }

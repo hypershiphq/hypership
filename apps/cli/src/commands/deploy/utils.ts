@@ -8,40 +8,12 @@ import path from 'path'
 
 import { Spinner } from '../../types.js'
 
-export const getUploadLink = async (projectSlug: string, authToken: string) => {
-  const preSignedUrlApi = 'https://cli.hypership.dev/v1/deploy/upload'
-  let response, preSignedUrl
-
-  try {
-    response = await axios.post(preSignedUrlApi, {
-      projectSlug: projectSlug
-    }, {
-      headers: { Authorization: `Bearer ${authToken}` },
-    })
-
-    preSignedUrl = response?.data?.data?.url
-
-    return preSignedUrl
-  } catch (error) {
-    const axiosError = error as AxiosError
-
-    if (axiosError?.response?.status === 401) {
-      throw new Error('Unauthorized')
-    } else {
-      throw new Error()
-    }
-  }
-}
-
 export const deployStaticWebsite = async (preSignedUrl: string, s: Spinner) => {
   try {
     // Check for static website
     const hypershipStaticWebsitePath = path.join(process.cwd(), 'web')
 
     if (fs.existsSync(hypershipStaticWebsitePath)) {
-      s = p.spinner()
-      s.start('Building static website...')
-
       // Build
       try {
         await new Promise((resolve, reject) => {

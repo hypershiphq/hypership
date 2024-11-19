@@ -3,7 +3,8 @@ import fs from 'fs'
 import color = require('picocolors')
 
 import { retrieveToken } from '../../lib/retrieveToken.js'
-import { getUserProjects, getProjectDetails } from '../../util/init/project.js'
+import { getUserProjects } from '../../util/init/project.js'
+import { getProjectDetails } from '../../util/projectDetails.js'
 import { createHypershipProjectDirectory, createWebDirectory } from '../../util/init/directory.js'
 import { cloneHypershipFramework } from '../../util/init/framework.js'
 import { createHypershipConfig } from '../../util/init/config.js'
@@ -71,11 +72,11 @@ export const initProject = async (projectId: string) => {
     // Create project directory
     await createHypershipProjectDirectory(project)
 
-    // Create web directory
-    await createWebDirectory(project)
+    // Create web directory - coming soon with API deployments
+    // await createWebDirectory(project)
 
     // Initialize hypership framework
-    await cloneHypershipFramework(project, projectDetails?.framework)
+    await cloneHypershipFramework(authToken, project, projectDetails?.framework)
 
     // Create hypership config
     await createHypershipConfig(projectDetails?.id, project)
