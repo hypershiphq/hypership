@@ -1,16 +1,15 @@
 import * as p from '@clack/prompts'
 import color = require('picocolors')
 
-import {
-  deleteStoredPassword,
-  deleteStoredToken
-} from './utils.js'
+import { deleteStoredPassword } from '../../util/logout/keychain.js'
+import { deleteStoredToken } from '../../util/logout/deleteToken.js'
+
+import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 
 export const logout = async () => {
   console.clear()
 
   try {
-
     p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Logout '))}`)
   
     await deleteStoredPassword()
@@ -20,7 +19,10 @@ export const logout = async () => {
   
     process.exit(0)
   } catch (error) {
-    p.cancel('An error occurred while logging out. Please try again.')
+    const message = error instanceof Error ? error.message : 'default'
+
+    p.cancel(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogout)
+
     process.exit(1)
   }
 }

@@ -20,3 +20,8 @@ export interface CloneProjectOptionResponse {
   label: string
   createdAt: string
 }
+
+export type ProjectIdentifier = {
+  projectSlug?: string;
+  projectId?: string;
+}

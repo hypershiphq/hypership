@@ -16,7 +16,7 @@
   "devDependencies": {
     "@types/archiver": "^6.0.2",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^20.11.17",
+    "@types/node": "^20.16.1",
     "@types/ora": "^3.2.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
@@ -30,6 +30,8 @@
     "email-validator": "^2.0.4",
     "jszip": "^3.10.1",
     "keytar": "^7.9.0",
-    "ora": "^8.0.1"
+    "ora": "^8.0.1",
+    "picocolors": "^1.1.1",
+    "xdg-app-paths": "^5.1.0"
   }
 }

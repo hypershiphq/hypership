@@ -1,19 +1,17 @@
-import * as p from '@clack/prompts'
 import fs from 'fs'
-import os from 'os'
 import path from 'path'
+import XDGAppPaths from 'xdg-app-paths'
 
-export const retrieveToken = (): string => {
-  const homeDir = os.homedir()
-  const configDir = path.join(homeDir, '.hypership')
-  const configFile = path.join(configDir, 'hypership.json')
-
+export const retrieveToken = () => {
   try {
+    const directories = XDGAppPaths('com.hypership.cli').dataDirs();
+    const configFile = path.join(directories[0], 'config.json');
+
     const data = fs.readFileSync(configFile, 'utf8')
     const parsedData = JSON.parse(data)
-    return parsedData.authToken
+
+    return parsedData?.token
   } catch (error) {
-    p.cancel('You are not logged in. Please login using `hypership login`.')
-    process.exit(1)
+    throw new Error('Failed to retrieve token')
   }
 }
