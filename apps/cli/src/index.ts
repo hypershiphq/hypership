@@ -3,7 +3,7 @@ import * as color from 'picocolors';
 import readline from 'readline';
 import { Writable } from 'stream';
 
-import { login } from './commands/login/index.js';
+import { authenticate } from './commands/authenticate/index.js';
 import { logout } from './commands/logout/index.js';
 import { deployProject } from './commands/deploy/index.js';
 import { initProject } from './commands/init/index.js';
@@ -25,13 +25,13 @@ rl.on('SIGINT', () => {
 });
 
 program
-  .command('login')
-  .description('Login to Hypership')
+  .command('authenticate [cliKey]')
+  .description('Authenticate with Hypership')
   .option('-e, --email <email>', 'Email')
   .option('-p, --password <password>', 'Password')
   .option('-ns, --no-save', 'Do not save the password in the system keychain')
-  .action(async (options) => {
-    await login(options);
+  .action(async (cliKey: string, options) => {
+    await authenticate(cliKey, options);
   });
 
 program

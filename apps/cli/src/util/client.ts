@@ -14,7 +14,6 @@ export class HypershipClient {
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
-        console.error(error)
         if (error.response) {
           const { status, data } = error.response;
           if (status === 401) {

@@ -2,19 +2,28 @@ import * as p from '@clack/prompts'
 import validator from 'email-validator'
 import color = require('picocolors')
 
-import { standardLogin } from '../../util/login/login.js'
-import { storeToken } from '../../util/login/storeToken.js'
-import { checkKeychainCompatibility, deleteStoredPassword, getPasswordFromKeychain, storePassword } from '../../util/login/keychain.js'
+import { standardLogin } from '../../util/authenticate/login.js'
+import { storeToken } from '../../util/authenticate/storeToken.js'
+import { checkKeychainCompatibility, deleteStoredPassword, getPasswordFromKeychain, storePassword } from '../../util/authenticate/keychain.js'
 
 import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
+import { cliKeyAuthentication } from '../../util/authenticate/cliKey.js'
 
-export const login = async (options: any) => {
+export const authenticate = async (cliKey: string, options: any) => {
   console.clear()
 
   let s = p.spinner()
   
   try {
-    p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Login '))}`)
+    p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Authenticate '))}`)
+
+    if (cliKey) {
+      s.start('Authenticating...')
+      const accessToken = await cliKeyAuthentication(cliKey)
+      storeToken(accessToken)
+      s.stop(color.bgGreen(color.black('Authentication successful!')))
+      process.exit(0)
+    }
 
     let email: string
     if (!options.email) {
