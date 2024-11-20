@@ -3,7 +3,6 @@ import * as color from 'picocolors';
 import readline from 'readline';
 import { Writable } from 'stream';
 
-import { createNewProject } from './commands/new/index.js';
 import { login } from './commands/login/index.js';
 import { logout } from './commands/logout/index.js';
 import { deployProject } from './commands/deploy/index.js';
@@ -26,13 +25,6 @@ rl.on('SIGINT', () => {
 });
 
 program
-  .command('new')
-  .description('Create a new Hypership project')
-  .action(async () => {
-    await createNewProject();
-  });
-
-program
   .command('login')
   .description('Login to Hypership')
   .option('-e, --email <email>', 'Email')
@@ -50,17 +42,18 @@ program
   });
 
 program
+  .command('init [projectId]')
+  .description('Initialize your Hypership project')
+  .action(async (projectId: string) => {
+    await initProject(projectId);
+  });
+
+program
   .command('deploy')
   .description('Deploy your Hypership project')
   .action(async () => {
     await deployProject();
   });
 
-program
-  .command('init [projectId]')
-  .description('Initialize your Hypership project')
-  .action(async (projectId: string) => {
-    await initProject(projectId);
-  });
 
 program.parse(process.argv);
