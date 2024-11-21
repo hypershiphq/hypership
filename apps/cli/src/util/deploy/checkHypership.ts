@@ -6,9 +6,9 @@ export const checkIfHypershipProject = async (hypershipConfigFilePath: string) =
     path.join(process.cwd(), '.hypership', 'hypership.json')
 
     if (!fs.existsSync(hypershipConfigFilePath)) {
-      throw new Error('Failed to check if Hypership project')
+      throw new Error('No projects found')
     }
   } catch (error) {
-    throw new Error('Failed to check if Hypership project')
+    throw new Error('No projects found')
   }
 }
