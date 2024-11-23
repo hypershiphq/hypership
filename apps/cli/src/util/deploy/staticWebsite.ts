@@ -8,10 +8,10 @@ import * as color from 'picocolors'
 
 import { Spinner } from '../../types.js'
 
-export const deployStaticWebsite = async (preSignedUrl: string, s: Spinner) => {
+export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: string, s: Spinner) => {
   const rootDirectory = process.cwd()
   const hypershipStaticWebsitePath = path.join(rootDirectory, 'web')
-  const zipPath = path.join(rootDirectory, '.hypership', 'build.zip')
+  const zipPath = path.join(rootDirectory, '.hypership', `${deploymentId}.zip`)
 
   // Check if static website is in web directory or root directory
   const isStaticWebsiteInWebDirectory = fs.existsSync(hypershipStaticWebsitePath)

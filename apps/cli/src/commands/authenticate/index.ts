@@ -83,8 +83,10 @@ export const authenticate = async (cliKey: string, options: any) => {
             }
           }
 
-          p.outro(color.bgGreen(color.black('Login successful!')))
+          p.outro(color.bgGreen(color.black('Authentication successful!')))
           isAuthenticated = true
+
+          process.exit(0)
         } catch (error) {
           p.cancel(`${color.bgRed(color.white('Authentication failed.'))} Please try again.`)
           password = null
@@ -108,7 +110,9 @@ export const authenticate = async (cliKey: string, options: any) => {
         throw new Error('Invalid credentials')
       }
 
-      s.stop(color.bgGreen(color.black('Login successful!')))
+      s.stop(color.bgGreen(color.black('Authentication successful!')))
+
+      process.exit(0)
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'default'
