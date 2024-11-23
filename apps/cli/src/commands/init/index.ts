@@ -8,7 +8,7 @@ import { getProjectDetails } from '../../util/projectDetails.js'
 import { createHypershipProjectDirectory, createWebDirectory } from '../../util/init/directory.js'
 import { cloneHypershipFramework } from '../../util/init/framework.js'
 import { createHypershipConfig } from '../../util/init/config.js'
-
+import { installDependencies } from '../../util/init/dependencies.js'
 import { CloneProjectOption, CloneProjectOptionResponse } from '../../types.js'
 import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 
@@ -81,7 +81,16 @@ export const initProject = async (projectId: string) => {
     // Create hypership config
     await createHypershipConfig(projectDetails?.id, project)
 
+    // Install dependencies
+    await installDependencies(project)
+
     s.stop(color.bgGreen(color.black('Project initialized successfully.')))
+
+    p.outro(
+      `Next steps: 
+      1. cd ${project.name}
+      2. Run npm run start to start the development server`
+    )
 
   } catch (error: unknown) {
     // Delete the directory if the app creation fails
