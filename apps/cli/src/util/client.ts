@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 export class HypershipClient {
   private client: AxiosInstance;
-  private baseURL = process.env.HYPERSHIP_CLI_API_URL || 'https://cli.hypership.dev/v1';
+  private baseURL = process.env.HYPERSHIP_CLI_API_URL || 'https://cli-dev.hypership.dev/v1';
 
   constructor(private authToken?: string) {
     this.client = axios.create({
