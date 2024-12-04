@@ -14,6 +14,9 @@
   "bin": {
     "hypership": "./dist/index.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@types/archiver": "^6.0.2",
     "@types/fs-extra": "^11.0.4",

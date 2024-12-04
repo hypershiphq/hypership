@@ -5,6 +5,9 @@
   "bin": {
     "hypership": "./dist/index.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@hypership/cli": "^0.0.4"
   }
