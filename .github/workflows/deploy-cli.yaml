@@ -36,12 +36,12 @@ jobs:
 
       - name: Publish @hypership/cli Package
         working-directory: packages/cli
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Publish @hypership Package
         working-directory: packages/hypership
-        run: npm publish
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
