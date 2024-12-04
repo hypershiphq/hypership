@@ -9,6 +9,7 @@ import { getProjectDetails } from '../../util/projectDetails.js'
 import { checkIfHypershipProject } from '../../util/deploy/checkHypership.js'
 import { getUploadLink } from '../../util/deploy/upload.js'
 import { deployStaticWebsite } from '../../util/deploy/staticWebsite.js'
+import { log } from '../../util/deploy/log.js'
 
 import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 
@@ -30,10 +31,13 @@ export const deployProject = async () => {
     const projectId = retrieveProjectConfig()
     const projectDetails = await getProjectDetails(authToken, { projectId })
   
-    const preSignedUrl = await getUploadLink(authToken, projectId)
-  
+    // Log deployment
+    const deploymentId = await log(authToken, 'building', 'Building static website...', '', projectId)
+
+    const preSignedUrl = await getUploadLink(authToken, projectId, deploymentId)
+
     // Deploy static website
-    await deployStaticWebsite(preSignedUrl, s)
+    await deployStaticWebsite(preSignedUrl, deploymentId, s)
 
     await setTimeout(1000)
     s.stop(color.bgGreen(color.black(' Hypership Project Deployed Successfully! ')))
@@ -42,8 +46,6 @@ export const deployProject = async () => {
       ${color.white(' Your Hypership Project: ')}
       ${color.white(color.bold(color.underline(`https://${projectDetails?.slug}.hypership.dev`)))}
     `)
-  
-    p.outro(`Problems? ${color.underline(color.cyan('https://hypership.dev/quick-start'))}`)
   } catch (error) {
     const message = error instanceof Error ? error.message : 'default'
 
