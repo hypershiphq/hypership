@@ -8,7 +8,7 @@ if (!targetDir) {
   process.exit(1);
 }
 
-const filePath = path.join(__dirname, 'apps',targetDir, 'dist', 'index.js');
+const filePath = path.join(__dirname, 'packages', targetDir, 'dist', 'index.js');
 
 try {
   if (fs.existsSync(filePath)) {
