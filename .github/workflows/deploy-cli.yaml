@@ -25,9 +25,9 @@ jobs:
 
       - name: Install dependencies
         working-directory: packages/cli
-        run: pnpm install
+        run: pnpm install --no-frozen-lockfile
 
-      - name: Build CLI
+      - name: Build @hypership/cli Package
         working-directory: packages/cli
         run: pnpm run build
 
