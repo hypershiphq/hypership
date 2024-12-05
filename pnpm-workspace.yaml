@@ -2,4 +2,5 @@ packages:
   - "packages/*"
   - "packages/sdks/*"
   - "packages/sdks/node-sdk/*"
+  - "packages/sdks/react-sdk/*"
   - "configs/*"

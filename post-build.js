@@ -10,10 +10,14 @@ if (!targetDir) {
 
 let filePath = path.join(__dirname, 'packages', targetDir, 'dist', 'index.js');
 
-if (targetDir === 'analytics') {
+if (targetDir === 'node_analytics') {
   filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
-} else if (targetDir === 'events') {
+} else if (targetDir === 'node_events') {
   filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
+} else if (targetDir === 'react_analytics') {
+  filePath = path.join(__dirname, 'packages', 'sdks', 'react-sdk', targetDir, 'dist', 'index.js');
+} else if (targetDir === 'react_events') {
+  filePath = path.join(__dirname, 'packages', 'sdks', 'react-sdk', targetDir, 'dist', 'index.js');
 }
 
 try {
