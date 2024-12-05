@@ -1,0 +1,14 @@
+{
+  "name": "hypership",
+  "version": "0.0.4",
+  "description": "Shorthand for @hypership/cli",
+  "bin": {
+    "hypership": "./dist/index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@hypership/cli": "^0.0.4"
+  }
+} 

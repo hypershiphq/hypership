@@ -1,0 +1,21 @@
+{
+  "name": "@hypership/events",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "build": "tsc && node ../../post-build.js events && cp src/types/*.d.ts dist/types/ && npm link"
+  },
+  "type": "module",
+  "author": "Hypership",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.8",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
+  }
+}
