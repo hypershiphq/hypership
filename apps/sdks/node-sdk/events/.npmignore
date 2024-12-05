@@ -1,7 +1,0 @@
-# Exclude everything by default
-**
-
-# Include the dist directory and other necessary files
-!dist/**
-!package.json
-!README.md
