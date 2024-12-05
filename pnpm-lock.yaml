@@ -44,28 +44,6 @@ importers:
 
   configs/typescript-config: {}
 
-  packages/analytics:
-    dependencies:
-      history:
-        specifier: ^5.3.0
-        version: 5.3.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
-      tz-lookup:
-        specifier: ^6.1.25
-        version: 6.1.25
-    devDependencies:
-      '@types/lodash':
-        specifier: ^4.14.202
-        version: 4.17.13
-      '@types/node':
-        specifier: ^20.14.8
-        version: 20.17.9
-      typescript:
-        specifier: ^5.5.2
-        version: 5.7.2
-
   packages/cli:
     dependencies:
       '@clack/core':
@@ -124,7 +102,35 @@ importers:
         specifier: ^5.3.3
         version: 5.7.2
 
-  packages/events:
+  packages/hypership:
+    dependencies:
+      '@hypership/cli':
+        specifier: ^0.0.4
+        version: link:../cli
+
+  packages/sdks/node-sdk/analytics:
+    dependencies:
+      history:
+        specifier: ^5.3.0
+        version: 5.3.0
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
+      tz-lookup:
+        specifier: ^6.1.25
+        version: 6.1.25
+    devDependencies:
+      '@types/lodash':
+        specifier: ^4.14.202
+        version: 4.17.13
+      '@types/node':
+        specifier: ^20.14.8
+        version: 20.17.9
+      typescript:
+        specifier: ^5.5.2
+        version: 5.7.2
+
+  packages/sdks/node-sdk/events:
     dependencies:
       lodash:
         specifier: ^4.17.21
@@ -4533,4 +4539,3 @@ packages:
       compress-commons: 6.0.2
       readable-stream: 4.5.2
     dev: false
-

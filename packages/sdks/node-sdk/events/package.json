@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
-    "build": "tsc && node ../../post-build.js events && cp src/types/*.d.ts dist/types/ && npm link"
+    "build": "tsc && node ../../post-build.js analytics"
   },
   "type": "module",
   "author": "Hypership",

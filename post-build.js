@@ -8,7 +8,13 @@ if (!targetDir) {
   process.exit(1);
 }
 
-const filePath = path.join(__dirname, 'packages', targetDir, 'dist', 'index.js');
+let filePath = path.join(__dirname, 'packages', targetDir, 'dist', 'index.js');
+
+if (targetDir === 'analytics') {
+  filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
+} else if (targetDir === 'events') {
+  filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
+}
 
 try {
   if (fs.existsSync(filePath)) {
