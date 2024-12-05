@@ -8,16 +8,17 @@ if (!targetDir) {
   process.exit(1);
 }
 
-let filePath = path.join(__dirname, 'packages', targetDir, 'dist', 'index.js');
+const targetPaths = {
+  node_analytics: path.join(__dirname, 'packages', 'sdks', 'node-sdk', 'node_analytics', 'dist', 'index.js'),
+  node_events: path.join(__dirname, 'packages', 'sdks', 'node-sdk', 'node_events', 'dist', 'index.js'),
+  react_analytics: path.join(__dirname, 'packages', 'sdks', 'react-sdk', 'analytics', 'dist', 'index.js'),
+  react_events: path.join(__dirname, 'packages', 'sdks', 'react-sdk', 'events', 'dist', 'index.js')
+}
 
-if (targetDir === 'node_analytics') {
-  filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
-} else if (targetDir === 'node_events') {
-  filePath = path.join(__dirname, 'packages', 'sdks', 'node-sdk', targetDir, 'dist', 'index.js');
-} else if (targetDir === 'react_analytics') {
-  filePath = path.join(__dirname, 'packages', 'sdks', 'react-sdk', targetDir, 'dist', 'index.js');
-} else if (targetDir === 'react_events') {
-  filePath = path.join(__dirname, 'packages', 'sdks', 'react-sdk', targetDir, 'dist', 'index.js');
+const filePath = targetPaths[targetDir]
+
+if (!filePath) {
+  throw new Error(`Invalid target directory: ${targetDir}`)
 }
 
 try {
