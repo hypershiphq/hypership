@@ -1,7 +1,7 @@
 // src/analytics.ts
-import { PageViewData } from "./types";
-import { validateConfig } from "./utils/validateConfig";
-import { apiRequest } from "./utils/apiClient";
+import { PageViewData } from "./types/index.js";
+import { validateConfig } from "./utils/validateConfig.js";
+import { apiRequest } from "./utils/apiClient.js";
 
 class HypershipAnalytics {
   private publicKey: string = "";
@@ -32,7 +32,7 @@ class HypershipAnalytics {
         "hs-public-key": this.publicKey,
       },
       body: JSON.stringify(data),
-    }).catch((error) => {
+    }).catch((error: unknown) => {
       console.error("Error logging page view:", error);
     });
   }

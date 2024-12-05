@@ -1,4 +1,4 @@
-name: Deploy Events NPM Package
+name: Deploy React Events NPM Package
 
 on:
   workflow_dispatch:

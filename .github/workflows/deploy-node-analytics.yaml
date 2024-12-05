@@ -1,4 +1,4 @@
-name: Deploy Analytics NPM Package
+name: Deploy Node Analytics NPM Package
 
 on:
   workflow_dispatch:
