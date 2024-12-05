@@ -1,6 +1,6 @@
 {
   "name": "@hypership/analytics",
-  "version": "0.0.9",
+  "version": "0.0.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/types/index.d.ts",
