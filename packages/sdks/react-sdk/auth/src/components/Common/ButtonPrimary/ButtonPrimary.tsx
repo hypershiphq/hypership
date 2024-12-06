@@ -6,7 +6,6 @@ interface ButtonPrimaryProps {
   buttonLabel: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  unstyled?: boolean;
   loading?: boolean;
 }
 
@@ -14,12 +13,11 @@ export const ButtonPrimary: React.FC<ButtonPrimaryProps> = ({
   buttonLabel,
   onClick,
   type = "button",
-  unstyled = false,
   loading = false,
 }) => {
   return (
     <button
-      className={unstyled ? "" : sharedStyles["hypership-button-primary"]}
+      className="hypership-button-primary"
       type={type}
       onClick={onClick}
       disabled={loading}

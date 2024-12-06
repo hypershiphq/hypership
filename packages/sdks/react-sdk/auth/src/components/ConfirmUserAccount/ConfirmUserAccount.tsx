@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import OtpInput from "react-otp-input";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
-import sharedStyles from "../AuthComponents.module.css";
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { HypershipPoweredBy } from "../Common/HypershipPoweredBy/HypershipPoweredBy";
@@ -11,13 +10,11 @@ import { Alert } from "../Common/Alert/Alert";
 
 interface ConfirmUserAccountProps {
   onConfirmationSuccess: () => void;
-  unstyled?: boolean;
   email?: string;
 }
 
 export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   onConfirmationSuccess,
-  unstyled = false,
   email: initialEmail = "",
 }) => {
   const {
@@ -64,34 +61,23 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   };
 
   if (showSignIn) {
-    return (
-      <SignIn onSignInSuccess={onConfirmationSuccess} unstyled={unstyled} />
-    );
+    return <SignIn onSignInSuccess={onConfirmationSuccess} />;
   }
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-container"]}>
-      <form
-        className={unstyled ? "" : sharedStyles["hypership-form"]}
-        onSubmit={handleSubmit}
-      >
-        <Alert
-          message={errorMessage || error}
-          type="error"
-          unstyled={unstyled}
-        />
+    <div className="hypership-container">
+      <form className="hypership-form" onSubmit={handleSubmit}>
+        <Alert message={errorMessage || error} type="error" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
           placeholder="Enter your email"
           label="Email"
-          unstyled={unstyled}
         />
-        <div className={unstyled ? "" : sharedStyles["hypership-input-group"]}>
+        <div className="hypership-input-group">
           <Alert
             message="Enter the confirmation code sent to your email"
             type="success"
-            unstyled={unstyled}
           />
           <OtpInput
             inputStyle="hypership-otp-button"
@@ -117,7 +103,6 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
         <ButtonPrimary
           type="submit"
           buttonLabel="Confirm Account"
-          unstyled={unstyled}
           loading={confirmingAccount}
         />
         <ButtonSecondary

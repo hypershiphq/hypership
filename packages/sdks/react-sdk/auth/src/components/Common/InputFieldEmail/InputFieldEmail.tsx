@@ -1,12 +1,10 @@
 import React from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 
 interface InputFieldEmailProps {
   email: string;
   setEmail: (email: string) => void;
   placeholder?: string;
   label?: string;
-  unstyled?: boolean;
   theme?: "light" | "dark";
 }
 
@@ -15,18 +13,14 @@ export const InputFieldEmail: React.FC<InputFieldEmailProps> = ({
   setEmail,
   placeholder = "Enter your email",
   label = "Email",
-  unstyled = false,
   theme,
 }) => {
   const themeClass = theme ? `${theme}-theme` : "";
 
   return (
     <div className={themeClass}>
-      <div className={unstyled ? "" : sharedStyles["hypership-input-group"]}>
-        <label
-          htmlFor="email"
-          className={unstyled ? "" : sharedStyles["hypership-label"]}
-        >
+      <div className="hypership-input-group">
+        <label htmlFor="email" className="hypership-label">
           {label}
         </label>
         <input
@@ -36,7 +30,7 @@ export const InputFieldEmail: React.FC<InputFieldEmailProps> = ({
           onChange={(e) => setEmail(e.target.value)}
           placeholder={placeholder}
           required
-          className={unstyled ? "" : sharedStyles["hypership-input"]}
+          className="hypership-input"
         />
       </div>
     </div>

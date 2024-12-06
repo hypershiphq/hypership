@@ -8,12 +8,10 @@ import { SignUp } from "../SignUp/SignUp";
 // Props for HypershipAuth
 interface HypershipAuthProps {
   onAuthSuccess: () => void;
-  unstyled?: boolean;
 }
 
 export const HypershipAuth: React.FC<HypershipAuthProps> = ({
   onAuthSuccess,
-  unstyled = false,
 }) => {
   const [currentView, setCurrentView] = useState<
     "signIn" | "signUp" | "confirmAccount" | "passwordReset"
@@ -44,17 +42,14 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
           <SignIn
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
-            unstyled={unstyled}
           />
           <ButtonSecondary
             buttonLabel="Don't have an account? Sign up"
             onClick={() => setCurrentView("signUp")}
-            unstyled={unstyled}
           />
           <ButtonSecondary
             buttonLabel="Forgot Password?"
             onClick={handleForgotPassword}
-            unstyled={unstyled}
           />
         </>
       )}
@@ -65,12 +60,10 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
               setEmail(email);
               setCurrentView("confirmAccount");
             }}
-            unstyled={unstyled}
           />
           <ButtonSecondary
             buttonLabel="Already have an account? Sign in"
             onClick={() => setCurrentView("signIn")}
-            unstyled={unstyled}
           />
         </>
       )}
@@ -81,19 +74,16 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
             setCurrentView("signIn");
             handleSignInSuccess();
           }}
-          unstyled={unstyled}
         />
       )}
       {currentView === "passwordReset" && (
         <>
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
-            unstyled={unstyled}
           />
           <ButtonSecondary
             buttonLabel="Back to Sign In"
             onClick={() => setCurrentView("signIn")}
-            unstyled={unstyled}
           />
         </>
       )}

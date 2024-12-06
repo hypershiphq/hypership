@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import sharedStyles from "../AuthComponents.module.css";
 import { InputFieldPassword } from "../Common/InputFieldPassword/InputFieldPassword";
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
@@ -11,14 +10,12 @@ import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 interface SignInProps {
   onSignInSuccess: () => void;
   onAccountConfirmationRequired?: (email: string) => void;
-  unstyled?: boolean;
   buttonLabel?: string;
 }
 
 export const SignIn: React.FC<SignInProps> = ({
   onSignInSuccess,
   onAccountConfirmationRequired,
-  unstyled = false,
   buttonLabel = "Sign In",
 }) => {
   const { signIn, isAuthenticated, error, signingIn, theme } =
@@ -51,18 +48,14 @@ export const SignIn: React.FC<SignInProps> = ({
   }, [isAuthenticated, onSignInSuccess]);
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-container"]}>
-      <form
-        className={unstyled ? "" : sharedStyles["hypership-form"]}
-        onSubmit={handleSubmit}
-      >
-        <Alert message={error} type="error" unstyled={unstyled} />
+    <div className="hypership-container">
+      <form className="hypership-form" onSubmit={handleSubmit}>
+        <Alert message={error} type="error" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
           placeholder="Enter your email"
           label="Email"
-          unstyled={unstyled}
           theme={theme}
         />
         <InputFieldPassword
@@ -70,14 +63,12 @@ export const SignIn: React.FC<SignInProps> = ({
           setPassword={setPassword}
           placeholder="Enter your password"
           label="Password"
-          unstyled={unstyled}
           showStrengthMeter={false}
           // theme={theme}
         />
         <ButtonPrimary
           buttonLabel={buttonLabel}
           type="submit"
-          unstyled={unstyled}
           loading={signingIn}
         />
         <ButtonSignInGitHub buttonLabel="Sign In with GitHub" />

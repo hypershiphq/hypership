@@ -1,25 +1,18 @@
 import React from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 
 interface AlertProps {
   message: string | null;
   type: "success" | "error"; // Type of alert: success or error
-  unstyled?: boolean;
 }
 
-export const Alert: React.FC<AlertProps> = ({
-  message,
-  type,
-  unstyled = false,
-}) => {
+export const Alert: React.FC<AlertProps> = ({ message, type }) => {
   if (!message) return null;
 
-  // Determine the class based on alert type and unstyled prop
-  const alertClass = !unstyled
-    ? type === "success"
-      ? sharedStyles["hypership-success-message"]
-      : sharedStyles["hypership-error-message"]
-    : "";
+  // Determine the class based on alert type
+  const alertClass =
+    type === "success"
+      ? "hypership-success-message"
+      : "hypership-error-message";
 
   return <p className={alertClass}>{message}</p>;
 };

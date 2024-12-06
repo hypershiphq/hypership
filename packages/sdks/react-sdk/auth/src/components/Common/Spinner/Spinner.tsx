@@ -1,5 +1,4 @@
 import React from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 
 interface SpinnerProps {
   size?: number; // Optional size prop to control spinner dimensions
@@ -9,7 +8,7 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 22 }) => {
   return (
     <svg
       data-testid="spinner"
-      className={sharedStyles["hypership-spinner"]}
+      className="hypership-spinner"
       style={{
         height: `${size}px`,
         width: `${size}px`,

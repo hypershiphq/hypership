@@ -7,7 +7,6 @@ interface ButtonSignInGitHubProps {
   buttonLabel: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  unstyled?: boolean;
   loading?: boolean;
 }
 
@@ -15,7 +14,6 @@ export const ButtonSignInGitHub: React.FC<ButtonSignInGitHubProps> = ({
   buttonLabel,
   onClick,
   type = "button",
-  unstyled = false,
   loading = false,
 }) => {
   const { signInWithGithub, signingIn } = useHypershipAuth();
@@ -29,7 +27,7 @@ export const ButtonSignInGitHub: React.FC<ButtonSignInGitHubProps> = ({
 
   return (
     <button
-      className={unstyled ? "" : sharedStyles["hypership-button-github"]}
+      className="hypership-button-github"
       type={type}
       onClick={handleClick}
       disabled={loading || signingIn}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
-import sharedStyles from "../AuthComponents.module.css";
 import { PasswordChange } from "../PasswordChange/PasswordChange";
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
@@ -10,12 +9,10 @@ import { Alert } from "../Common/Alert/Alert";
 // Props interface that accepts the callback from the parent
 interface PasswordResetProps {
   onPasswordResetSuccess: () => void;
-  unstyled?: boolean;
 }
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({
   onPasswordResetSuccess,
-  unstyled = false,
 }) => {
   const { passwordReset, passwordResetting } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
@@ -43,31 +40,25 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({
     return (
       <PasswordChange
         onPasswordChangeSuccess={onPasswordResetSuccess}
-        unstyled={unstyled}
         email={email}
       />
     );
   }
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-container"]}>
-      <form
-        className={unstyled ? "" : sharedStyles["hypership-form"]}
-        onSubmit={handleSubmit}
-      >
-        <Alert message={errorMessage} type="error" unstyled={unstyled} />
-        <Alert message={message} type="success" unstyled={unstyled} />
+    <div className="hypership-container">
+      <form className="hypership-form" onSubmit={handleSubmit}>
+        <Alert message={errorMessage} type="error" />
+        <Alert message={message} type="success" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
           placeholder="Enter your email"
           label="Email"
-          unstyled={unstyled}
         />
         <ButtonPrimary
           buttonLabel="Reset Password"
           type="submit"
-          unstyled={unstyled}
           loading={passwordResetting}
         />
         <HypershipPoweredBy />

@@ -1,28 +1,25 @@
 import React from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 import Spinner from "../Spinner/Spinner";
 
 interface ButtonSecondaryProps {
   buttonLabel: string;
   onClick?: () => void;
-  unstyled?: boolean;
   loading?: boolean;
 }
 
 export const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({
   buttonLabel,
   onClick = () => {},
-  unstyled = false,
   loading = false,
 }) => {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={unstyled ? "" : sharedStyles["hypership-button-secondary"]}
+      className="hypership-button-secondary"
       disabled={loading}
     >
-      <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+      <span className="button-content">
         {loading && <Spinner />}
         {buttonLabel}
       </span>

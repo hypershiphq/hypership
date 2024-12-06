@@ -1,10 +1,8 @@
 import React from "react";
 import HypershipAuth from "../HypershipAuth/HypershipAuth";
-import sharedStyles from "../AuthComponents.module.css";
 
 interface HypershipAuthPageProps {
   onAuthSuccess: () => void;
-  unstyled?: boolean;
   title?: string;
   backgroundImage?: string;
   rightComponent?: React.ReactNode;
@@ -12,7 +10,6 @@ interface HypershipAuthPageProps {
 
 export const HypershipAuthPage: React.FC<HypershipAuthPageProps> = ({
   onAuthSuccess,
-  unstyled = false,
   title = "Welcome to My App",
   backgroundImage,
   rightComponent,
@@ -21,26 +18,24 @@ export const HypershipAuthPage: React.FC<HypershipAuthPageProps> = ({
 
   return (
     <div
-      className={unstyled ? "" : sharedStyles["auth-page-container"]}
+      className="auth-page-container"
       style={!showRightSide ? { justifyContent: "center" } : undefined}
     >
       {/* Left Side: HypershipAuth Component */}
       <div
-        className={unstyled ? "" : sharedStyles["auth-page-left"]}
+        className="auth-page-left"
         style={!showRightSide ? { flex: "unset", width: "600px" } : undefined}
       >
-        <h1 className={unstyled ? "" : sharedStyles["auth-page-title"]}>
-          {title}
-        </h1>
-        <div className={unstyled ? "" : sharedStyles["auth-form-container"]}>
-          <HypershipAuth onAuthSuccess={onAuthSuccess} unstyled={unstyled} />
+        <h1 className="auth-page-title">{title}</h1>
+        <div className="auth-form-container">
+          <HypershipAuth onAuthSuccess={onAuthSuccess} />
         </div>
       </div>
 
       {/* Right Side: Background Image or Custom Component */}
       {showRightSide && (
         <div
-          className={unstyled ? "" : sharedStyles["auth-page-right"]}
+          className="auth-page-right"
           style={
             backgroundImage
               ? {

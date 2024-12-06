@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import OtpInput from "react-otp-input";
-import sharedStyles from "../AuthComponents.module.css";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { InputFieldPassword } from "../Common/InputFieldPassword/InputFieldPassword";
@@ -10,13 +9,11 @@ import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 
 interface PasswordChangeProps {
   onPasswordChangeSuccess: () => void;
-  unstyled?: boolean;
   email?: string;
 }
 
 export const PasswordChange: React.FC<PasswordChangeProps> = ({
   onPasswordChangeSuccess,
-  unstyled = false,
   email: initialEmail = "",
 }) => {
   const { confirmPasswordResetCode, passwordChange, error, passwordChanging } =
@@ -58,28 +55,19 @@ export const PasswordChange: React.FC<PasswordChangeProps> = ({
   };
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-container"]}>
-      <form
-        className={unstyled ? "" : sharedStyles["hypership-form"]}
-        onSubmit={handleSubmit}
-      >
-        <Alert
-          message={errorMessage || error}
-          type="error"
-          unstyled={unstyled}
-        />
+    <div className="hypership-container">
+      <form className="hypership-form" onSubmit={handleSubmit}>
+        <Alert message={errorMessage || error} type="error" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
           placeholder="Enter your email"
           label="Email"
-          unstyled={unstyled}
         />
-        <div className={unstyled ? "" : sharedStyles["hypership-input-group"]}>
+        <div className="hypership-input-group">
           <Alert
             message="Enter the confirmation code sent to your email"
             type="success"
-            unstyled={unstyled}
           />
           <OtpInput
             inputStyle="hypership-otp-button"
@@ -107,7 +95,6 @@ export const PasswordChange: React.FC<PasswordChangeProps> = ({
           setPassword={setNewPassword}
           placeholder="Enter your new password"
           label="New Password"
-          unstyled={unstyled}
           onChange={handlePasswordChange}
         />
         <InputFieldPassword
@@ -116,12 +103,10 @@ export const PasswordChange: React.FC<PasswordChangeProps> = ({
           placeholder="Confirm your new password"
           label="Confirm New Password"
           showStrengthMeter={false}
-          unstyled={unstyled}
         />
         <ButtonPrimary
           buttonLabel="Reset Password"
           type="submit"
-          unstyled={unstyled}
           loading={passwordChanging}
         />
         <HypershipPoweredBy />

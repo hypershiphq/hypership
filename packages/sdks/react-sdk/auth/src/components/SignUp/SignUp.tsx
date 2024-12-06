@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
-import sharedStyles from "../AuthComponents.module.css";
 import { InputFieldPassword } from "../Common/InputFieldPassword/InputFieldPassword";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { HypershipPoweredBy } from "../Common/HypershipPoweredBy/HypershipPoweredBy";
@@ -9,13 +8,9 @@ import { Alert } from "../Common/Alert/Alert";
 
 interface SignUpProps {
   onSignUpSuccess: (email: string) => void;
-  unstyled?: boolean;
 }
 
-export const SignUp: React.FC<SignUpProps> = ({
-  onSignUpSuccess,
-  unstyled = false,
-}) => {
+export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
   const { signUp, error, signingUp } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -48,29 +43,20 @@ export const SignUp: React.FC<SignUpProps> = ({
   };
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-container"]}>
-      <form
-        className={unstyled ? "" : sharedStyles["hypership-form"]}
-        onSubmit={handleSubmit}
-      >
-        <Alert
-          message={errorMessage || error}
-          type="error"
-          unstyled={unstyled}
-        />
+    <div className="hypership-container">
+      <form className="hypership-form" onSubmit={handleSubmit}>
+        <Alert message={errorMessage || error} type="error" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
           placeholder="Enter your email"
           label="Email"
-          unstyled={unstyled}
         />
         <InputFieldPassword
           password={password}
           setPassword={setPassword}
           placeholder="Enter your password"
           label="Password"
-          unstyled={unstyled}
           onChange={handlePasswordChange}
         />
         <InputFieldPassword
@@ -79,13 +65,11 @@ export const SignUp: React.FC<SignUpProps> = ({
           setPassword={setConfirmPassword}
           placeholder="Confirm your password"
           label="Confirm Password"
-          unstyled={unstyled}
           showStrengthMeter={false}
         />
         <ButtonPrimary
           buttonLabel="Create Account"
           type="submit"
-          unstyled={unstyled}
           loading={signingUp}
         />
         <HypershipPoweredBy />

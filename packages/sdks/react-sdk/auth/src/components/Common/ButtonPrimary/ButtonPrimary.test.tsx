@@ -1,7 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ButtonPrimary from "./ButtonPrimary";
-import sharedStyles from "../AuthComponents.module.css";
 
 describe("ButtonPrimary Component", () => {
   test("renders with default properties and displays the label", () => {

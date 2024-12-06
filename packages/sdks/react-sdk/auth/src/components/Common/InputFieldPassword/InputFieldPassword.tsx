@@ -1,12 +1,10 @@
 import React, { useState } from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 
 interface InputFieldPasswordProps {
   password: string;
   setPassword: (password: string) => void;
   placeholder?: string;
   label?: string;
-  unstyled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   showStrengthMeter?: boolean;
   id?: string;
@@ -21,7 +19,6 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
   setPassword,
   placeholder = "Enter your password",
   label = "Password",
-  unstyled = false,
   onChange,
   showStrengthMeter = true,
   id = "password",
@@ -68,11 +65,8 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
   };
 
   return (
-    <div className={unstyled ? "" : sharedStyles["hypership-input-group"]}>
-      <label
-        htmlFor={id}
-        className={unstyled ? "" : sharedStyles["hypership-label"]}
-      >
+    <div className="hypership-input-group">
+      <label htmlFor={id} className="hypership-label">
         {label}
       </label>
       <div
@@ -86,7 +80,7 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           required
-          className={unstyled ? "" : sharedStyles["hypership-input"]}
+          className="hypership-input"
         />
         <button
           type="button"
@@ -110,7 +104,7 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="#9CA3AF"
-              className={unstyled ? "" : "size-6"}
+              className="size-6"
               style={{ width: "24px", height: "24px" }}
             >
               <path
@@ -126,7 +120,7 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
               viewBox="0 0 24 24"
               strokeWidth="1.5"
               stroke="#9CA3AF"
-              className={unstyled ? "" : "size-6"}
+              className="size-6"
               style={{ width: "24px", height: "24px" }}
             >
               <path
@@ -146,37 +140,33 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
       {showStrengthMeter && (
         <div
           data-testid="password-strength-bar"
-          className={
-            unstyled ? "" : sharedStyles["hypership-password-strength-bar"]
-          }
+          className="hypership-password-strength-bar"
         >
           <div
             data-testid="password-strength-bar-1"
-            className={`${unstyled ? "" : sharedStyles["hypership-bar"]} ${
+            className={`hypership-bar ${
               passwordStrength >= 1
                 ? passwordStrength === 3
-                  ? sharedStyles["green"]
+                  ? "green"
                   : passwordStrength === 2
-                    ? sharedStyles["yellow"]
-                    : sharedStyles["red"]
+                    ? "yellow"
+                    : "red"
                 : ""
             }`}
           ></div>
           <div
             data-testid="password-strength-bar-2"
-            className={`${unstyled ? "" : sharedStyles["hypership-bar"]} ${
+            className={`hypership-bar ${
               passwordStrength >= 2
                 ? passwordStrength === 3
-                  ? sharedStyles["green"]
-                  : sharedStyles["yellow"]
+                  ? "green"
+                  : "yellow"
                 : ""
             }`}
           ></div>
           <div
             data-testid="password-strength-bar-3"
-            className={`${unstyled ? "" : sharedStyles["hypership-bar"]} ${
-              passwordStrength === 3 ? sharedStyles["green"] : ""
-            }`}
+            className={`hypership-bar ${passwordStrength === 3 ? "green" : ""}`}
           ></div>
         </div>
       )}

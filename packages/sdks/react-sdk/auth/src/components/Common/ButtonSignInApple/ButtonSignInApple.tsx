@@ -1,12 +1,10 @@
 import React from "react";
-import sharedStyles from "../../AuthComponents.module.css";
 import Spinner from "../Spinner/Spinner";
 
 interface ButtonSignInAppleProps {
   buttonLabel: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  unstyled?: boolean;
   loading?: boolean;
 }
 
@@ -14,12 +12,11 @@ export const ButtonSignInApple: React.FC<ButtonSignInAppleProps> = ({
   buttonLabel,
   onClick,
   type = "button",
-  unstyled = false,
   loading = false,
 }) => {
   return (
     <button
-      className={unstyled ? "" : sharedStyles["hypership-button-apple"]}
+      className="hypership-button-apple"
       type={type}
       onClick={onClick}
       disabled={loading}
@@ -27,7 +24,7 @@ export const ButtonSignInApple: React.FC<ButtonSignInAppleProps> = ({
       {loading ? (
         <Spinner />
       ) : (
-        <div className={sharedStyles["button-content-wrapper"]}>
+        <div className="button-content-wrapper">
           <svg
             width="22"
             height="22"
@@ -40,7 +37,7 @@ export const ButtonSignInApple: React.FC<ButtonSignInAppleProps> = ({
               fill="#ffffff"
             />
           </svg>
-          <span className={sharedStyles["button-label"]}>{buttonLabel}</span>
+          <span className="button-label">{buttonLabel}</span>
         </div>
       )}
     </button>
