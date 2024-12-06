@@ -17,8 +17,11 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   apiKey,
   theme: initialTheme = "light", // Default to "light" if no theme is provided
 }) => {
+  console.log("here")
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
+
+  console.log(theme)
 
   // Loading states
   const [signingIn, setSigningIn] = useState<boolean>(false);

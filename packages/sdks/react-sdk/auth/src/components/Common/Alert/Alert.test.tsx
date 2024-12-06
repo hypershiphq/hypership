@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import Alert from "./Alert";
-import sharedStyles from "../AuthComponents.module.css";
+import * as sharedStyles from "../../AuthComponents.module.css";;
 
 describe("Alert Component", () => {
   test("renders success alert with correct message and styling", () => {

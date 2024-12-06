@@ -1,7 +1,7 @@
 import React from "react";
 import { render } from "@testing-library/react";
 import Spinner from "./Spinner";
-import sharedStyles from "../AuthComponents.module.css";
+import * as sharedStyles from "../../AuthComponents.module.css";;
 
 describe("Spinner Component", () => {
   test("renders spinner with default size", () => {

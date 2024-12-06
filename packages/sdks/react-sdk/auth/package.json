@@ -5,6 +5,7 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "style": "./dist/assets/index.css",
   "files": [
     "dist/**"
   ],
@@ -18,11 +19,12 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    }
+    },
+    "./style": "./dist/assets/index.css"
   },
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --external react",
-    "dev": "tsup src/index.ts --format esm,cjs --dts --external react && npm link"
+    "build": "tsc && vite build",
+    "dev": "tsup --config tsup.config.ts && npm link"
   },
   "type": "module",
   "author": "Hypership",
@@ -30,8 +32,13 @@
   "devDependencies": {
     "@types/node": "^20.14.8",
     "@types/react": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.0.0",
     "tsup": "^8.3.5",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-lib-inject-css": "^2.1.1"
   },
   "peerDependencies": {
     "react": ">=16.8.0",

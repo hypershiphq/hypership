@@ -21,6 +21,7 @@ export const SignIn: React.FC<SignInProps> = ({
   unstyled = false,
   buttonLabel = "Sign In",
 }) => {
+  console.log(sharedStyles)
   const { signIn, isAuthenticated, error, signingIn, theme } =
     useHypershipAuth();
   const [email, setEmail] = useState<string>("crowson.j+test6@gmail.com");
