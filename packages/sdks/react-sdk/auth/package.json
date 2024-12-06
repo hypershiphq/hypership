@@ -6,7 +6,8 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist/**"
+    "dist/**",
+    "dist/index.css"
   ],
   "exports": {
     ".": {
@@ -18,10 +19,12 @@
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
       }
-    }
+    },
+    "./index.css": "./dist/index.css"
   },
   "scripts": {
-    "build": "tsup",
+    "clean": "rimraf dist",
+    "build": "npm run clean && tsup && cpy src/index.css dist/",
     "dev": "tsup --watch && npm link"
   },
   "type": "module",
@@ -30,8 +33,10 @@
   "devDependencies": {
     "@types/node": "^20.14.8",
     "@types/react": "^18.0.0",
+    "cpy-cli": "^5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "rimraf": "^6.0.1",
     "tsup": "^8.3.5",
     "typescript": "^5.5.2"
   },

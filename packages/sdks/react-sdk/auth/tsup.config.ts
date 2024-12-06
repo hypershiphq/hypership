@@ -1,10 +1,12 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.ts"], // Entry file
+  entry: ["src/index.ts"], // Single entry point
   format: ["esm", "cjs"], // Output formats
   dts: true, // Generate TypeScript declaration files
-  external: ["react", "react-dom", "./src/index.css"], // Externalize React and React-DOM
-  clean: true, // Clean output directory before building
-  sourcemap: true, // Optional: Enable source maps
+  clean: true, // Clean the dist folder
+  sourcemap: true, // Generate source maps
+  external: ["react", "react-dom"], // Externalize dependencies
+  splitting: false, // Disable code splitting for a single bundled output
+  minify: true, // Optional: Minify the output
 });
