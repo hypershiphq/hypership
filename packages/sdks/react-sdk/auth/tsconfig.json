@@ -2,6 +2,7 @@
   "compilerOptions": {
     "composite": false,
     "declaration": true,
+    "declarationDir": "./dist",
     "declarationMap": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
