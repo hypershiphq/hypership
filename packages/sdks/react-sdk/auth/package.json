@@ -1,20 +1,26 @@
 {
-    "name": "@hypership/auth-react",
-    "private": true,
-    "scripts": {
-      "build": "turbo build",
-      "dev": "turbo dev",
-      "lint": "turbo lint",
-      "format": "prettier --write \"**/*.{ts,tsx,md}\""
-    },
-    "devDependencies": {
-      "prettier": "^3.2.5",
-      "turbo": "^2.1.0",
-      "typescript": "^5.4.5"
-    },
-    "packageManager": "pnpm@8.15.6",
-    "engines": {
-      "node": ">=18"
-    }
+  "name": "@hypership/auth-react",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/types/index.d.ts",
+  "scripts": {
+    "dev": "tsc && npm link",
+    "build": "tsc && node ../../../../post-build.js react_auth"
+  },
+  "type": "module",
+  "author": "Hypership",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "@types/react": "^19.0.0",
+    "typescript": "^5.5.2"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-router-dom": ">=6.0.0"
+  },
+  "dependencies": {
+    "react-otp-input": "^3.1.1"
   }
-  
+}
