@@ -29,7 +29,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/node": "^20.14.8",
-    "@types/react": "^19.0.0",
+    "@types/react": "^18.0.0",
     "tsup": "^8.3.5",
     "typescript": "^5.5.2"
   },
