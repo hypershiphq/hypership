@@ -1,3 +1,5 @@
+import "./index.css";
+
 export { useHypershipAuth } from "./hooks/useHypershipAuth";
 export { HypershipAuthProvider } from "./context/HypershipAuthProvider";
 export { SignIn } from "./components/SignIn/SignIn";
