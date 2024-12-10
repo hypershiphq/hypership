@@ -1,14 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import { hypershipAnalytics } from '../analytics';
+import React, { useEffect, useRef } from "react";
+import { hypershipAnalytics } from "../utils/analytics";
 import { timezoneToCountryCodeMap } from "../utils/timeZoneMap"; // Your map as defined above
 
 interface HypershipAnalyticsProps {
   apiKey: string;
 }
 
-export const HypershipAnalytics: React.FC<HypershipAnalyticsProps> = ({ apiKey }) => {
-  const location = useLocation();
+export const HypershipAnalytics: React.FC<HypershipAnalyticsProps> = ({
+  apiKey,
+}) => {
   const previousPathRef = useRef<string | undefined>(undefined);
 
   // Helper function to resolve timezone to country
@@ -25,44 +25,57 @@ export const HypershipAnalytics: React.FC<HypershipAnalyticsProps> = ({ apiKey }
       return entry.c[0]; // Returning the first country for simplicity
     }
 
-    return 'Unknown'; // Fallback if no valid country is found
+    return "Unknown"; // Fallback if no valid country is found
   };
-
 
   useEffect(() => {
     // Initialize Hypership analytics
     hypershipAnalytics.initialize(apiKey);
 
-    // Determine the country from the timezone
-    const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const country = resolveCountryFromTimezone(timeZone);
+    const handlePageView = () => {
+      // Determine the country from the timezone
+      const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const country = resolveCountryFromTimezone(timeZone);
 
-    // Log page view on route changes
-    const currentPath = location.pathname;
-    const searchParams = location.search;
-    const previousPath = previousPathRef.current;
-    const userAgent = navigator.userAgent;
-    const referrer = document.referrer;
-    const timestamp = new Date().toISOString();
-    const title = document.title;
+      const currentPath = window.location.pathname;
+      const searchParams = window.location.search;
+      const previousPath = previousPathRef.current;
+      const userAgent = navigator.userAgent;
+      const referrer = document.referrer;
+      const timestamp = new Date().toISOString();
+      const title = document.title;
 
-    // Update the previousPathRef with the current path for the next render
-    previousPathRef.current = currentPath;
+      // Update the previousPathRef with the current path
+      previousPathRef.current = currentPath;
 
-    // Log the page view with the determined country
-    hypershipAnalytics.logPageView({
-      currentPath,
-      searchParams,
-      previousPath,
-      userAgent,
-      referrer,
-      timestamp,
-      title,
-      country,
-    });
-  }, [location]);
+      // Log the page view with the determined country
+      hypershipAnalytics.logPageView({
+        currentPath,
+        searchParams,
+        previousPath,
+        userAgent,
+        referrer,
+        timestamp,
+        title,
+        country,
+      });
+    };
+
+    // Log the initial page view
+    handlePageView();
+
+    // Listen for URL changes
+    const handlePopState = () => {
+      handlePageView();
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [apiKey]);
 
   // This component doesn't render any UI
   return null;
 };
-

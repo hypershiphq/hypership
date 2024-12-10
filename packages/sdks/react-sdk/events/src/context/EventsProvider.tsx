@@ -1,6 +1,6 @@
 // src/context/EventsProvider.tsx
 import React, { createContext, useContext } from "react";
-import { EventsContextProps } from "../types";
+import { EventsContextProps } from "../types/types";
 import { apiRequest } from "../utils/apiClient";
 import { validateConfig } from "../utils/validateConfig";
 

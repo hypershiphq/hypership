@@ -1,5 +1,5 @@
 {
-  "name": "@hypership/analytics-react",
+  "name": "@hypership/events-react",
   "version": "0.0.1",
   "description": "",
   "main": "./dist/index.js",

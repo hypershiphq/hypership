@@ -1,6 +1,6 @@
 // Create a base URL for the API
 const BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "http://localhost:3002/v1";
+  process.env.REACT_APP_API_BASE_URL || "https://backend-dev.hypership.dev/v1";
 
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
