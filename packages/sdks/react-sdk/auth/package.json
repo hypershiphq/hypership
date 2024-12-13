@@ -24,6 +24,7 @@
   },
   "scripts": {
     "build": "vite build",
+    "build:watch": "vite build --watch",
     "dev": "tsup --config tsup.config.ts && npm link"
   },
   "type": "module",

@@ -20,7 +20,7 @@ export const SignIn: React.FC<SignInProps> = ({
 }) => {
   const { signIn, isAuthenticated, error, signingIn, theme } =
     useHypershipAuth();
-  const [email, setEmail] = useState<string>("crowson.j+test6@gmail.com");
+  const [email, setEmail] = useState<string>("crowson.j+test@gmail.com");
   const [password, setPassword] = useState<string>("Password12");
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -32,8 +32,8 @@ export const SignIn: React.FC<SignInProps> = ({
       }
     } catch (err: any) {
       if (
-        err.response?.data?.error?.code === "SIGN_IN_FAILED" &&
-        err.response?.data?.error?.message === "User is not confirmed."
+        err?.error?.code === "SIGN_IN_FAILED" &&
+        err?.error?.message === "User is not confirmed."
       ) {
         // Trigger the function prop to handle unconfirmed users
         onAccountConfirmationRequired && onAccountConfirmationRequired(email);
@@ -64,14 +64,13 @@ export const SignIn: React.FC<SignInProps> = ({
           placeholder="Enter your password"
           label="Password"
           showStrengthMeter={false}
-          // theme={theme}
         />
         <ButtonPrimary
           buttonLabel={buttonLabel}
           type="submit"
           loading={signingIn}
         />
-        <ButtonSignInGitHub buttonLabel="Sign In with GitHub" />
+        {/* <ButtonSignInGitHub buttonLabel="Sign In with GitHub" /> */}
         <HypershipPoweredBy />
       </form>
     </div>

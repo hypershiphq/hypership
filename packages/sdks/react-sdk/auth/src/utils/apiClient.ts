@@ -1,6 +1,10 @@
 // Create a base URL for the API
 const BASE_URL =
   process.env.REACT_APP_API_BASE_URL || "https://backend-dev.hypership.dev/v1";
+// const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3002/v1";
+
+// Flag to track if token refresh is in progress
+let isRefreshing = false;
 
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
@@ -25,26 +29,39 @@ const getHeaders = (url?: string) => {
 
 // Helper function to handle refresh token
 const handleTokenRefresh = async () => {
-  const refreshToken = localStorage.getItem("refreshToken");
-  if (!refreshToken) {
-    throw new Error("No refresh token available");
+  if (isRefreshing) {
+    // Wait until refresh is complete
+    while (isRefreshing) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    return localStorage.getItem("accessToken");
   }
 
-  const response = await fetch(`${BASE_URL}/auth/refresh`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
+  isRefreshing = true;
+  try {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) {
+      throw new Error("No refresh token available");
+    }
 
-  if (!response.ok) {
-    throw new Error("Token refresh failed");
+    const response = await fetch(`${BASE_URL}/auth/refresh`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Token refresh failed");
+    }
+
+    const data = await response.json();
+    localStorage.setItem("accessToken", data.accessToken);
+    return data.accessToken;
+  } finally {
+    isRefreshing = false;
   }
-
-  const data = await response.json();
-  localStorage.setItem("accessToken", data.accessToken);
-  return data.accessToken;
 };
 
 const apiClient = {
@@ -59,11 +76,26 @@ const apiClient = {
 
     let response = await fetch(`${BASE_URL}${url}`, requestOptions);
 
-    // Handle token expiration
-    if (
-      response.status === 401 ||
-      (response.status === 400 && (await this.isTokenExpired(response)))
-    ) {
+    // Handle token expiration and errors
+    if (response.status === 400) {
+      const errorData = await response.json();
+      if (await this.isTokenExpired(response)) {
+        try {
+          const newToken = await handleTokenRefresh();
+          // Retry original request with new token
+          requestOptions.headers = {
+            ...requestOptions.headers,
+            Authorization: `Bearer ${newToken}`,
+          };
+          response = await fetch(`${BASE_URL}${url}`, requestOptions);
+        } catch (error) {
+          localStorage.removeItem("accessToken");
+          throw error;
+        }
+      } else {
+        throw errorData;
+      }
+    } else if (response.status === 401) {
       try {
         const newToken = await handleTokenRefresh();
         // Retry original request with new token
@@ -74,7 +106,6 @@ const apiClient = {
         response = await fetch(`${BASE_URL}${url}`, requestOptions);
       } catch (error) {
         localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
         throw error;
       }
     }

@@ -5,14 +5,12 @@ import { PasswordReset } from "../PasswordReset/PasswordReset";
 import { ButtonSecondary } from "../Common/ButtonSecondary/ButtonSecondary";
 import { SignUp } from "../SignUp/SignUp";
 
-// Props for HypershipAuth
-interface HypershipAuthProps {
+// Props for AuthFlow
+interface AuthFlowProps {
   onAuthSuccess: () => void;
 }
 
-export const HypershipAuth: React.FC<HypershipAuthProps> = ({
-  onAuthSuccess,
-}) => {
+export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
   const [currentView, setCurrentView] = useState<
     "signIn" | "signUp" | "confirmAccount" | "passwordReset"
   >("signIn");
@@ -38,7 +36,7 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
   return (
     <>
       {currentView === "signIn" && (
-        <>
+        <div className="hypership-auth-wrapper">
           <SignIn
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
@@ -51,10 +49,10 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
             buttonLabel="Forgot Password?"
             onClick={handleForgotPassword}
           />
-        </>
+        </div>
       )}
       {currentView === "signUp" && (
-        <>
+        <div className="hypership-auth-wrapper">
           <SignUp
             onSignUpSuccess={(email) => {
               setEmail(email);
@@ -65,19 +63,21 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
             buttonLabel="Already have an account? Sign in"
             onClick={() => setCurrentView("signIn")}
           />
-        </>
+        </div>
       )}
       {currentView === "confirmAccount" && (
-        <ConfirmUserAccount
-          email={email}
-          onConfirmationSuccess={() => {
-            setCurrentView("signIn");
-            handleSignInSuccess();
-          }}
-        />
+        <div className="hypership-auth-wrapper">
+          <ConfirmUserAccount
+            email={email}
+            onConfirmationSuccess={() => {
+              setCurrentView("signIn");
+              handleSignInSuccess();
+            }}
+          />
+        </div>
       )}
       {currentView === "passwordReset" && (
-        <>
+        <div className="hypership-auth-wrapper">
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
           />
@@ -85,10 +85,10 @@ export const HypershipAuth: React.FC<HypershipAuthProps> = ({
             buttonLabel="Back to Sign In"
             onClick={() => setCurrentView("signIn")}
           />
-        </>
+        </div>
       )}
     </>
   );
 };
 
-export default HypershipAuth;
+export default AuthFlow;

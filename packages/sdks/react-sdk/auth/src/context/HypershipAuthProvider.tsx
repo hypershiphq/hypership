@@ -19,6 +19,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
+  const accessToken = localStorage.getItem("accessToken");
 
   // Loading states
   const [signingIn, setSigningIn] = useState<boolean>(false);
@@ -42,12 +43,14 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   const setUserWithData = (userData: User) => {
     const normalizedUser: User = {
       id: userData.id,
-      email:
-        typeof userData.email === "string" ? userData.email : userData.email,
+      username: typeof userData.username === "string" ? userData.username : "",
       firstName: userData.firstName || "",
       lastName: userData.lastName || "",
       enabled: userData.enabled,
-      metadata: userData.metadata || {},
+      metadata:
+        typeof userData.metadata === "string"
+          ? JSON.parse(userData.metadata)
+          : userData.metadata || {},
     };
     setUser(normalizedUser);
   };
@@ -58,48 +61,52 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
     const initializeAuth = async () => {
       setAuthenticating(true);
-      const accessToken = localStorage.getItem("accessToken");
-      if (accessToken) {
-        try {
-          const response = await apiClient.get("/auth/me");
-          const userData = {
-            id: response.data.user.id,
-            email: response.data.user.username,
-            firstName: response.data.user.firstName,
-            lastName: response.data.user.lastName,
-            enabled: response.data.user.enabled,
-            metadata: response.data.user.metadata,
-          };
-          setUserWithData(userData);
-        } catch (error) {
-          setError("Failed to authenticate. Please sign in again.");
-          throw error;
-        }
+      try {
+        const response = await apiClient.get("/auth/me");
+        const userData = {
+          id: response.user.id,
+          username: response.user.username,
+          firstName: response.user.firstName,
+          lastName: response.user.lastName,
+          enabled: response.user.enabled,
+          metadata: response.user.metadata,
+        };
+        setUserWithData(userData);
+      } catch (error) {
+        setError("Failed to authenticate. Please sign in again.");
+        throw error;
+      } finally {
+        setAuthenticating(false);
       }
-      setAuthenticating(false);
     };
-    initializeAuth();
-  }, [apiKey]);
+
+    if (accessToken) {
+      initializeAuth();
+    } else {
+      setAuthenticating(false);
+    }
+  }, [apiKey, accessToken]);
 
   const signIn = async (email: string, password: string): Promise<void> => {
-    console.log("Signing in with email:", email, "and password:", password);
     setSigningIn(true);
     try {
       const response = await apiClient.post("/auth/signin", {
         username: email,
         password,
       });
-      const { accessToken, refreshToken } = response.data;
+
+      const accessToken = response.accessToken;
+      if (!accessToken) {
+        throw new Error("No access token received");
+      }
+
       localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
-      setUserWithData(response.data);
+      setUserWithData(response);
       setError(null);
     } catch (error: unknown) {
-      if (error instanceof Error && "response" in (error as any)) {
-        const axiosError = error as any;
-        setError(
-          axiosError.response?.data?.error?.message || "Sign-in failed."
-        );
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Sign-in failed.");
       } else {
         setError("Sign-in failed.");
       }
@@ -111,7 +118,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   const signInWithGithub = (): Promise<void> => {
-    return new Promise((resolve) => {
+    return new Promise(() => {
       const publicKey = localStorage.getItem("hs-public-key");
 
       // Construct the OAuth URL with `hs-public-key` as a query parameter
@@ -135,17 +142,13 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         password,
         name,
       });
-      const signedUpUser = {
-        id: response.data.userId,
-        email: email, // Use the email passed to signUp since it's not in response
-        firstName: "",
-        lastName: "",
-        enabled: true,
-        metadata: {},
-      };
-      setUserWithData(signedUpUser);
-    } catch (error: any) {
-      setError(error.response?.data?.error?.message || "Sign-up failed.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Sign-up failed.");
+      } else {
+        setError("Sign-up failed.");
+      }
       throw error;
     } finally {
       setSigningUp(false);
@@ -155,9 +158,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   // Sign-out method
   const signOut = async () => {
     localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     setUser(null);
-    // setError(null);
   };
 
   // Password reset method (renamed from resetPassword to passwordReset)
@@ -166,8 +167,12 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setPasswordResetting(true);
     try {
       await apiClient.post("/auth/forgotPassword", { username: email });
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Password reset failed.");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message || "Password reset failed.");
+      } else {
+        setError("Password reset failed.");
+      }
       throw error;
     } finally {
       setPasswordResetting(false);
@@ -177,17 +182,22 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   // Password reset verification method
   const confirmPasswordResetCode = async (email: string, code: string) => {
     setError(null);
+    setPasswordChanging(true);
     try {
       const response = await apiClient.post("/auth/verifyResetCode", {
         username: email,
         resetCode: code,
       });
-      return response.data.changePasswordToken;
-    } catch (error: any) {
-      setError(
-        error.response?.data?.message ||
-          "Verification code verification failed."
-      );
+      return response.changePasswordToken;
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(
+          apiError.error?.message || "Verification code verification failed."
+        );
+      } else {
+        setError("Verification code verification failed.");
+      }
       throw error;
     }
   };
@@ -198,7 +208,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     newPassword: string,
     changePasswordToken: string
   ) => {
-    setPasswordChanging(true);
     setError(null);
     try {
       await apiClient.post("/auth/changePassword", {
@@ -206,8 +215,13 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         newPassword,
         changePasswordToken,
       });
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Password change failed.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Password change failed.");
+      } else {
+        setError("Password change failed.");
+      }
       throw error;
     } finally {
       setPasswordChanging(false);
@@ -222,8 +236,13 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         username: email,
         confirmationToken: code,
       });
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Account confirmation failed.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Account confirmation failed.");
+      } else {
+        setError("Account confirmation failed.");
+      }
       throw error;
     } finally {
       setConfirmingAccount(false);
@@ -237,8 +256,13 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       await apiClient.post("/auth/resendConfirmation", {
         username: email,
       });
-    } catch (error: any) {
-      setError(error.response?.data?.message || "Resend confirmation failed.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Resend confirmation failed.");
+      } else {
+        setError("Resend confirmation failed.");
+      }
       throw error;
     } finally {
       setConfirmAccountCodeResending(false);

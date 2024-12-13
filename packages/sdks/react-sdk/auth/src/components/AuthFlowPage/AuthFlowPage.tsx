@@ -1,16 +1,21 @@
 import React from "react";
-import HypershipAuth from "../HypershipAuth/HypershipAuth";
+import HypershipAuth from "../AuthFlow/AuthFlow";
 
-interface HypershipAuthPageProps {
+interface AuthFlowPageProps {
   onAuthSuccess: () => void;
   title?: string;
+  /**
+   * URL or path to background image. For local images, import them first:
+   * import bgImage from './background.jpg';
+   * Then pass the imported value: backgroundImage={bgImage}
+   */
   backgroundImage?: string;
   rightComponent?: React.ReactNode;
 }
 
-export const HypershipAuthPage: React.FC<HypershipAuthPageProps> = ({
+export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
   onAuthSuccess,
-  title = "Welcome to My App",
+  title = "",
   backgroundImage,
   rightComponent,
 }) => {
@@ -39,7 +44,7 @@ export const HypershipAuthPage: React.FC<HypershipAuthPageProps> = ({
           style={
             backgroundImage
               ? {
-                  backgroundImage: `url('${backgroundImage}')`,
+                  backgroundImage: `url(${backgroundImage})`,
                 }
               : undefined
           }
