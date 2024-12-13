@@ -142,10 +142,21 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         password,
         name,
       });
+
+      if (response.status === "error") {
+        setError(response.error.message || "Sign-up failed.");
+        throw response.error;
+      }
     } catch (error: unknown) {
       if (error && typeof error === "object" && "error" in error) {
-        const apiError = error as { error: { message?: string } };
-        setError(apiError.error?.message || "Sign-up failed.");
+        const apiError = error as {
+          error: { message?: string; code?: string };
+        };
+        if (apiError.error?.code === "USER_ALREADY_EXISTS") {
+          setError(apiError.error.message || "User already exists.");
+        } else {
+          setError(apiError.error?.message || "Sign-up failed.");
+        }
       } else {
         setError("Sign-up failed.");
       }
