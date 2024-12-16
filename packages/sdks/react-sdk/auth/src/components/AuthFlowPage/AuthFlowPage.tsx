@@ -1,5 +1,5 @@
 import React from "react";
-import HypershipAuth from "../AuthFlow/AuthFlow";
+import AuthFlow from "../AuthFlow/AuthFlow";
 
 interface AuthFlowPageProps {
   onAuthSuccess: () => void;
@@ -33,7 +33,7 @@ export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
       >
         <h1 className="auth-page-title">{title}</h1>
         <div className="auth-form-container">
-          <HypershipAuth onAuthSuccess={onAuthSuccess} />
+          <AuthFlow onAuthSuccess={onAuthSuccess} />
         </div>
       </div>
 

@@ -1,7 +1,5 @@
 // Create a base URL for the API
-const BASE_URL =
-  process.env.REACT_APP_API_BASE_URL || "https://backend-dev.hypership.dev/v1";
-// const BASE_URL = process.env.REACT_APP_API_BASE_URL || "http://localhost:3002/v1";
+const BASE_URL = "https://backend-dev.hypership.dev/v1";
 
 // Flag to track if token refresh is in progress
 let isRefreshing = false;
@@ -46,6 +44,7 @@ const handleTokenRefresh = async () => {
 
     const response = await fetch(`${BASE_URL}/auth/refresh`, {
       method: "POST",
+      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${refreshToken}`,
@@ -66,8 +65,9 @@ const handleTokenRefresh = async () => {
 
 const apiClient = {
   async request(url: string, options: RequestInit = {}) {
-    const requestOptions = {
+    const requestOptions: RequestInit = {
       ...options,
+      credentials: "include",
       headers: {
         ...getHeaders(url),
         ...(options.headers || {}),
@@ -84,7 +84,8 @@ const apiClient = {
           const newToken = await handleTokenRefresh();
           // Retry original request with new token
           requestOptions.headers = {
-            ...requestOptions.headers,
+            ...getHeaders(url),
+            ...(options.headers || {}),
             Authorization: `Bearer ${newToken}`,
           };
           response = await fetch(`${BASE_URL}${url}`, requestOptions);
@@ -100,7 +101,8 @@ const apiClient = {
         const newToken = await handleTokenRefresh();
         // Retry original request with new token
         requestOptions.headers = {
-          ...requestOptions.headers,
+          ...getHeaders(url),
+          ...(options.headers || {}),
           Authorization: `Bearer ${newToken}`,
         };
         response = await fetch(`${BASE_URL}${url}`, requestOptions);

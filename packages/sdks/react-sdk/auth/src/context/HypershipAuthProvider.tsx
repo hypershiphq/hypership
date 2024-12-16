@@ -1,4 +1,10 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect,
+  ReactNode,
+  useRef,
+} from "react";
 import apiClient from "../utils/apiClient";
 import { AuthContextProps, User } from "../types/types";
 
@@ -20,6 +26,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
   const accessToken = localStorage.getItem("accessToken");
+  const initializeAuthRan = useRef(false);
 
   // Loading states
   const [signingIn, setSigningIn] = useState<boolean>(false);
@@ -55,13 +62,65 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setUser(normalizedUser);
   };
 
-  // Effect to handle initial authentication (on app load)
+  // Effect to handle initial authentication and token refresh
   useEffect(() => {
     localStorage.setItem("hs-public-key", apiKey);
 
+    const isAccessTokenExpired = (token: string) => {
+      try {
+        const base64Url = token.split(".")[1];
+        const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split("")
+            .map((c) => {
+              return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+            })
+            .join("")
+        );
+        const payload = JSON.parse(jsonPayload);
+        const expirationDate = new Date(payload.exp * 1000);
+        console.log("Decoded token:", {
+          ...payload,
+          exp: expirationDate.toLocaleString(),
+        });
+        return payload.exp * 1000 < Date.now();
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        return true;
+      }
+    };
+
+    const refreshToken = async () => {
+      try {
+        const response = await apiClient.request("/auth/refresh", {
+          method: "POST",
+        });
+        const { accessToken: newAccessToken } = response;
+        localStorage.setItem("accessToken", newAccessToken);
+        return newAccessToken;
+      } catch (error) {
+        console.error("Failed to refresh token:", error);
+        throw error;
+      }
+    };
+
     const initializeAuth = async () => {
+      if (initializeAuthRan.current) return;
+      initializeAuthRan.current = true;
+
       setAuthenticating(true);
       try {
+        if (accessToken && isAccessTokenExpired(accessToken)) {
+          try {
+            await refreshToken();
+          } catch (error) {
+            signOut();
+            setAuthenticating(false);
+            return;
+          }
+        }
+
         const response = await apiClient.get("/auth/me");
         const userData = {
           id: response.user.id,
@@ -85,6 +144,23 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     } else {
       setAuthenticating(false);
     }
+
+    // Add event listener for URL changes
+    const handleUrlChange = () => {
+      if (accessToken) {
+        if (isAccessTokenExpired(accessToken)) {
+          refreshToken().catch(() => signOut());
+        }
+      }
+    };
+
+    window.addEventListener("popstate", handleUrlChange);
+    window.addEventListener("hashchange", handleUrlChange);
+
+    return () => {
+      window.removeEventListener("popstate", handleUrlChange);
+      window.removeEventListener("hashchange", handleUrlChange);
+    };
   }, [apiKey, accessToken]);
 
   const signIn = async (email: string, password: string): Promise<void> => {

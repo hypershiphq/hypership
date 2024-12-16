@@ -41,14 +41,16 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
           />
-          <ButtonSecondary
-            buttonLabel="Don't have an account? Sign up"
-            onClick={() => setCurrentView("signUp")}
-          />
-          <ButtonSecondary
-            buttonLabel="Forgot Password?"
-            onClick={handleForgotPassword}
-          />
+          <div className="hypership-button-group">
+            <ButtonSecondary
+              buttonLabel="Don't have an account? Sign up"
+              onClick={() => setCurrentView("signUp")}
+            />
+            <ButtonSecondary
+              buttonLabel="Forgot Password?"
+              onClick={handleForgotPassword}
+            />
+          </div>
         </div>
       )}
       {currentView === "signUp" && (
@@ -59,10 +61,12 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
               setCurrentView("confirmAccount");
             }}
           />
-          <ButtonSecondary
-            buttonLabel="Already have an account? Sign in"
-            onClick={() => setCurrentView("signIn")}
-          />
+          <div className="hypership-button-group">
+            <ButtonSecondary
+              buttonLabel="Already have an account? Sign in"
+              onClick={() => setCurrentView("signIn")}
+            />
+          </div>
         </div>
       )}
       {currentView === "confirmAccount" && (
@@ -81,10 +85,12 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
           />
-          <ButtonSecondary
-            buttonLabel="Back to Sign In"
-            onClick={() => setCurrentView("signIn")}
-          />
+          <div className="hypership-button-group">
+            <ButtonSecondary
+              buttonLabel="Back to Sign In"
+              onClick={() => setCurrentView("signIn")}
+            />
+          </div>
         </div>
       )}
     </>
