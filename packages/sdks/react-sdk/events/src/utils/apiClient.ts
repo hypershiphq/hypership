@@ -1,6 +1,6 @@
 // src/utils/apiClient.ts
 
-let API_BASE_URL = "http://localhost:3002/v1"; // Default API base URL
+let API_BASE_URL = "https://backend-dev.hypership.dev/v1";
 
 export const setApiBaseUrl = (url: string) => {
   API_BASE_URL = url;

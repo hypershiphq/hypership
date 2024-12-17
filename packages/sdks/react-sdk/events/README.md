@@ -11,18 +11,15 @@ npm install @hypership/events-react
 ## Usage
 
 ```
-import { HypershipEvents } from '@hypership/events-react';
+import { HypershipEventsProvider } from '@hypership/events-react';
 
-// Initialize the package in your main App function
 export default function App() {
-  HypershipEvents();
-
   return (
-    <>
+    <HypershipEventsProvider apiKey={HYPERSHIP_PUBLIC_KEY}>
       <div>
         <h1>Basic Example</h1>
       </div>
-    </>
+    </HypershipEventsProvider>
   );
 };
 ```

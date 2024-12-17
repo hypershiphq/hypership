@@ -8,7 +8,7 @@ interface HypershipEventsProps {
   children: React.ReactNode;
 }
 
-export const HypershipEvents: React.FC<HypershipEventsProps> = ({
+export const HypershipEventsProvider: React.FC<HypershipEventsProps> = ({
   apiKey,
   children,
 }) => {

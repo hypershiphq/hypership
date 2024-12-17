@@ -6,6 +6,7 @@ import { apiRequest } from "./apiClient.js";
 class HypershipAnalytics {
   private publicKey: string = "";
   private isInitialized: boolean = false;
+  private lastPageView: string = "";
 
   public initialize(publicKey: string) {
     if (this.isInitialized) {
@@ -24,6 +25,17 @@ class HypershipAnalytics {
       console.error("Hypership Analytics is not initialized.");
       return;
     }
+
+    // Create a unique key for this page view using path and timestamp
+    const pageViewKey = `${data.currentPath}-${data.timestamp}`;
+
+    // Check if this exact page view was already logged
+    if (this.lastPageView === pageViewKey) {
+      return;
+    }
+
+    // Update the last page view before making the request
+    this.lastPageView = pageViewKey;
 
     apiRequest("/analytics", {
       method: "POST",
