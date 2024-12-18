@@ -18,6 +18,9 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   // Validate the configuration
   validateConfig(publicKey);
 
+  // Retrieve access token from localStorage
+  const accessToken = localStorage.getItem("accessToken");
+
   // Function to log events
   const trackEvent = async (key: string, metadata: object) => {
     try {
@@ -30,6 +33,7 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         headers: {
           "Content-Type": "application/json",
           "hs-public-key": publicKey,
+          "hs-user-access-token": accessToken || "",
         },
         body: JSON.stringify(payload),
       });

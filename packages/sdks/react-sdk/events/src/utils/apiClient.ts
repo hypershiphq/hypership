@@ -9,20 +9,20 @@ export const setApiBaseUrl = (url: string) => {
 export const apiRequest = async (
   endpoint: string,
   options: RequestInit = {}
-): Promise<any> => {
+): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.log("API Error Response:", errorData);
+    console.log("API Error Response:", response.status);
 
     // Create a custom error with additional properties
-    const error = new Error(errorData?.error?.message || "An error occurred.");
-    (error as any).status = errorData?.status || "error";
-    (error as any).error = errorData?.error || {};
+    const error = new Error("An error occurred.");
+    (error as any).status = "error";
+    (error as any).statusCode = response.status;
 
     throw error;
   }
 
-  return response.json();
+  // No JSON response expected, just return if successful
+  return;
 };

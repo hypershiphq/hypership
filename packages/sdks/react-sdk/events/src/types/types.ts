@@ -2,7 +2,6 @@
 
 export interface HypershipConfig {
   publicKey: string;
-  secretKey: string;
   apiBaseUrl?: string;
 }
 

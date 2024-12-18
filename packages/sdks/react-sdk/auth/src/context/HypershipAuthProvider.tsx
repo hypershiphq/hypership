@@ -62,6 +62,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
           ? JSON.parse(userData.metadata)
           : userData.metadata || {},
     };
+
     setUser(normalizedUser);
   };
 
@@ -82,11 +83,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
             .join("")
         );
         const payload = JSON.parse(jsonPayload);
-        const expirationDate = new Date(payload.exp * 1000);
-        console.log("Decoded token:", {
-          ...payload,
-          exp: expirationDate.toLocaleString(),
-        });
         return payload.exp * 1000 < Date.now();
       } catch (error) {
         console.error("Error decoding token:", error);
@@ -110,6 +106,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
     const initializeAuth = async () => {
       if (initializeAuthRan.current) return;
+
       initializeAuthRan.current = true;
 
       setAuthenticating(true);
@@ -180,7 +177,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       }
 
       localStorage.setItem("accessToken", accessToken);
-      setUserWithData(response);
       setError(null);
     } catch (error: unknown) {
       if (error && typeof error === "object" && "error" in error) {
@@ -248,6 +244,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   // Sign-out method
   const signOut = async () => {
     localStorage.removeItem("accessToken");
+    initializeAuthRan.current = false;
     setUser(null);
   };
 

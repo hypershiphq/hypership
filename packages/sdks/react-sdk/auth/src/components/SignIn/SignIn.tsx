@@ -20,8 +20,8 @@ export const SignIn: React.FC<SignInProps> = ({
 }) => {
   const { signIn, isAuthenticated, error, signingIn, theme } =
     useHypershipAuth();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [email, setEmail] = useState<string>("crowson.j@gmail.com");
+  const [password, setPassword] = useState<string>("Password12");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
