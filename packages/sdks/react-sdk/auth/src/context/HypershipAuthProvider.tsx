@@ -50,7 +50,10 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   const setUserWithData = (userData: User) => {
     const normalizedUser: User = {
       id: userData.id,
-      username: typeof userData.username === "string" ? userData.username : "",
+      username:
+        typeof userData.username === "string"
+          ? userData.username.toLowerCase()
+          : "",
       firstName: userData.firstName || "",
       lastName: userData.lastName || "",
       enabled: userData.enabled,
@@ -124,7 +127,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         const response = await apiClient.get("/auth/me");
         const userData = {
           id: response.user.id,
-          username: response.user.username,
+          username: response.user.username.toLowerCase(),
           firstName: response.user.firstName,
           lastName: response.user.lastName,
           enabled: response.user.enabled,
@@ -167,7 +170,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setSigningIn(true);
     try {
       const response = await apiClient.post("/auth/signin", {
-        username: email,
+        username: email.toLowerCase(),
         password,
       });
 
@@ -214,7 +217,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setError(null);
     try {
       const response = await apiClient.post("/auth/signup", {
-        username: email,
+        username: email.toLowerCase(),
         password,
         name,
       });
@@ -253,7 +256,9 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setError(null);
     setPasswordResetting(true);
     try {
-      await apiClient.post("/auth/forgotPassword", { username: email });
+      await apiClient.post("/auth/forgotPassword", {
+        username: email.toLowerCase(),
+      });
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message || "Password reset failed.");
@@ -272,7 +277,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setPasswordChanging(true);
     try {
       const response = await apiClient.post("/auth/verifyResetCode", {
-        username: email,
+        username: email.toLowerCase(),
         resetCode: code,
       });
       return response.changePasswordToken;
@@ -298,7 +303,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setError(null);
     try {
       await apiClient.post("/auth/changePassword", {
-        username: email,
+        username: email.toLowerCase(),
         newPassword,
         changePasswordToken,
       });
@@ -320,7 +325,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setConfirmingAccount(true);
     try {
       await apiClient.post("/auth/confirmAccount", {
-        username: email,
+        username: email.toLowerCase(),
         confirmationToken: code,
       });
     } catch (error: unknown) {
@@ -341,7 +346,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setError(null);
     try {
       await apiClient.post("/auth/resendConfirmation", {
-        username: email,
+        username: email.toLowerCase(),
       });
     } catch (error: unknown) {
       if (error && typeof error === "object" && "error" in error) {
