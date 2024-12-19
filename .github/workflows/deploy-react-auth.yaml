@@ -1,4 +1,4 @@
-name: Deploy React Events NPM Package
+name: Deploy React Auth NPM Package
 
 on:
   workflow_dispatch:
@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - "packages/sdks/react-sdk/events/**"
+      - "packages/sdks/react-sdk/auth/**"
 
 jobs:
   build:
@@ -27,15 +27,16 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Install dependencies
-        working-directory: packages/sdks/react-sdk/events
+        working-directory: packages/sdks/react-sdk/auth
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build @hypership/events Package
-        working-directory: packages/sdks/react-sdk/events
+      - name: Build @hypership/auth Package
+        working-directory: packages/sdks/react-sdk/auth
         run: pnpm run build
 
-      - name: Publish @hypership/events Package
-        working-directory: packages/sdks/react-sdk/events
+      - name: Publish @hypership/auth Package
+        working-directory: packages/sdks/react-sdk/auth
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+

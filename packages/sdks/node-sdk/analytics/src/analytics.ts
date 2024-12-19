@@ -72,7 +72,7 @@ const logEvent = debounce(async (publicKey: string) => {
   if (publicKey) {
     try {
       const response = await fetch(
-        "https://backend.hypership.dev/v1/analytics",
+        "https://backend-dev.hypership.dev/v1/analytics",
         {
           method: "POST",
           headers: {
