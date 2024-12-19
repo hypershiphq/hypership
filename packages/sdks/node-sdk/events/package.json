@@ -1,11 +1,27 @@
 {
   "name": "@hypership/events",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
-  "main": "dist/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
   "scripts": {
-    "build": "tsc && node ../../../../post-build.js node_events"
+    "build": "vite build"
   },
   "type": "module",
   "author": "Hypership",
@@ -13,7 +29,10 @@
   "devDependencies": {
     "@types/lodash": "^4.17.7",
     "@types/node": "^20.14.8",
-    "typescript": "^5.5.2"
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.5.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0"
   },
   "dependencies": {
     "lodash": "^4.17.21"
