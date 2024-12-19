@@ -14,7 +14,7 @@ function App() {
       ) : isAuthenticated ? (
         <Dashboard />
       ) : (
-        <AuthFlowPage onAuthSuccess={() => console.log("signed in")} />
+        <AuthFlowPage onAuthSuccess={() => console.info("signed in")} />
       )}
     </BrowserRouter>
   );
