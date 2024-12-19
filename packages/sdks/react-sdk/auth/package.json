@@ -1,20 +1,51 @@
 {
-    "name": "@hypership/auth-react",
-    "private": true,
-    "scripts": {
-      "build": "turbo build",
-      "dev": "turbo dev",
-      "lint": "turbo lint",
-      "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  "name": "@hypership/auth-react",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/style.css",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
-    "devDependencies": {
-      "prettier": "^3.2.5",
-      "turbo": "^2.1.0",
-      "typescript": "^5.4.5"
-    },
-    "packageManager": "pnpm@8.15.6",
-    "engines": {
-      "node": ">=18"
-    }
+    "./style": "./dist/style.css"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "dev": "tsup --config tsup.config.ts && npm link"
+  },
+  "type": "module",
+  "author": "Hypership",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "@types/react": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.5.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-lib-inject-css": "^2.1.1"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-router-dom": ">=6.0.0"
+  },
+  "dependencies": {
+    "react-otp-input": "^3.1.1"
   }
-  
+}

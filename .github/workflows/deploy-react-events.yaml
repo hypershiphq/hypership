@@ -6,7 +6,7 @@ on:
     branches:
       - main
     paths:
-      - "packages/sdks/node-sdk/events/**"
+      - "packages/sdks/react-sdk/events/**"
 
 jobs:
   build:
@@ -27,15 +27,15 @@ jobs:
         uses: pnpm/action-setup@v4
 
       - name: Install dependencies
-        working-directory: packages/sdks/node-sdk/events
+        working-directory: packages/sdks/react-sdk/events
         run: pnpm install --no-frozen-lockfile
 
       - name: Build @hypership/events Package
-        working-directory: packages/sdks/node-sdk/events
+        working-directory: packages/sdks/react-sdk/events
         run: pnpm run build
 
       - name: Publish @hypership/events Package
-        working-directory: packages/sdks/node-sdk/events
+        working-directory: packages/sdks/react-sdk/events
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

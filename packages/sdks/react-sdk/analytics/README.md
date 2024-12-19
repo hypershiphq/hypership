@@ -11,29 +11,28 @@ npm install @hypership/analytics-react
 ## Usage
 
 ```
-import { HypershipAnalytics } from '@hypership/analytics-react';
+import { HypershipAnalyticsProvider } from '@hypership/analytics-react';
 
-// Initialize the package in your main App function
 export default function App() {
-  HypershipAnalytics();
-
   return (
-    <>
+    <HypershipAnalyticsProvider apiKey={HYPERSHIP_PUBLIC_KEY}>
       <div>
         <h1>Basic Example</h1>
       </div>
-    </>
+    </HypershipAnalyticsProvider>
   );
 };
 ```
 
 ## API Key
+
 You can provide your Hypership API Key in one of the following ways:
 
- - Directly as an argument when initializing Hypership Analytics.
- - As an environment variable named `HYPERSHIP_API_KEY`.
- - As an environment variable named `REACT_APP_HYPERSHIP_API_KEY` if you're using Create React App.
- - As an environment variable named `NEXT_PUBLIC_HYPERSHIP_API_KEY` if you're using Next.js.
+- Directly as an argument when initializing Hypership Analytics.
+- As an environment variable named `HYPERSHIP_PUBLIC_KEY`.
+- As an environment variable named `REACT_APP_HYPERSHIP_PUBLIC_KEY` if you're using Create React App.
+- As an environment variable named `NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY` if you're using Next.js.
 
 ## License
+
 MIT

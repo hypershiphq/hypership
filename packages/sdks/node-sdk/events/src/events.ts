@@ -27,10 +27,12 @@ class Events {
         console.error('🚀 Hypership Analytics - Failed to log event');
       }
 
-      console.log('Event logged successfully', {
-        eventID,
-        payload
-      });
+      if (process.env.NODE_ENV === 'dev') {
+        console.info('Event logged successfully', {
+          eventID,
+          payload
+        });
+      }
     } catch (error) {
       console.error('Error logging event:', error);
     }
