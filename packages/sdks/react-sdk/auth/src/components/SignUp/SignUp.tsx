@@ -34,7 +34,6 @@ export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
       await signUp(email, password);
       onSignUpSuccess(email);
     } catch (err: any) {
-      console.log(err);
       setErrorMessage(
         err.response?.data?.error?.message ||
           "An error occurred during sign-up."

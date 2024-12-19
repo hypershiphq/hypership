@@ -13,8 +13,6 @@ export const apiRequest = async (
   const response = await fetch(`${API_BASE_URL}${endpoint}`, options);
 
   if (!response.ok) {
-    console.log("API Error Response:", response.status);
-
     // Create a custom error with additional properties
     const error = new Error("An error occurred.");
     (error as any).status = "error";

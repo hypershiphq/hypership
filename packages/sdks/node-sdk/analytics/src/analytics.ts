@@ -63,7 +63,7 @@ const logEvent = debounce(async (publicKey: string) => {
     process.env.NODE_ENV === "local" ||
     process.env.NODE_ENV === "development"
   ) {
-    console.log("🚀 Hypership Analytics - Logged event", currentPath);
+    console.info("🚀 Hypership Analytics - Logged event", currentPath);
     return;
   }
 

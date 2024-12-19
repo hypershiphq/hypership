@@ -52,7 +52,6 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
       onConfirmationSuccess();
       setErrorMessage(null);
     } catch (err: any) {
-      console.log(err);
       setErrorMessage(
         err.response?.data?.error?.message ||
           "An error occurred during account confirmation."

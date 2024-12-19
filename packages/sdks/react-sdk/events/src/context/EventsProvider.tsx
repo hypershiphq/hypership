@@ -38,8 +38,6 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
         body: JSON.stringify(payload),
       });
     } catch (error: any) {
-      console.log("Error logging event:", error);
-
       if (error?.status === "error" && error?.error) {
         const { code, message } = error.error;
 
