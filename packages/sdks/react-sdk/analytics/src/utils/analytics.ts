@@ -37,11 +37,14 @@ class HypershipAnalytics {
     // Update the last page view before making the request
     this.lastPageView = pageViewKey;
 
+    const accessToken = localStorage.getItem("accessToken");
+
     apiRequest("/analytics", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "hs-public-key": this.publicKey,
+        "hs-user-access-token": accessToken || "",
       },
       body: JSON.stringify(data),
     }).catch((error: unknown) => {
