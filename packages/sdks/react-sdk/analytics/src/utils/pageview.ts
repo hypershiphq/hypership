@@ -1,4 +1,4 @@
-// src/analytics.ts
+// src/pageview.ts
 import { PageViewData } from "../types/types.js";
 import { validateConfig } from "./validateConfig.js";
 import { apiRequest } from "./apiClient.js";

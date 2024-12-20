@@ -1,7 +1,7 @@
 {
   "name": "@hypership/analytics-react",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Hypership Analytics React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -21,8 +21,7 @@
     }
   },
   "scripts": {
-    "build": "vite build",
-    "dev": "tsup --config tsup.config.ts && npm link"
+    "build": "vite build"
   },
   "type": "module",
   "author": "Hypership",

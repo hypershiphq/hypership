@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { hypershipAnalytics } from "../utils/analytics";
+import { hypershipAnalytics } from "../utils/pageview";
 import { timezoneToCountryCodeMap } from "../utils/timeZoneMap";
 
 interface HypershipAnalyticsProps {

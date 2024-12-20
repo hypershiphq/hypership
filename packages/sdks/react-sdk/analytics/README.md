@@ -15,11 +15,9 @@ import { HypershipAnalyticsProvider } from '@hypership/analytics-react';
 
 export default function App() {
   return (
-    <HypershipAnalyticsProvider apiKey={HYPERSHIP_PUBLIC_KEY}>
-      <div>
-        <h1>Basic Example</h1>
-      </div>
-    </HypershipAnalyticsProvider>
+    ...
+    <HypershipAnalyticsProvider apiKey={HYPERSHIP_PUBLIC_KEY} />
+    ...
   );
 };
 ```
