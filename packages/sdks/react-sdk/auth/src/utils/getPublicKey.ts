@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-export const getHypershipPublicKey = (): string | undefined => {
+const getHypershipPublicKey = (): string | undefined => {
   // Check if using Vite (import.meta.env)
   if (typeof import.meta !== "undefined" && import.meta.env) {
     return import.meta.env.VITE_HYPERSHIP_PUBLIC_KEY;
@@ -18,3 +18,5 @@ export const getHypershipPublicKey = (): string | undefined => {
   // Return undefined if no environment variables are found
   return undefined;
 };
+
+export default getHypershipPublicKey;

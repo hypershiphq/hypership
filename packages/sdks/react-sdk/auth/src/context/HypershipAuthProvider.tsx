@@ -6,13 +6,13 @@ import React, {
   useRef,
 } from "react";
 import apiClient from "../utils/apiClient";
+import getHypershipPublicKey from "../utils/getPublicKey";
+
 import { AuthContextProps, User } from "../types/types";
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
   undefined
 );
-
-import { getHypershipPublicKey } from "../utils/getPublicKey";
 
 interface AuthProviderProps {
   children: ReactNode;
