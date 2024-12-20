@@ -12,9 +12,11 @@ export const AuthContext = createContext<AuthContextProps | undefined>(
   undefined
 );
 
+import { getHypershipPublicKey } from "../utils/getPublicKey";
+
 interface AuthProviderProps {
   children: ReactNode;
-  apiKey: string;
+  apiKey?: string; // Make apiKey optional
   theme?: "light" | "dark"; // Optional theme prop with possible values
 }
 
@@ -27,6 +29,12 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
   const accessToken = localStorage.getItem("accessToken");
   const initializeAuthRan = useRef(false);
+
+  // Resolve the API key, trying to get it from getHypershipPublicKey if not provided
+  const resolvedApiKey = apiKey || getHypershipPublicKey();
+  if (!resolvedApiKey) {
+    throw new Error("HypershipAuthProvider: API key is required");
+  }
 
   // Loading states
   const [signingIn, setSigningIn] = useState<boolean>(false);
@@ -68,7 +76,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Effect to handle initial authentication and token refresh
   useEffect(() => {
-    localStorage.setItem("hs-public-key", apiKey);
+    localStorage.setItem("hs-public-key", resolvedApiKey);
 
     const isAccessTokenExpired = (token: string) => {
       try {

@@ -1,9 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import { hypershipAnalytics } from "../utils/pageview";
 import { timezoneToCountryCodeMap } from "../utils/timeZoneMap";
+import { getHypershipPublicKey } from "../utils/getPublicKey";
 
 interface HypershipAnalyticsProps {
-  apiKey: string;
+  apiKey?: string;
 }
 
 export const HypershipAnalyticsProvider: React.FC<HypershipAnalyticsProps> = ({
@@ -46,7 +47,11 @@ export const HypershipAnalyticsProvider: React.FC<HypershipAnalyticsProps> = ({
   };
 
   useEffect(() => {
-    hypershipAnalytics.initialize(apiKey);
+    const resolvedApiKey = apiKey || getHypershipPublicKey();
+    if (!resolvedApiKey) {
+      throw new Error("HypershipAnalytics: API key is required");
+    }
+    hypershipAnalytics.initialize(resolvedApiKey);
 
     if (isFirstPageLoadRef.current) {
       // Log page view only on first load
