@@ -39,7 +39,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   // Loading states
   const [signingIn, setSigningIn] = useState<boolean>(false);
   const [signingUp, setSigningUp] = useState<boolean>(false);
-  const [authenticating, setAuthenticating] = useState<boolean>(false);
+  const [authenticating, setAuthenticating] = useState<boolean>(true);
   const [passwordResetting, setPasswordResetting] = useState<boolean>(false);
   const [passwordChanging, setPasswordChanging] = useState<boolean>(false);
   const [confirmingAccount, setConfirmingAccount] = useState<boolean>(false);

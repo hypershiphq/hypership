@@ -1,7 +1,7 @@
 import React from "react";
-import { useHypershipAuth } from "../../packages/sdks/react-sdk/auth/src/index";
-import { useHypershipEvents } from "../../packages/sdks/react-sdk/events/src/index";
-import { useNavigate, Link, Routes, Route } from "react-router-dom";
+import { useHypershipAuth } from "../../../packages/sdks/react-sdk/auth/src/index";
+import { useHypershipEvents } from "../../../packages/sdks/react-sdk/events/src/index";
+import { useNavigate, Routes, Route } from "react-router-dom";
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -35,15 +35,9 @@ const Dashboard: React.FC = () => {
 
   return (
     <div>
-      <nav>
-        <Link to="/dashboard">Dashboard</Link>
-        <Link to="/dashboard/james">Profile</Link>
-        <Link to="/dashboard/settings">Settings</Link>
-      </nav>
-
       <Routes>
         <Route
-          path="/"
+          path="/private"
           element={
             <div>
               <h1>My Awesome App Dashboard</h1>
