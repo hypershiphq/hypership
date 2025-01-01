@@ -1,5 +1,5 @@
 // Create a base URL for the API
-const BASE_URL = "https://backend-dev.hypership.dev/v1";
+const BASE_URL = "https://backend.hypership.dev/v1";
 
 // Flag to track if token refresh is in progress
 let isRefreshing = false;

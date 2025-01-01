@@ -1,1 +1,1 @@
-export const EVENTS_API_ENDPOINT = 'https://backend-dev.hypership.dev/v1/events';
+export const EVENTS_API_ENDPOINT = 'https://backend.hypership.dev/v1/events';
