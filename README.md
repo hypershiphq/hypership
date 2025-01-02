@@ -7,7 +7,9 @@
   <p>
     Find out more at <a href="https://hypership.dev">hypership.dev</a>
   </p>
-  <p style="display: inline-flex; align-items: center;">Join our community on <a href="https://discord.gg/BD35TJ2M" style="display: inline-flex; align-items: center;"><img src="./public/assets/images/discord-icon.svg" alt="Discord" width="20" height="20" style="margin-left: 5px; margin-right: 5px;"/> Discord</a></p>
+
+[![Join Our Discord](https://img.shields.io/badge/Join%20Our%20Discord-%237289DA.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/R2KHzFqGjN)
+
 </div>
 
 ## Getting Started
