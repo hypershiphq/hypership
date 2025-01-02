@@ -28,7 +28,7 @@ The platform is where you can manage your projects, users, events, analytics, an
 
 The SDKs are what you use to build your app.
 
-![GitHub Analytics Banner](./public/assets/images/github-product-banner.webp "GitHub Analytics Banner")
+![GitHub Product Banner](./public/assets/images/github-product-banner.webp "GitHub Product Banner")
 
 ## Services
 
