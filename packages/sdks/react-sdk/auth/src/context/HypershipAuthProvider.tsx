@@ -7,8 +7,10 @@ import React, {
 } from "react";
 import apiClient from "../utils/apiClient";
 import getHypershipPublicKey from "../utils/getPublicKey";
+import { ToastProvider } from "../components/Common/Toast/ToastProvider";
 
 import { AuthContextProps, User } from "../types/types";
+import { Toast } from "../components/Common/Toast/Toast";
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
   undefined
@@ -48,6 +50,11 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Error state
   const [error, setError] = useState<string | null>(null);
+
+  // Add toast state directly in this component
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastType, setToastType] = useState<"success" | "error">("success");
 
   // Function to toggle theme
   const toggleTheme = () => {
@@ -171,6 +178,31 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     };
   }, [apiKey, accessToken]);
 
+  const handleError = (errorMessage: string) => {
+    setError(errorMessage);
+    setToastMessage(errorMessage);
+    setToastType("error");
+    setShowToast(true);
+
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+      setToastMessage(null);
+    }, 3000);
+  };
+
+  const handleSuccess = (successMessage: string) => {
+    setToastMessage(successMessage);
+    setToastType("success");
+    setShowToast(true);
+
+    // Hide toast after 3 seconds
+    setTimeout(() => {
+      setShowToast(false);
+      setToastMessage(null);
+    }, 3000);
+  };
+
   const signIn = async (email: string, password: string): Promise<void> => {
     setSigningIn(true);
     try {
@@ -187,12 +219,22 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       localStorage.setItem("accessToken", accessToken);
       setError(null);
     } catch (error: unknown) {
-      if (error && typeof error === "object" && "error" in error) {
-        const apiError = error as { error: { message?: string } };
-        setError(apiError.error?.message || "Sign-in failed.");
+      console.error("Sign-in error:", error);
+      if (
+        error &&
+        typeof error === "object" &&
+        "status" in error &&
+        error.status === "error" &&
+        "error" in error
+      ) {
+        const apiError = error as {
+          error: { message?: string; code?: string };
+        };
+        handleError(apiError.error?.message || "Sign-in failed.");
       } else {
-        setError("Sign-in failed.");
+        handleError("Sign-in failed.");
       }
+      localStorage.removeItem("accessToken");
       signOut();
       throw error;
     } finally {
@@ -227,8 +269,10 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       });
 
       if (response.status === "error") {
-        setError(response.error.message || "Sign-up failed.");
+        handleError(response.error.message || "Sign-up failed.");
         throw response.error;
+      } else {
+        handleSuccess("Sign-up successful. Please confirm your account.");
       }
     } catch (error: unknown) {
       if (error && typeof error === "object" && "error" in error) {
@@ -236,12 +280,12 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
           error: { message?: string; code?: string };
         };
         if (apiError.error?.code === "USER_ALREADY_EXISTS") {
-          setError(apiError.error.message || "User already exists.");
+          handleError(apiError.error.message || "User already exists.");
         } else {
-          setError(apiError.error?.message || "Sign-up failed.");
+          handleError(apiError.error?.message || "Sign-up failed.");
         }
       } else {
-        setError("Sign-up failed.");
+        handleError("Sign-up failed.");
       }
       throw error;
     } finally {
@@ -266,9 +310,9 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        setError(error.message || "Password reset failed.");
+        handleError(error.message || "Password reset failed.");
       } else {
-        setError("Password reset failed.");
+        handleError("Password reset failed.");
       }
       throw error;
     } finally {
@@ -333,6 +377,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         username: email.toLowerCase(),
         confirmationToken: code,
       });
+      handleSuccess("Account confirmed successfully. You can now sign in.");
     } catch (error: unknown) {
       if (error && typeof error === "object" && "error" in error) {
         const apiError = error as { error: { message?: string } };
@@ -367,31 +412,34 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        signingIn,
-        signingUp,
-        authenticating,
-        passwordResetting,
-        passwordChanging,
-        confirmingAccount,
-        error,
-        signIn,
-        signUp,
-        signOut,
-        passwordReset,
-        confirmPasswordResetCode,
-        passwordChange,
-        confirmAccount,
-        confirmAccountCodeResend,
-        confirmAccountCodeResending,
-        signInWithGithub,
-        theme,
-        toggleTheme,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+    <ToastProvider>
+      <AuthContext.Provider
+        value={{
+          user,
+          signingIn,
+          signingUp,
+          authenticating,
+          passwordResetting,
+          passwordChanging,
+          confirmingAccount,
+          error,
+          signIn,
+          signUp,
+          signOut,
+          passwordReset,
+          confirmPasswordResetCode,
+          passwordChange,
+          confirmAccount,
+          confirmAccountCodeResend,
+          confirmAccountCodeResending,
+          signInWithGithub,
+          theme,
+          toggleTheme,
+        }}
+      >
+        {children}
+        {showToast && <Toast message={toastMessage} type={toastType} />}
+      </AuthContext.Provider>
+    </ToastProvider>
   );
 };

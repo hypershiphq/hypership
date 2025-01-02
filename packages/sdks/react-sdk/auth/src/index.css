@@ -405,3 +405,48 @@
     transform: rotate(360deg);
   }
 }
+
+.hypership-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  border-radius: 6px;
+  color: #333;
+  font-size: 14px;
+  z-index: 1000;
+  animation:
+    slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    slideUp 0.5s 2.5s forwards;
+  background-color: #fff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-toast {
+    background-color: rgb(45, 55, 72); /* Lighter background color */
+    color: #e0e0e0;
+  }
+}
+
+@keyframes slideDown {
+  from {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate(-50%, -100%);
+    opacity: 0;
+  }
+}

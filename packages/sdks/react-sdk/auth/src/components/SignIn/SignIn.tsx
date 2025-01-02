@@ -3,8 +3,6 @@ import { InputFieldPassword } from "../Common/InputFieldPassword/InputFieldPassw
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { HypershipPoweredBy } from "../Common/HypershipPoweredBy/HypershipPoweredBy";
-import { Alert } from "../Common/Alert/Alert";
-import { ButtonSignInGitHub } from "../Common/ButtonSignInGitHub/ButtonSignInGitHub";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 
 interface SignInProps {
@@ -50,7 +48,6 @@ export const SignIn: React.FC<SignInProps> = ({
   return (
     <div className="hypership-container">
       <form className="hypership-form" onSubmit={handleSubmit}>
-        <Alert message={error} type="error" />
         <InputFieldEmail
           email={email}
           setEmail={setEmail}
@@ -70,7 +67,6 @@ export const SignIn: React.FC<SignInProps> = ({
           type="submit"
           loading={signingIn}
         />
-        {/* <ButtonSignInGitHub buttonLabel="Sign In with GitHub" /> */}
         <HypershipPoweredBy />
       </form>
     </div>

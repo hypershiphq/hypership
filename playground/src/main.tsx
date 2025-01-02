@@ -7,6 +7,11 @@ import { HypershipEventsProvider } from "../../packages/sdks/react-sdk/events/sr
 import { HypershipAnalyticsProvider } from "../../packages/sdks/react-sdk/analytics/src/components/HypershipAnalyticsProvider.tsx";
 import { BrowserRouter } from "react-router-dom";
 
+console.log(
+  "VITE_HYPERSHIP_PUBLIC_KEY:",
+  import.meta.env.VITE_HYPERSHIP_PUBLIC_KEY
+);
+
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
