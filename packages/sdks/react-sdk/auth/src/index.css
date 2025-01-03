@@ -249,6 +249,13 @@
   border: 1px solid #f2e0e0;
 }
 
+@media (prefers-color-scheme: dark) {
+  .hypership-error-message {
+    background-color: #4b1c1c;
+    color: #fca5a5;
+    border: 1px solid #7f1d1d;
+  }
+}
 .hypership-success-message {
   background-color: #f0fdf4;
   color: #166534;
@@ -257,6 +264,14 @@
   padding: 0.75rem;
   border-radius: 4px;
   text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-success-message {
+    background-color: #1c4532;
+    color: #d1fae5;
+    border: 1px solid #166534;
+  }
 }
 
 .hypership-button-secondary {
@@ -418,7 +433,7 @@
   z-index: 1000;
   animation:
     slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-    slideUp 0.5s 2.5s forwards;
+    slideUp 0.5s 5.5s forwards;
   background-color: #fff;
 }
 

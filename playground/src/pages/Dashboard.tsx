@@ -10,7 +10,7 @@ const Dashboard: React.FC = () => {
 
   const handleButtonClick = () => {
     // Tracking the event with a lot of contextual information
-    trackEvent("button-click", {
+    trackEvent("test-event", {
       plan: "Pro",
       userId: currentUser?.id || "anonymous",
       sessionId: "abcdef-123456",

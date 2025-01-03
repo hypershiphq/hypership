@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SignIn from "../SignIn/SignIn";
 import { ConfirmUserAccount } from "../ConfirmUserAccount/ConfirmUserAccount";
 import { PasswordReset } from "../PasswordReset/PasswordReset";
 import { ButtonSecondary } from "../Common/ButtonSecondary/ButtonSecondary";
 import { SignUp } from "../SignUp/SignUp";
+import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 
 // Props for AuthFlow
 interface AuthFlowProps {
@@ -14,7 +15,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
   const [currentView, setCurrentView] = useState<
     "signIn" | "signUp" | "confirmAccount" | "passwordReset"
   >("signIn");
+  const { error } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
+
+  useEffect(() => {
+    if (error === "Please confirm your email address before signing in.") {
+      setCurrentView("confirmAccount");
+    }
+  }, [error]);
 
   // Function to handle successful sign-in
   const handleSignInSuccess = () => {

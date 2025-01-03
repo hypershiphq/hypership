@@ -8,7 +8,6 @@ import React, {
 import apiClient from "../utils/apiClient";
 import getHypershipPublicKey from "../utils/getPublicKey";
 import { ToastProvider } from "../components/Common/Toast/ToastProvider";
-
 import { AuthContextProps, User } from "../types/types";
 import { Toast } from "../components/Common/Toast/Toast";
 
@@ -188,7 +187,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setTimeout(() => {
       setShowToast(false);
       setToastMessage(null);
-    }, 3000);
+    }, 6000);
   };
 
   const handleSuccess = (successMessage: string) => {
@@ -200,7 +199,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setTimeout(() => {
       setShowToast(false);
       setToastMessage(null);
-    }, 3000);
+    }, 6000);
   };
 
   const signIn = async (email: string, password: string): Promise<void> => {
@@ -230,9 +229,12 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         const apiError = error as {
           error: { message?: string; code?: string };
         };
-        handleError(apiError.error?.message || "Sign-in failed.");
+        handleError(
+          apiError.error?.message ||
+            "Sign-in failed. Please check your API key and try again."
+        );
       } else {
-        handleError("Sign-in failed.");
+        handleError("Sign-in failed. Please check your API key and try again.");
       }
       localStorage.removeItem("accessToken");
       signOut();
@@ -300,7 +302,36 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     setUser(null);
   };
 
-  // Password reset method (renamed from resetPassword to passwordReset)
+  // This method actually changes the password, not triggers the password reset flow
+  const passwordChange = async (
+    email: string,
+    newPassword: string,
+    changePasswordToken: string
+  ) => {
+    setError(null);
+    try {
+      await apiClient.post("/auth/changePassword", {
+        username: email.toLowerCase(),
+        newPassword,
+        changePasswordToken,
+      });
+      handleSuccess("Password changed successfully.");
+    } catch (error: unknown) {
+      if (error && typeof error === "object" && "error" in error) {
+        const apiError = error as { error: { message?: string } };
+        setError(apiError.error?.message || "Password change failed.");
+        handleError(apiError.error?.message || "Password change failed.");
+      } else {
+        setError("Password change failed.");
+        handleError("Password change failed.");
+      }
+      throw error;
+    } finally {
+      setPasswordChanging(false);
+    }
+  };
+
+  // This method triggers the password reset flow
   const passwordReset = async (email: string) => {
     setError(null);
     setPasswordResetting(true);
@@ -308,13 +339,11 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       await apiClient.post("/auth/forgotPassword", {
         username: email.toLowerCase(),
       });
+      handleSuccess("Password reset email sent successfully.");
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        handleError(error.message || "Password reset failed.");
-      } else {
-        handleError("Password reset failed.");
-      }
-      throw error;
+      const errorMessage =
+        error instanceof Error ? error.message : "Password reset failed.";
+      handleError(errorMessage);
     } finally {
       setPasswordResetting(false);
     }
@@ -343,32 +372,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     }
   };
 
-  // Password change method
-  const passwordChange = async (
-    email: string,
-    newPassword: string,
-    changePasswordToken: string
-  ) => {
-    setError(null);
-    try {
-      await apiClient.post("/auth/changePassword", {
-        username: email.toLowerCase(),
-        newPassword,
-        changePasswordToken,
-      });
-    } catch (error: unknown) {
-      if (error && typeof error === "object" && "error" in error) {
-        const apiError = error as { error: { message?: string } };
-        setError(apiError.error?.message || "Password change failed.");
-      } else {
-        setError("Password change failed.");
-      }
-      throw error;
-    } finally {
-      setPasswordChanging(false);
-    }
-  };
-
   const confirmAccount = async (email: string, code: string) => {
     setError(null);
     setConfirmingAccount(true);
@@ -379,12 +382,12 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       });
       handleSuccess("Account confirmed successfully. You can now sign in.");
     } catch (error: unknown) {
-      if (error && typeof error === "object" && "error" in error) {
-        const apiError = error as { error: { message?: string } };
-        setError(apiError.error?.message || "Account confirmation failed.");
-      } else {
-        setError("Account confirmation failed.");
-      }
+      const errorMessage =
+        error instanceof Error && "error" in error
+          ? (error as { error: { message?: string } }).error?.message
+          : "Account confirmation failed.";
+      handleError(errorMessage || "Account confirmation failed.");
+      console.log("Toast shown with message:", errorMessage);
       throw error;
     } finally {
       setConfirmingAccount(false);
@@ -398,13 +401,14 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       await apiClient.post("/auth/resendConfirmation", {
         username: email.toLowerCase(),
       });
+      handleSuccess("Confirmation code resent successfully.");
     } catch (error: unknown) {
-      if (error && typeof error === "object" && "error" in error) {
-        const apiError = error as { error: { message?: string } };
-        setError(apiError.error?.message || "Resend confirmation failed.");
-      } else {
-        setError("Resend confirmation failed.");
-      }
+      const errorMessage =
+        error instanceof Error && "error" in error
+          ? (error as { error: { message?: string } }).error?.message
+          : "Resend confirmation failed.";
+      handleError(errorMessage || "Resend confirmation failed.");
+      console.log("Toast shown with message:", errorMessage);
       throw error;
     } finally {
       setConfirmAccountCodeResending(false);
