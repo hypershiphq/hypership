@@ -4,7 +4,7 @@ import axios from 'axios'
 import { exec } from 'child_process'
 import fs from 'fs'
 import path from 'path'
-import * as color from 'picocolors'
+import color from 'picocolors'
 
 import { Spinner } from '../../types.js'
 
@@ -44,7 +44,7 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
       output.on('close', resolve)
       archive.on('error', reject)
       archive.pipe(output)
-      archive.directory(`${staticWebsitePath}/build`, false)
+      archive.directory(`${staticWebsitePath}/dist`, false)
       archive.finalize()
     })
 

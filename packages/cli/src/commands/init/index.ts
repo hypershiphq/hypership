@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts'
 import fs from 'fs'
-import color = require('picocolors')
+import color from 'picocolors'
 
 import { retrieveToken } from '../../lib/retrieveToken.js'
 import { getUserProjects } from '../../util/init/project.js'
@@ -89,7 +89,7 @@ export const initProject = async (projectId: string) => {
     p.outro(
       `Next steps: 
       1. cd ${project.name}
-      2. Run npm run start to start the development server`
+      2. Run npm run dev to start the development server`
     )
 
   } catch (error: unknown) {

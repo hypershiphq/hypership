@@ -1,5 +1,5 @@
 import * as p from '@clack/prompts'
-import color = require('picocolors')
+import color from 'picocolors'
 
 import { deleteStoredPassword } from '../../util/logout/keychain.js'
 import { deleteStoredToken } from '../../util/logout/deleteToken.js'

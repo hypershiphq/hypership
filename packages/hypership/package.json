@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Shorthand for @hypership/cli",
   "bin": {
     "hypership": "./dist/index.js"

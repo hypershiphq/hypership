@@ -1,6 +1,6 @@
 import { program } from 'commander';
-import * as color from 'picocolors';
-import readline from 'readline';
+import color from 'picocolors';
+import * as readline from 'readline';
 import { Writable } from 'stream';
 
 import { authenticate } from './commands/authenticate/index.js';
@@ -23,6 +23,11 @@ rl.on('SIGINT', () => {
   process.stdout.write(color.red('\n Hypership CLI exited.\n'));
   process.exit();
 });
+
+program
+  .name('hypership')
+  .description('CLI for Hypership platform')
+  .version('1.0.0');
 
 program
   .command('authenticate [cliKey]')
@@ -54,6 +59,5 @@ program
   .action(async () => {
     await deployProject();
   });
-
 
 program.parse(process.argv);

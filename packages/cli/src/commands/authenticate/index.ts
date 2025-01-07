@@ -1,6 +1,6 @@
 import * as p from '@clack/prompts'
 import validator from 'email-validator'
-import color = require('picocolors')
+import color from 'picocolors'
 
 import { standardLogin } from '../../util/authenticate/login.js'
 import { storeToken } from '../../util/authenticate/storeToken.js'

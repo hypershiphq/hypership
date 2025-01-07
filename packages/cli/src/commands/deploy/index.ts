@@ -1,7 +1,7 @@
 import * as p from '@clack/prompts'
 import { setTimeout } from 'node:timers/promises'
 import path from 'path'
-import color = require('picocolors')
+import color from 'picocolors'
 
 import { retrieveToken } from '../../lib/retrieveToken.js'
 import { retrieveProjectConfig } from '../../util/deploy/projectConfig.js'

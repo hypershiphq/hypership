@@ -1,19 +1,25 @@
 {
   "name": "@hypership/cli",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "CLI for Hypership",
-  "main": "index.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "hypership": "./dist/index.js"
+  },
+  "files": [
+    "dist/**"
+  ],
+  "exports": "./dist/index.js",
   "scripts": {
-    "build": "tsc && node ../../post-build.js cli",
-    "dev": "tsc && node ../../post-build.js cli && npm link"
+    "build": "vite build",
+    "dev": "vite build && npm link --force && chmod +x ./dist/index.js"
   },
   "keywords": [],
   "type": "module",
   "author": "Hypership",
   "license": "ISC",
-  "bin": {
-    "hypership": "./dist/index.js"
-  },
   "publishConfig": {
     "access": "public"
   },
@@ -24,7 +30,9 @@
     "@types/ora": "^3.2.0",
     "esbuild": "^0.20.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vite-plugin-banner": "^0.7.1"
   },
   "dependencies": {
     "@clack/core": "^0.3.3",
