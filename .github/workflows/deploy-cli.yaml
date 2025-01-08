@@ -34,6 +34,10 @@ jobs:
         working-directory: packages/cli
         run: pnpm run build
 
+      - name: Build hypership Package
+        working-directory: packages/hypership
+        run: pnpm run build
+
       - name: Publish @hypership/cli Package
         working-directory: packages/cli
         run: npm publish --access public
