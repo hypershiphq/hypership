@@ -111,8 +111,8 @@ importers:
   packages/hypership:
     dependencies:
       '@hypership/cli':
-        specifier: ^0.0.6
-        version: 0.0.6
+        specifier: ^0.0.12
+        version: link:../cli
     devDependencies:
       '@types/node':
         specifier: ^18.0.0
@@ -1268,25 +1268,6 @@ packages:
     resolution: {integrity: sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==}
     deprecated: Use @eslint/object-schema instead
     dev: true
-
-  /@hypership/cli@0.0.6:
-    resolution: {integrity: sha512-AixfNgXGekjXlMgXJkpANCtayYiJbwIEoGXq7IfGonFMRJWggVAKOiz3dokj3UlacGNmv6QwRAlFYE9a89r44A==}
-    hasBin: true
-    dependencies:
-      '@clack/core': 0.3.5
-      '@clack/prompts': 0.7.0
-      archiver: 7.0.1
-      axios: 1.7.8
-      commander: 12.1.0
-      email-validator: 2.0.4
-      jszip: 3.10.1
-      keytar: 7.9.0
-      ora: 8.1.1
-      picocolors: 1.1.1
-      xdg-app-paths: 5.1.0
-    transitivePeerDependencies:
-      - debug
-    dev: false
 
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
