@@ -42,7 +42,7 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
       throw new Error('Build directory (dist) not found. Build may have failed.')
     }
 
-    s.start('Creating deployment archive...')
+    s.start('Deploying static website...')
 
     // Zip
     const output = fs.createWriteStream(zipPath)
@@ -68,8 +68,6 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
       archive.directory(distPath, false)
       archive.finalize()
     })
-
-    s.start('Uploading deployment archive...')
 
     // Upload
     const zipFileStream = fs.createReadStream(zipPath)
