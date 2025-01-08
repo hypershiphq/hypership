@@ -112,7 +112,14 @@ importers:
     dependencies:
       '@hypership/cli':
         specifier: ^0.0.6
-        version: link:../cli
+        version: 0.0.6
+    devDependencies:
+      '@types/node':
+        specifier: ^18.0.0
+        version: 18.19.70
+      typescript:
+        specifier: ^5.0.0
+        version: 5.7.2
 
   packages/sdks/node-sdk/analytics:
     dependencies:
@@ -1262,6 +1269,25 @@ packages:
     deprecated: Use @eslint/object-schema instead
     dev: true
 
+  /@hypership/cli@0.0.6:
+    resolution: {integrity: sha512-AixfNgXGekjXlMgXJkpANCtayYiJbwIEoGXq7IfGonFMRJWggVAKOiz3dokj3UlacGNmv6QwRAlFYE9a89r44A==}
+    hasBin: true
+    dependencies:
+      '@clack/core': 0.3.5
+      '@clack/prompts': 0.7.0
+      archiver: 7.0.1
+      axios: 1.7.8
+      commander: 12.1.0
+      email-validator: 2.0.4
+      jszip: 3.10.1
+      keytar: 7.9.0
+      ora: 8.1.1
+      picocolors: 1.1.1
+      xdg-app-paths: 5.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@isaacs/cliui@8.0.2:
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
     engines: {node: '>=12'}
@@ -1720,6 +1746,12 @@ packages:
 
   /@types/lodash@4.17.13:
     resolution: {integrity: sha512-lfx+dftrEZcdBPczf9d0Qv0x+j/rfNCMuC6OcfXmO8gkfeNAY88PgKUbvG56whcN23gc27yenwF6oJZXGFpYxg==}
+    dev: true
+
+  /@types/node@18.19.70:
+    resolution: {integrity: sha512-RE+K0+KZoEpDUbGGctnGdkrLFwi1eYKTlIHNl2Um98mUkGsm1u2Ff6Ltd0e8DktTtC98uy7rSj+hO8t/QuLoVQ==}
+    dependencies:
+      undici-types: 5.26.5
     dev: true
 
   /@types/node@20.17.9:
@@ -6010,6 +6042,10 @@ packages:
       has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
+    dev: true
+
+  /undici-types@5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
     dev: true
 
   /undici-types@6.19.8:
