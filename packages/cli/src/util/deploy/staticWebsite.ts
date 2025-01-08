@@ -24,7 +24,6 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
 
   try {
     // Build
-    s.start('Building static website...')
     await new Promise((resolve, reject) => {
       exec(`cd ${staticWebsitePath} && npm i && npm run build`, (error, stdout, stderr) => {
         if (error) {

@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Shorthand for @hypership/cli",
   "bin": {
     "hypership": "./dist/index.js"
@@ -9,7 +9,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@hypership/cli": "^0.0.11"
+    "@hypership/cli": "^0.0.12"
   },
   "scripts": {
     "build": "tsc"
