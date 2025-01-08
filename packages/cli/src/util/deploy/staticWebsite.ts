@@ -24,29 +24,52 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
 
   try {
     // Build
+    s.start('Building static website...')
     await new Promise((resolve, reject) => {
-      exec(`cd ${staticWebsitePath} && npm i && npm run build`, (error, stdout) => {
-        if (error) reject(new Error('Failed to build the project'))
+      exec(`cd ${staticWebsitePath} && npm i && npm run build`, (error, stdout, stderr) => {
+        if (error) {
+          console.error('Build error:', stderr)
+          reject(new Error('Failed to build the project'))
+          return
+        }
         resolve(stdout)
         s.stop('Static website built successfully.')
       })
     })
 
-    s.start('Deploying static website...')
+    const distPath = path.join(staticWebsitePath, 'dist')
+    if (!fs.existsSync(distPath)) {
+      throw new Error('Build directory (dist) not found. Build may have failed.')
+    }
+
+    s.start('Creating deployment archive...')
 
     // Zip
     const output = fs.createWriteStream(zipPath)
     const archive = archiver('zip', { zlib: { level: 9 } })
     
-    archive.on('error', (err) => { throw err })
+    archive.on('warning', function(err) {
+      if (err.code === 'ENOENT') {
+        console.warn('Zip warning:', err)
+      } else {
+        throw err
+      }
+    })
+    
+    archive.on('error', (err) => { 
+      console.error('Zip error:', err)
+      throw err 
+    })
     
     await new Promise((resolve, reject) => {
       output.on('close', resolve)
       archive.on('error', reject)
       archive.pipe(output)
-      archive.directory(`${staticWebsitePath}/dist`, false)
+      archive.directory(distPath, false)
       archive.finalize()
     })
+
+    s.start('Uploading deployment archive...')
 
     // Upload
     const zipFileStream = fs.createReadStream(zipPath)
