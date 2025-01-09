@@ -2,7 +2,7 @@
 
 <div align="center">
   <p>
-    Hypership is a new platform to build, launch, and manage your web-apps with user authentication, deployments, analytics and events out of the box.
+    Hypership is a new platform to build, ship, and manage apps at warp-speed. We give you a full codebase deployed with user authentication, pageview analytics, event tracking, and deployments out of the box.
   </p>
   <p>
     Find out more at <a href="https://hypership.dev">hypership.dev</a>
