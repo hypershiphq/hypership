@@ -30,22 +30,12 @@ jobs:
         working-directory: packages/cli
         run: pnpm install --no-frozen-lockfile
 
-      - name: Build @hypership/cli Package
+      - name: Build hypership CLI Package
         working-directory: packages/cli
         run: pnpm run build
 
-      - name: Build hypership Package
-        working-directory: packages/hypership
-        run: pnpm run build
-
-      - name: Publish @hypership/cli Package
+      - name: Publish hypership CLI Package
         working-directory: packages/cli
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish @hypership Package
-        working-directory: packages/hypership
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
