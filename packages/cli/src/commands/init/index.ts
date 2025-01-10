@@ -9,6 +9,8 @@ import { createHypershipProjectDirectory, createWebDirectory } from '../../util/
 import { cloneHypershipFramework } from '../../util/init/framework.js'
 import { createHypershipConfig } from '../../util/init/config.js'
 import { installDependencies } from '../../util/init/dependencies.js'
+import { createEnvFile } from '../../util/init/createEnvFile.js'
+
 import { CloneProjectOption, CloneProjectOptionResponse } from '../../types.js'
 import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 
@@ -80,6 +82,9 @@ export const initProject = async (projectId: string) => {
 
     // Create hypership config
     await createHypershipConfig(projectDetails?.id, project)
+
+    // Create .env file
+    await createEnvFile(authToken, projectDetails?.id, project)
 
     // Install dependencies
     await installDependencies(project)

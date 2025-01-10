@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "CLI for Hypership",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
