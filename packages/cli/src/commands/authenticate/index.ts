@@ -3,8 +3,7 @@ import validator from 'email-validator'
 import color from 'picocolors'
 
 import { standardLogin } from '../../util/authenticate/login.js'
-import { storeToken } from '../../util/authenticate/storeToken.js'
-import { checkKeychainCompatibility, deleteStoredPassword, getPasswordFromKeychain, storePassword } from '../../util/authenticate/keychain.js'
+import { storeTokens } from '../../util/authenticate/storeTokens.js'
 
 import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
 import { cliKeyAuthentication } from '../../util/authenticate/cliKey.js'
@@ -20,7 +19,7 @@ export const authenticate = async (cliKey: string, options: any) => {
     if (cliKey) {
       s.start('Authenticating...')
       const accessToken = await cliKeyAuthentication(cliKey)
-      storeToken(accessToken)
+      storeTokens(accessToken, null)
       s.stop(color.bgGreen(color.black('Authentication successful!')))
       process.exit(0)
     }
@@ -39,80 +38,61 @@ export const authenticate = async (cliKey: string, options: any) => {
       email = options.email
     }
 
-    let password: string | null = await getPasswordFromKeychain(email)
+    let password: string | null = null;
     if (!options.password) {
-      let isAuthenticated = false
-      let attemptCount = 0
+      let isAuthenticated = false;
+      let attemptCount = 0;
 
       while (!isAuthenticated && attemptCount < 3) {
-        if (!password) {
-          const passwordResponse = await p.password({
-            message: 'Password:',
-            validate: (value) => {
-              if (!value) return 'Please enter a password.'
-            },
-          })
-          password = passwordResponse as string
-        } else {
-          p.note('Password retrieved from keychain.')
-        }
+        const passwordResponse = await p.password({
+          message: 'Password:',
+          validate: (value) => {
+            if (!value) return 'Please enter a password.';
+          },
+        });
+        password = passwordResponse as string;
 
-        const user = { email, password }
+        const user = { email, password };
 
         try {
-          const accessToken = await standardLogin(user.email, user.password)
+          const { accessToken, refreshToken } = await standardLogin(user.email, user.password);
 
-          storeToken(accessToken)
+          storeTokens(accessToken, refreshToken);
 
           if (!accessToken) {
-            throw new Error('Invalid credentials')
+            throw new Error('Invalid credentials');
           }
 
-          if (!await getPasswordFromKeychain(email) || attemptCount > 0) {
-            const isCompatible = await checkKeychainCompatibility()
-            if (isCompatible && options.save !== false) {
-              const storePasswordChoice = await p.confirm({
-                message: 'Do you want to save your password securely in your system\'s keychain?',
-              })
+          p.outro(color.bgGreen(color.black('Authentication successful!')));
+          isAuthenticated = true;
 
-              if (storePasswordChoice) {
-                await storePassword(user.email, user.password)
-              } else {
-                await deleteStoredPassword(user.email)
-              }
-            }
-          }
-
-          p.outro(color.bgGreen(color.black('Authentication successful!')))
-          isAuthenticated = true
-
-          process.exit(0)
+          process.exit(0);
         } catch (error) {
-          p.cancel(`${color.bgRed(color.white('Authentication failed.'))} Please try again.`)
-          password = null
-          attemptCount++
+          p.cancel(`${color.bgRed(color.white('Authentication failed.'))} Please try again.`);
+          password = null;
+          attemptCount++;
         }
       }
 
       if (!isAuthenticated) {
-        p.cancel('Failed to authenticate after several attempts.')
+        p.cancel('Failed to authenticate after several attempts.');
       }
     } else {
-      password = options.password
+      password = options.password;
 
-      const user = { email, password }
+      const user = { email, password };
 
-      s.start('Authenticating...')
-      const accessToken = await standardLogin(user.email as string, user.password as string)
-      storeToken(accessToken)
+      s.start('Authenticating...');
+      const { accessToken, refreshToken } = await standardLogin(user.email as string, user.password as string);
+      storeTokens(accessToken, refreshToken);
 
       if (!accessToken) {
-        throw new Error('Invalid credentials')
+        throw new Error('Invalid credentials');
       }
 
-      s.stop(color.bgGreen(color.black('Authentication successful!')))
+      s.stop(color.bgGreen(color.black('Authentication successful!')));
 
-      process.exit(0)
+      process.exit(0);
     }
   } catch (error) {
     const message = error instanceof Error ? error.message : 'default'

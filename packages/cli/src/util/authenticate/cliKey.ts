@@ -5,7 +5,7 @@ export const cliKeyAuthentication = async (cliKey: string) => {
   try {
     const hypershipClient = new HypershipClient()
 
-    const response = await hypershipClient.post('/auth/verify-cli-key', {
+    const response = await hypershipClient.post('/auth/verifyCliKey', {
       cliKey,
     })
 
