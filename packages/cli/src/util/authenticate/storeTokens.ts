@@ -12,6 +12,8 @@ export const storeTokens = (accessToken: string, refreshToken: string | null) =>
       fs.mkdirSync(configDir, { recursive: true });
     }
 
+    console.log(accessToken, refreshToken)
+
     fs.writeFileSync(configFile, JSON.stringify({ accessToken, refreshToken }, null, 2));
   } catch (error) {
     throw new Error('Error storing tokens')

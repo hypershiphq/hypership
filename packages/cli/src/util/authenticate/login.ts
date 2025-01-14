@@ -11,8 +11,8 @@ export const standardLogin = async (email: string, password: string) => {
     })
 
     return {
-      accessToken: response?.accessToken,
-      refreshToken: response?.refreshToken
+      accessToken: response?.data?.accessToken,
+      refreshToken: response?.data?.refreshToken
     }
   } catch (error) {
     throw new Error('Unauthorized')

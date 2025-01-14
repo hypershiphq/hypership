@@ -14,17 +14,19 @@ export const retrieveToken = async () => {
 
     let { accessToken, refreshToken } = parsedData;
 
+    console.log(accessToken, refreshToken)
+    console.log(parsedData)
+
     // Check if the access token is valid
     const hypershipClient = new HypershipClient(accessToken);
     try {
-      await hypershipClient.get('/auth/validate-token', {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
+      await hypershipClient.get('/auth/validateToken');
     } catch (error) {
+      console.log('Token is invalid, refreshing...')
       if (refreshToken) {
-        const response = await hypershipClient.post('/auth/refreshToken', { refreshToken }, {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        });
+        console.log('Refreshing token...')
+        const refreshClient = new HypershipClient();
+        const response = await refreshClient.post('/auth/refreshToken', { refreshToken });
         accessToken = response.accessToken;
         refreshToken = response.refreshToken;
 
@@ -36,6 +38,7 @@ export const retrieveToken = async () => {
 
     return accessToken;
   } catch (error) {
+    console.log(error)
     throw new Error('Failed to retrieve token');
   }
 }

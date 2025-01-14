@@ -98,6 +98,7 @@ export const initProject = async (projectId: string) => {
     )
 
   } catch (error: unknown) {
+    console.log(error)
     // Delete the directory if the app creation fails
     if (fs.existsSync(project.name)) {
       fs.rmSync(project.name, { recursive: true, force: true })
