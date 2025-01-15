@@ -10,7 +10,10 @@ export const standardLogin = async (email: string, password: string) => {
       password,
     })
 
-    return response?.accessToken
+    return {
+      accessToken: response?.data?.accessToken,
+      refreshToken: response?.data?.refreshToken
+    }
   } catch (error) {
     throw new Error('Unauthorized')
   }

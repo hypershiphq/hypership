@@ -27,7 +27,6 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
     await new Promise((resolve, reject) => {
       exec(`cd ${staticWebsitePath} && npm i && npm run build`, (error, stdout, stderr) => {
         if (error) {
-          console.error('Build error:', stderr)
           reject(new Error('Failed to build the project'))
           return
         }
@@ -56,7 +55,6 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
     })
     
     archive.on('error', (err) => { 
-      console.error('Zip error:', err)
       throw err 
     })
     

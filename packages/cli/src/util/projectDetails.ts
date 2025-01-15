@@ -17,7 +17,7 @@ export const getProjectDetails = async (authToken: string, identifier: ProjectId
         throw new Error('Failed to fetch project details')
       }
   
-      return response.data
+      return response?.data
     } catch (error: unknown) {
       if (error instanceof Error && error.message.includes('Unauthorized')) {
         throw new Error('Unauthorized')

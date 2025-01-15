@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 
-export const retrieveProjectConfig = () => {
+export const retrieveProjectConfig = async () => {
   try {
     const configFile = path.join(process.cwd(), '.hypership', 'hypership.json')
 

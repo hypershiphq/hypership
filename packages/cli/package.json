@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "CLI for Hypership",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -27,7 +27,6 @@
     "@types/archiver": "^6.0.2",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.16.1",
-    "@types/ora": "^3.2.0",
     "esbuild": "^0.20.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3",
@@ -42,8 +41,6 @@
     "commander": "^12.0.0",
     "email-validator": "^2.0.4",
     "jszip": "^3.10.1",
-    "keytar": "^7.9.0",
-    "ora": "^8.0.1",
     "picocolors": "^1.1.1",
     "xdg-app-paths": "5.1.0"
   }
