@@ -22,19 +22,22 @@ export const initProject = async (projectId: string) => {
 
   p.intro(color.bgCyan(color.black(' 🚀 Initialize Hypership App ')))
 
-  const authToken = retrieveToken()
-
   let project: { name: string } = { name: '' }
 
   try {
+    s.start('Fetching project details...')
+    const authToken = await retrieveToken()
+
+    if (!authToken) {
+      throw new Error('Failed to retrieve token')
+    }
+
     let projectDetails
 
     if (projectId) {
-      s.start('Fetching project details...')
       projectDetails = await getProjectDetails(authToken, { projectId })
       s.stop('Project details fetched successfully.')
     } else {
-      s.start('Fetching projects...')
       const projects = await getUserProjects(authToken)
       s.stop('Projects fetched successfully.')
 
@@ -98,7 +101,6 @@ export const initProject = async (projectId: string) => {
     )
 
   } catch (error: unknown) {
-    console.log(error)
     // Delete the directory if the app creation fails
     if (fs.existsSync(project.name)) {
       fs.rmSync(project.name, { recursive: true, force: true })

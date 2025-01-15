@@ -3,6 +3,7 @@ import path from 'path'
 import XDGAppPaths from 'xdg-app-paths'
 
 import { HypershipClient } from '../util/client.js'
+import { storeTokens } from '../util/authenticate/storeTokens.js'
 
 export const retrieveToken = async () => {
   try {
@@ -14,31 +15,28 @@ export const retrieveToken = async () => {
 
     let { accessToken, refreshToken } = parsedData;
 
-    console.log(accessToken, refreshToken)
-    console.log(parsedData)
-
     // Check if the access token is valid
-    const hypershipClient = new HypershipClient(accessToken);
+    const hypershipClient = new HypershipClient();
     try {
-      await hypershipClient.get('/auth/validateToken');
-    } catch (error) {
-      console.log('Token is invalid, refreshing...')
-      if (refreshToken) {
-        console.log('Refreshing token...')
-        const refreshClient = new HypershipClient();
-        const response = await refreshClient.post('/auth/refreshToken', { refreshToken });
-        accessToken = response.accessToken;
-        refreshToken = response.refreshToken;
+      await hypershipClient.get('/auth/validateToken', {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      })
 
-        fs.writeFileSync(configFile, JSON.stringify({ accessToken, refreshToken }, null, 2));
+      return accessToken
+    } catch (error) {
+      if (refreshToken) {
+        const response = await hypershipClient.post('/auth/refreshToken', { refreshToken: refreshToken })
+
+        accessToken = response.data.accessToken;
+        refreshToken = response.data.refreshToken;
+
+        storeTokens(accessToken, refreshToken)
+        return accessToken
       } else {
         throw new Error('No refresh token available');
       }
     }
-
-    return accessToken;
   } catch (error) {
-    console.log(error)
     throw new Error('Failed to retrieve token');
   }
 }
