@@ -97,7 +97,7 @@ export const initProject = async (projectId: string) => {
     p.outro(
       `Next steps: 
       1. cd ${project.name}
-      2. Run npm run dev to start the development server`
+      2. Execute ${color.bold('npm run dev')} to launch the development server`
     )
 
   } catch (error: unknown) {
