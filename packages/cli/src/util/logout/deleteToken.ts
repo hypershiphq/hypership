@@ -11,6 +11,6 @@ export const deleteStoredToken = async () => {
       fs.unlinkSync(configFile);
     }
   } catch (error) {
-    console.error('Error deleting token:', error);
+    throw new Error('Failed to delete stored token')
   }
 }

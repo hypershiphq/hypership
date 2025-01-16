@@ -22,19 +22,22 @@ export const initProject = async (projectId: string) => {
 
   p.intro(color.bgCyan(color.black(' 🚀 Initialize Hypership App ')))
 
-  const authToken = retrieveToken()
-
   let project: { name: string } = { name: '' }
 
   try {
+    s.start('Fetching project details...')
+    const authToken = await retrieveToken()
+
+    if (!authToken) {
+      throw new Error('Failed to retrieve token')
+    }
+
     let projectDetails
 
     if (projectId) {
-      s.start('Fetching project details...')
       projectDetails = await getProjectDetails(authToken, { projectId })
       s.stop('Project details fetched successfully.')
     } else {
-      s.start('Fetching projects...')
       const projects = await getUserProjects(authToken)
       s.stop('Projects fetched successfully.')
 
@@ -94,7 +97,7 @@ export const initProject = async (projectId: string) => {
     p.outro(
       `Next steps: 
       1. cd ${project.name}
-      2. Run npm run dev to start the development server`
+      2. Execute ${color.bold('npm run dev')} to launch the development server`
     )
 
   } catch (error: unknown) {

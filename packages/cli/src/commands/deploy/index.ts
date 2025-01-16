@@ -27,8 +27,8 @@ export const deployProject = async () => {
     // Check if the current directory is a Hypership project
     await checkIfHypershipProject(path.join(process.cwd(), '.hypership', 'hypership.json'))
   
-    const authToken = retrieveToken()
-    const projectId = retrieveProjectConfig()
+    const authToken = await retrieveToken()
+    const projectId = await retrieveProjectConfig()
     const projectDetails = await getProjectDetails(authToken, { projectId })
   
     // Log deployment
