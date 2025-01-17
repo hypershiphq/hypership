@@ -28,10 +28,10 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
       exec(`cd ${staticWebsitePath} && npm i && npm run build`, (error, stdout, stderr) => {
         if (error) {
           reject(new Error('Failed to build the project'))
-          return
+        } else {
+          resolve(stdout)
+          s.stop('Static website built successfully.')
         }
-        resolve(stdout)
-        s.stop('Static website built successfully.')
       })
     })
 
@@ -80,6 +80,9 @@ export const deployStaticWebsite = async (preSignedUrl: string, deploymentId: st
     s.stop('Static website deployed successfully.')
 
   } catch (error) {
+    if (error instanceof Error && error.message === 'Failed to build the project') {
+      throw new Error('Failed to build the project')
+    }
     throw new Error('Failed to deploy static website')
   }
 }
