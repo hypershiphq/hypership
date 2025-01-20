@@ -1,21 +1,28 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
-import { HypershipClient } from '../client.js';
+import { HypershipClient } from "../client.js";
 
-export const createEnvFile = async (authToken: string, projectId: string, project: { name: string }) => {
+export const createEnvFile = async (
+  authToken: string,
+  projectId: string,
+  project: { name: string },
+) => {
   try {
     const rootDirectory = process.cwd();
-    const envFilePath = path.join(rootDirectory, project.name, '.env');
+    const envFilePath = path.join(rootDirectory, project.name, ".env");
 
     const hypershipClient = new HypershipClient();
-    const response = await hypershipClient.get(`/projects/keys?projectId=${projectId}`, {
+    const response = await hypershipClient.get(
+      `/projects/keys?projectId=${projectId}`,
+      {
         headers: { Authorization: `Bearer ${authToken}` },
-    });
+      },
+    );
 
     const publicKey = response?.data?.publicKey;
     if (!publicKey) {
-      throw new Error('Failed to retrieve Public Key');
+      throw new Error("Failed to retrieve Public Key");
     }
 
     const envFileContent = `VITE_HYPERSHIP_PUBLIC_KEY=${publicKey}`;
@@ -25,6 +32,6 @@ export const createEnvFile = async (authToken: string, projectId: string, projec
     if (error instanceof Error) {
       throw new Error(`Failed to create .env file: ${error.message}`);
     }
-    throw new Error('Failed to create .env file');
+    throw new Error("Failed to create .env file");
   }
-}
+};

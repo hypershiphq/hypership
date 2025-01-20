@@ -1,51 +1,56 @@
-import JSZip from 'jszip'
-import fs from 'fs'
-import path from 'path'
+import JSZip from "jszip";
+import fs from "fs";
+import path from "path";
 
-import { HypershipClient } from "../client.js"
+import { HypershipClient } from "../client.js";
 
-
-export const cloneHypershipFramework = async (authToken: string, project: { name: string }, appFramework: string) => {
+export const cloneHypershipFramework = async (
+  authToken: string,
+  project: { name: string },
+  appFramework: string,
+) => {
   try {
-    const hypershipClient = new HypershipClient()
+    const hypershipClient = new HypershipClient();
 
-    const response = await hypershipClient.post('/deploy/download', {
-      framework: appFramework,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      }
-    }
-  )
+    const response = await hypershipClient.post(
+      "/deploy/download",
+      {
+        framework: appFramework,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      },
+    );
 
-    const preSignedUrl = response?.data?.url
+    const preSignedUrl = response?.data?.url;
     if (!preSignedUrl) {
-      throw new Error('Failed to get download URL')
+      throw new Error("Failed to get download URL");
     }
 
     const zipResponse = await hypershipClient.get<ArrayBuffer>(preSignedUrl, {
-      responseType: 'arraybuffer'
-    })
+      responseType: "arraybuffer",
+    });
 
     if (!zipResponse) {
-      throw new Error('Failed to download framework')
+      throw new Error("Failed to download framework");
     }
 
-    const zip = await JSZip.loadAsync(Buffer.from(zipResponse))
-    
+    const zip = await JSZip.loadAsync(Buffer.from(zipResponse));
+
     for (const [fileName, zipEntry] of Object.entries(zip.files)) {
       if (!zipEntry.dir) {
-        const fileData = await zipEntry.async('nodebuffer')
-        const filePath = path.join(`${project.name}`, fileName)
-        await fs.promises.mkdir(path.dirname(filePath), { recursive: true })
-        await fs.promises.writeFile(filePath, fileData)
+        const fileData = await zipEntry.async("nodebuffer");
+        const filePath = path.join(`${project.name}`, fileName);
+        await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.promises.writeFile(filePath, fileData);
       }
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to clone framework: ${error.message}`)
+      throw new Error(`Failed to clone framework: ${error.message}`);
     }
-    throw new Error('Failed to clone framework')
+    throw new Error("Failed to clone framework");
   }
-}
+};

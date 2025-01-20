@@ -1,26 +1,38 @@
-import * as p from '@clack/prompts'
-import color from 'picocolors'
+import ora from "ora";
 
-import { deleteStoredToken } from '../../util/logout/deleteToken.js'
+import { displayCLIHeader } from "../../util/displayCLIHeader.js";
+import { checkForUpdates } from "../../util/updateNotifier.js";
 
-import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
+import { deleteStoredToken } from "../../util/logout/deleteToken.js";
+
+import {
+  ERROR_MESSAGES,
+  ErrorMessageKey,
+} from "../../constants/errorMessages.js";
 
 export const logout = async () => {
-  console.clear()
+  displayCLIHeader();
 
+  checkForUpdates();
+
+  const spinner = ora();
   try {
-    p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Logout '))}`)
-  
-    await deleteStoredToken()
-  
-    p.outro('You have been logged out.')
-  
-    process.exit(0)
+    spinner.start("Logging out...");
+    await deleteStoredToken();
+
+    spinner.succeed("You have been logged out. \n");
+
+    process.exit(0);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'default'
+    const message = error instanceof Error ? error.message : "default";
 
-    p.cancel(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogout)
+    if (spinner) {
+      spinner.fail(
+        ERROR_MESSAGES[message as ErrorMessageKey] ||
+          ERROR_MESSAGES.defaultLogout
+      );
+    }
 
-    process.exit(1)
+    process.exit(1);
   }
-}
+};
