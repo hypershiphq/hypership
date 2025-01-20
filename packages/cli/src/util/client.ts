@@ -1,8 +1,10 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 export class HypershipClient {
   private client: AxiosInstance;
-  private baseURL = import.meta.env.VITE_HYPERSHIP_CLI_API_URL || 'https://cli.hypership.dev/v1';
+  private baseURL =
+    import.meta.env.VITE_HYPERSHIP_CLI_API_URL ||
+    "https://cli.hypership.dev/v1";
 
   constructor(private authToken?: string) {
     this.client = axios.create({
@@ -16,22 +18,22 @@ export class HypershipClient {
         if (error.response) {
           const { status, data } = error.response;
           if (status === 401) {
-            throw new Error('Unauthorized: Please login first');
+            throw new Error("Unauthorized: Please login first");
           }
-          throw new Error(data.message || 'An error occurred');
+          throw new Error(data.message || "An error occurred");
         }
         throw error;
-      }
+      },
     );
   }
 
   private getHeaders() {
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     if (this.authToken) {
-      headers['Authorization'] = `Bearer ${this.authToken}`;
+      headers["Authorization"] = `Bearer ${this.authToken}`;
     }
 
     return headers;
@@ -39,7 +41,7 @@ export class HypershipClient {
 
   public setAuthToken(authToken: string) {
     this.authToken = authToken;
-    this.client.defaults.headers['Authorization'] = `Bearer ${authToken}`;
+    this.client.defaults.headers["Authorization"] = `Bearer ${authToken}`;
   }
 
   async get<T = any>(path: string, config?: AxiosRequestConfig) {

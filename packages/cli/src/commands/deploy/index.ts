@@ -1,60 +1,84 @@
-import * as p from '@clack/prompts'
-import { setTimeout } from 'node:timers/promises'
-import path from 'path'
-import color from 'picocolors'
+import { setTimeout } from "node:timers/promises";
+import path from "path";
+import ora from "ora";
 
-import { retrieveToken } from '../../lib/retrieveToken.js'
-import { retrieveProjectConfig } from '../../util/deploy/projectConfig.js'
-import { getProjectDetails } from '../../util/projectDetails.js'
-import { checkIfHypershipProject } from '../../util/deploy/checkHypership.js'
-import { getUploadLink } from '../../util/deploy/upload.js'
-import { deployStaticWebsite } from '../../util/deploy/staticWebsite.js'
-import { log } from '../../util/deploy/log.js'
+import { displayCLIHeader } from "../../util/displayCLIHeader.js";
+import { checkForUpdates } from "../../util/updateNotifier.js";
 
-import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
+import { retrieveToken } from "../../lib/retrieveToken.js";
+import { retrieveProjectConfig } from "../../util/deploy/projectConfig.js";
+import { getProjectDetails } from "../../util/projectDetails.js";
+import { checkIfHypershipProject } from "../../util/deploy/checkHypership.js";
+import { getUploadLink } from "../../util/deploy/upload.js";
+import { deployStaticWebsite } from "../../util/deploy/staticWebsite.js";
+import { log } from "../../util/deploy/log.js";
+
+import {
+  ERROR_MESSAGES,
+  ErrorMessageKey,
+} from "../../constants/errorMessages.js";
 
 export const deployProject = async () => {
-  console.clear()
+  displayCLIHeader();
 
-  // Initial check spinner
-  let s = p.spinner()
-  
-  p.intro(color.bgCyan(color.black(' 🚀 Deploy Hypership App ')))
+  checkForUpdates();
 
-  s.start('Building static website...')
+  const spinner = ora();
+  spinner.start("Building");
+  // Check if the current directory is a Hypership project
+  await checkIfHypershipProject(
+    path.join(process.cwd(), ".hypership", "hypership.json")
+  );
 
+  let authToken: string | undefined;
+  let projectId: string | undefined;
+  let deploymentId: string | undefined;
   try {
-    // Check if the current directory is a Hypership project
-    await checkIfHypershipProject(path.join(process.cwd(), '.hypership', 'hypership.json'))
-  
-    const authToken = await retrieveToken()
-    const projectId = await retrieveProjectConfig()
-    const projectDetails = await getProjectDetails(authToken, { projectId })
-  
-    // Log deployment
-    const deploymentId = await log(authToken, 'building', 'Building static website...', '', projectId)
+    authToken = await retrieveToken();
+    projectId = await retrieveProjectConfig();
+    const projectDetails = await getProjectDetails(authToken, { projectId });
 
-    const preSignedUrl = await getUploadLink(authToken, projectId, deploymentId)
+    // Log deployment
+    deploymentId = await log(
+      authToken,
+      "building",
+      "Building static website...",
+      "",
+      projectId
+    );
+
+    const preSignedUrl = await getUploadLink(
+      authToken,
+      projectId,
+      deploymentId
+    );
 
     // Deploy static website
-    await deployStaticWebsite(preSignedUrl, deploymentId, s)
+    await deployStaticWebsite(preSignedUrl, deploymentId, spinner);
 
-    await setTimeout(1000)
-    s.stop(color.bgGreen(color.black(' Hypership Project Deployed Successfully! ')))
-  
-    p.note(`
-      ${color.white(' Your Hypership Project: ')}
-      ${color.white(color.bold(color.underline(`https://${projectDetails?.slug}.hypership.dev`)))}
-    `)
+    await setTimeout(1000);
+    spinner.succeed("Hypership Project Deployed");
+    console.log(
+      `\n🔗 Your Hypership Project: \nhttps://${projectDetails?.slug}.hypership.dev \n`
+    );
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'default'
+    const message = error instanceof Error ? error.message : "default";
 
-    if (s) {
-      s.stop(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultDeploy)
-    } else {
-      p.cancel(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultDeploy)
+    if (authToken && projectId && deploymentId) {
+      await log(authToken, "failed", message, deploymentId, projectId);
     }
 
-    process.exit(1)
-  } 
-}
+    if (spinner) {
+      if (message === "No projects found") {
+        spinner.warn(ERROR_MESSAGES[message as ErrorMessageKey]);
+      } else {
+        spinner.fail(
+          ERROR_MESSAGES[message as ErrorMessageKey] ||
+            ERROR_MESSAGES.defaultDeploy
+        );
+      }
+    }
+
+    process.exit(1);
+  }
+};

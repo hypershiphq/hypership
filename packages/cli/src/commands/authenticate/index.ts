@@ -1,41 +1,46 @@
-import * as p from '@clack/prompts'
-import validator from 'email-validator'
-import color from 'picocolors'
+import * as p from "@clack/prompts";
+import validator from "email-validator";
+import ora from "ora";
 
-import { standardLogin } from '../../util/authenticate/login.js'
-import { storeTokens } from '../../util/authenticate/storeTokens.js'
+import { displayCLIHeader } from "../../util/displayCLIHeader.js";
+import { checkForUpdates } from "../../util/updateNotifier.js";
+import { standardLogin } from "../../util/authenticate/login.js";
+import { storeTokens } from "../../util/authenticate/storeTokens.js";
 
-import { ERROR_MESSAGES, ErrorMessageKey } from '../../constants/errorMessages.js'
-import { cliKeyAuthentication } from '../../util/authenticate/cliKey.js'
+import {
+  ERROR_MESSAGES,
+  ErrorMessageKey,
+} from "../../constants/errorMessages.js";
+import { cliKeyAuthentication } from "../../util/authenticate/cliKey.js";
 
 export const authenticate = async (cliKey: string, options: any) => {
-  console.clear()
+  displayCLIHeader();
 
-  let s = p.spinner()
-  
+  checkForUpdates();
+
+  const spinner = ora();
+
   try {
-    p.intro(`${color.bgCyan(color.black(' 🚀 Hypership Authenticate '))}`)
-
     if (cliKey) {
-      s.start('Authenticating...')
-      const accessToken = await cliKeyAuthentication(cliKey)
-      storeTokens(accessToken, null)
-      s.stop(color.bgGreen(color.black('Authentication successful!')))
-      process.exit(0)
+      spinner.start("Authenticating...");
+      const accessToken = await cliKeyAuthentication(cliKey);
+      storeTokens(accessToken, null);
+      spinner.succeed("Authentication successful! \n");
+      process.exit(0);
     }
 
-    let email: string
+    let email: string;
     if (!options.email) {
-      email = await p.text({
-        message: 'Email:',
+      email = (await p.text({
+        message: "Email:",
         validate: (value) => {
-          if (!value) return 'Please enter an email.'
-          // Check for valid email format
-          if (!validator.validate(value)) return 'Please enter a valid email address.'
+          if (!value) return "Please enter an email.";
+          if (!validator.validate(value))
+            return "Please enter a valid email address.";
         },
-      }) as string
+      })) as string;
     } else {
-      email = options.email
+      email = options.email;
     }
 
     let password: string | null = null;
@@ -45,9 +50,9 @@ export const authenticate = async (cliKey: string, options: any) => {
 
       while (!isAuthenticated && attemptCount < 3) {
         const passwordResponse = await p.password({
-          message: 'Password:',
+          message: "Password:",
           validate: (value) => {
-            if (!value) return 'Please enter a password.';
+            if (!value) return "Please enter a password.";
           },
         });
         password = passwordResponse as string;
@@ -55,54 +60,61 @@ export const authenticate = async (cliKey: string, options: any) => {
         const user = { email, password };
 
         try {
-          const { accessToken, refreshToken } = await standardLogin(user.email, user.password);
+          const { accessToken, refreshToken } = await standardLogin(
+            user.email,
+            user.password
+          );
 
           storeTokens(accessToken, refreshToken);
 
           if (!accessToken) {
-            throw new Error('Invalid credentials');
+            throw new Error("Invalid credentials");
           }
 
-          p.outro(color.bgGreen(color.black('Authentication successful!')));
+          spinner.succeed("Authentication successful! \n");
           isAuthenticated = true;
 
           process.exit(0);
         } catch (error) {
-          p.cancel(`${color.bgRed(color.white('Authentication failed.'))} Please try again.`);
+          spinner.fail("Authentication failed. Please try again. \n");
           password = null;
           attemptCount++;
         }
       }
 
       if (!isAuthenticated) {
-        p.cancel('Failed to authenticate after several attempts.');
+        spinner.fail("Failed to authenticate after several attempts. \n");
       }
     } else {
       password = options.password;
 
       const user = { email, password };
 
-      s.start('Authenticating...');
-      const { accessToken, refreshToken } = await standardLogin(user.email as string, user.password as string);
+      spinner.start("Authenticating...");
+      const { accessToken, refreshToken } = await standardLogin(
+        user.email as string,
+        user.password as string
+      );
       storeTokens(accessToken, refreshToken);
 
       if (!accessToken) {
-        throw new Error('Invalid credentials');
+        throw new Error("Invalid credentials");
       }
 
-      s.stop(color.bgGreen(color.black('Authentication successful!')));
+      spinner.succeed("Authentication successful! \n");
 
       process.exit(0);
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'default'
+    const message = error instanceof Error ? error.message : "default";
 
-    if (s) {
-      s.stop(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogin)
-    } else {
-      p.cancel(ERROR_MESSAGES[message as ErrorMessageKey] || ERROR_MESSAGES.defaultLogin)
+    if (spinner) {
+      spinner.fail(
+        ERROR_MESSAGES[message as ErrorMessageKey] ||
+          ERROR_MESSAGES.defaultLogin
+      );
     }
 
-    process.exit(1)
+    process.exit(1);
   }
-}
+};
