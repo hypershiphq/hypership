@@ -3,7 +3,6 @@ import axios from "axios";
 import { exec } from "child_process";
 import fs from "fs";
 import path from "path";
-import color from "picocolors";
 import type { Ora } from "ora";
 
 export const deployStaticWebsite = async (
