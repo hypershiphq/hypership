@@ -16,7 +16,7 @@ import { cliKeyAuthentication } from "../../util/authenticate/cliKey.js";
 export const authenticate = async (cliKey: string, options: any) => {
   displayCLIHeader();
 
-  checkForUpdates();
+  await checkForUpdates();
 
   const spinner = ora();
 

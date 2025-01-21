@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.0.21",
+  "version": "0.0.22",
   "description": "CLI for Hypership",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -44,7 +44,7 @@
     "jszip": "^3.10.1",
     "ora": "^8.1.1",
     "picocolors": "^1.1.1",
-    "update-notifier": "^7.3.1",
+    "update-check": "^1.5.4",
     "xdg-app-paths": "5.1.0"
   }
 }

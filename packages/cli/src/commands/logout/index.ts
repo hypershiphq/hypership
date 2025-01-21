@@ -13,7 +13,7 @@ import {
 export const logout = async () => {
   displayCLIHeader();
 
-  checkForUpdates();
+  await checkForUpdates();
 
   const spinner = ora();
   try {

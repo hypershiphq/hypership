@@ -27,15 +27,13 @@ import {
 export const initProject = async (projectId: string) => {
   displayCLIHeader();
 
-  checkForUpdates();
+  await checkForUpdates();
 
   const spinner = ora();
 
   let project: { name: string } = { name: "" };
 
   try {
-    checkForUpdates();
-
     spinner.start("Fetching projects");
     const authToken = await retrieveToken();
 

@@ -21,14 +21,21 @@ import {
 export const deployProject = async () => {
   displayCLIHeader();
 
-  checkForUpdates();
+  await checkForUpdates();
 
   const spinner = ora();
   spinner.start("Building");
+
   // Check if the current directory is a Hypership project
-  await checkIfHypershipProject(
-    path.join(process.cwd(), ".hypership", "hypership.json")
-  );
+  try {
+    await checkIfHypershipProject(
+      path.join(process.cwd(), ".hypership", "hypership.json")
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "default";
+    spinner.warn(ERROR_MESSAGES[message as ErrorMessageKey]);
+    process.exit(1);
+  }
 
   let authToken: string | undefined;
   let projectId: string | undefined;
