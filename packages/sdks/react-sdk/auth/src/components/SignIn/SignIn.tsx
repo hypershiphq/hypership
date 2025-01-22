@@ -22,19 +22,24 @@ export const SignIn: React.FC<SignInProps> = ({
   const [password, setPassword] = useState<string>("");
 
   useEffect(() => {
+    console.log("SignIn - Current error:", error);
     if (error === "Please confirm your email address before signing in.") {
+      console.log("SignIn - Unconfirmed account detected, email:", email);
       onAccountConfirmationRequired && onAccountConfirmationRequired(email);
     }
   }, [error, email, onAccountConfirmationRequired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("SignIn - Attempting sign in for email:", email);
     try {
       await signIn(email, password);
       if (isAuthenticated) {
+        console.log("SignIn - Sign in successful");
         onSignInSuccess();
       }
     } catch (err: any) {
+      console.log("SignIn - Sign in error:", err);
       // Error handling is now done through the error state
     }
   };
