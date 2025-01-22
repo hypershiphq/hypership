@@ -21,6 +21,12 @@ export const SignIn: React.FC<SignInProps> = ({
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
+  useEffect(() => {
+    if (error === "Please confirm your email address before signing in.") {
+      onAccountConfirmationRequired && onAccountConfirmationRequired(email);
+    }
+  }, [error, email, onAccountConfirmationRequired]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -29,13 +35,7 @@ export const SignIn: React.FC<SignInProps> = ({
         onSignInSuccess();
       }
     } catch (err: any) {
-      if (
-        err?.error?.message ===
-        "Please confirm your email address before signing in."
-      ) {
-        // Trigger the function prop to handle unconfirmed users
-        onAccountConfirmationRequired && onAccountConfirmationRequired(email);
-      }
+      // Error handling is now done through the error state
     }
   };
 
