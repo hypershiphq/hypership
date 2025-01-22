@@ -30,8 +30,8 @@ export const SignIn: React.FC<SignInProps> = ({
       }
     } catch (err: any) {
       if (
-        err?.error?.code === "SIGN_IN_FAILED" &&
-        err?.error?.message === "User is not confirmed."
+        err?.error?.message ===
+        "Please confirm your email address before signing in."
       ) {
         // Trigger the function prop to handle unconfirmed users
         onAccountConfirmationRequired && onAccountConfirmationRequired(email);
