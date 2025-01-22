@@ -51,12 +51,7 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
       setShowSignIn(true);
       onConfirmationSuccess();
       setErrorMessage(null);
-    } catch (err: any) {
-      setErrorMessage(
-        err.response?.data?.error?.message ||
-          "An error occurred during account confirmation."
-      );
-    }
+    } catch (err: any) {}
   };
 
   if (showSignIn) {

@@ -18,8 +18,6 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
   const { error } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
 
-  console.log("@hypership/auth-react version:", "0.0.11");
-
   useEffect(() => {
     if (error === "Please confirm your email address before signing in.") {
       setCurrentView("confirmAccount");

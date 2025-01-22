@@ -177,11 +177,21 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     };
   }, [apiKey, accessToken]);
 
-  const handleError = (errorMessage: string) => {
-    setError(errorMessage);
+  const showErrorToast = (errorMessage: string) => {
     setToastMessage(errorMessage);
     setToastType("error");
     setShowToast(true);
+  };
+
+  const showSuccessToast = (successMessage: string) => {
+    setToastMessage(successMessage);
+    setToastType("success");
+    setShowToast(true);
+  };
+
+  const handleError = (errorMessage: string) => {
+    setError(errorMessage);
+    showErrorToast(errorMessage);
 
     // Hide toast after 3 seconds
     setTimeout(() => {
@@ -191,9 +201,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   const handleSuccess = (successMessage: string) => {
-    setToastMessage(successMessage);
-    setToastType("success");
-    setShowToast(true);
+    showSuccessToast(successMessage);
 
     // Hide toast after 3 seconds
     setTimeout(() => {
@@ -387,7 +395,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
           ? (error as { error: { message?: string } }).error?.message
           : "Account confirmation failed.";
       handleError(errorMessage || "Account confirmation failed.");
-      console.log("Toast shown with message:", errorMessage);
       throw error;
     } finally {
       setConfirmingAccount(false);
@@ -408,7 +415,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
           ? (error as { error: { message?: string } }).error?.message
           : "Resend confirmation failed.";
       handleError(errorMessage || "Resend confirmation failed.");
-      console.log("Toast shown with message:", errorMessage);
       throw error;
     } finally {
       setConfirmAccountCodeResending(false);
