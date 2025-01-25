@@ -1,6 +1,6 @@
 # @hypership/auth-react
 
-![GitHub Hero Banner](./public/assets/images/github-hero-banner.png)
+![GitHub Hero Banner](/public/assets/images/github-hero-banner.png)
 
 <div align="center">
   <p>
@@ -138,12 +138,4 @@ Returns an object with:
 - Methods:
   - `signIn(email: string, password: string): Promise<void>`
   - `signUp(email: string, password: string): Promise<void>`
-  - `signOut(): Promise<void>`
-  - `passwordReset(email: string): Promise<void>`
-  - `confirmAccount(email: string, code: string): Promise<void>`
-  - `signInWithGithub(): Promise<void>`
-  - `toggleTheme(): void`
-
-## License
-
-ISC
+  - `

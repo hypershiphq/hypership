@@ -1,6 +1,6 @@
 # @hypership/analytics-react
 
-![GitHub Hero Banner](./public/assets/images/github-hero-banner.png)
+![GitHub Hero Banner](/public/assets/images/github-hero-banner.png)
 
 <div align="center">
   <p>
