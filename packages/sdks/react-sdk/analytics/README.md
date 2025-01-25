@@ -1,7 +1,5 @@
 # @hypership/analytics-react
 
-![GitHub Hero Banner](/public/assets/images/github-hero-banner.png)
-
 <div align="center">
   <p>
     Hypership is a new platform to build, ship, and manage apps at warp-speed. We give you a full codebase deployed with user authentication, pageview analytics, event tracking, and deployments out of the box.
