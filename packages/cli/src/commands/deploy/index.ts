@@ -24,7 +24,7 @@ export const deployProject = async () => {
   await checkForUpdates();
 
   const spinner = ora();
-  spinner.start("Building");
+  spinner.start("Installing dependencies");
 
   // Check if the current directory is a Hypership project
   try {
@@ -61,7 +61,12 @@ export const deployProject = async () => {
     );
 
     // Deploy static website
-    await deployStaticWebsite(preSignedUrl, deploymentId, spinner);
+    await deployStaticWebsite(
+      preSignedUrl,
+      deploymentId,
+      projectDetails?.framework,
+      spinner
+    );
 
     await setTimeout(1000);
     spinner.succeed("Hypership Project Deployed");

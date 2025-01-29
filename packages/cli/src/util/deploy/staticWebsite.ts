@@ -8,9 +8,10 @@ import type { Ora } from "ora";
 export const deployStaticWebsite = async (
   preSignedUrl: string,
   deploymentId: string,
+  framework: string,
   spinner: Ora
 ) => {
-  spinner.text = "Deploying";
+  spinner.text = "Installing dependencies";
 
   const rootDirectory = process.cwd();
   const hypershipStaticWebsitePath = path.join(rootDirectory, "web");
@@ -29,22 +30,45 @@ export const deployStaticWebsite = async (
   }
 
   try {
+    // Install dependencies
+    await new Promise((resolve, reject) => {
+      exec(`cd ${staticWebsitePath} && npm i`, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error("Failed to install dependencies"));
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+
+    spinner.text = "Building (this may take a couple of minutes)";
+
     // Build
     await new Promise((resolve, reject) => {
+      const buildCommand =
+        framework === "next" || framework === "next-static"
+          ? `NODE_ENV=production npx --yes open-next build`
+          : "NODE_ENV=production npm run build";
+
       exec(
-        `cd ${staticWebsitePath} && npm i && npm run build`,
+        `cd ${staticWebsitePath} && ${buildCommand}`,
         (error, stdout, stderr) => {
           if (error) {
+            console.log(error);
             reject(new Error("Failed to build the project"));
           } else {
             resolve(stdout);
-            spinner.text = "Static website built successfully.";
           }
         }
       );
     });
 
-    const distPath = path.join(staticWebsitePath, "dist");
+    const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
+      ? path.join(staticWebsitePath, "dist")
+      : fs.existsSync(path.join(staticWebsitePath, "build"))
+        ? path.join(staticWebsitePath, "build")
+        : path.join(staticWebsitePath, ".open-next");
+
     if (!fs.existsSync(distPath)) {
       throw new Error(
         "Build directory (dist) not found. Build may have failed."
@@ -75,6 +99,8 @@ export const deployStaticWebsite = async (
       archive.finalize();
     });
 
+    spinner.text = "Deploying";
+
     // Upload
     const zipFileStream = fs.createReadStream(zipPath);
     await axios.put(preSignedUrl, zipFileStream, {
@@ -86,8 +112,17 @@ export const deployStaticWebsite = async (
 
     // Clean up
     await fs.promises.unlink(zipPath);
+    await fs.promises.rm(distPath, { recursive: true });
+
+    if (framework === "next") {
+      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
+        recursive: true,
+      });
+    }
+
     spinner.text = "Deployed successfully";
   } catch (error) {
+    console.log(error);
     if (
       error instanceof Error &&
       error.message === "Failed to build the project"
