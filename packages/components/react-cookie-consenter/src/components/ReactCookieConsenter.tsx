@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { CookieConsenterProps } from "../types/types";
 
-const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
+const CookieConsenter: React.FC<CookieConsenterProps> = ({
   buttonText = "Accept",
   declineButtonText = "Decline",
   manageButtonText = "Manage Cookies",
@@ -12,9 +12,7 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
   title = "",
   message = "This website uses cookies to enhance your experience.",
   cookieName = "cookie-consent",
-  cookieExpiration = 365,
   displayType = "banner",
-  position = "bottom",
   theme = "light",
   onAccept,
   onDecline,
@@ -59,7 +57,7 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
     ${
       theme === "light"
         ? "bg-white/95 ring-1 ring-black/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]"
-        : "bg-black/95 ring-1 ring-white/20"
+        : "bg-black/95 ring-1 ring-white/10"
     }
     rounded-lg backdrop-blur-sm backdrop-saturate-150 
     transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
@@ -78,7 +76,7 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
     ${
       theme === "light"
         ? "bg-white/95 ring-1 ring-black/10"
-        : "bg-black/95 ring-1 ring-white/20"
+        : "bg-black/95 ring-1 ring-white/10"
     }
     rounded-lg backdrop-blur-sm backdrop-saturate-150 
     transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
@@ -130,7 +128,8 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
     px-3 py-1.5 text-xs font-medium rounded-md
     bg-blue-500 hover:bg-blue-600 text-white
     transition-all duration-200
-    hover:scale-105 active:scale-95
+    hover:scale-105 focus-visible:outline-none focus:outline-none
+    focus-visible:outline-transparent focus:outline-transparent
     ${displayType === "popup" ? "flex-1" : ""}
   `;
 
@@ -142,7 +141,8 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
         : "bg-gray-800 hover:bg-gray-700 text-gray-300"
     }
     transition-all duration-200
-    hover:scale-105 active:scale-95
+    hover:scale-105 focus-visible:outline-none focus:outline-none
+    focus-visible:outline-transparent focus:outline-transparent
     ${displayType === "popup" ? "flex-1" : ""}
   `;
 
@@ -152,7 +152,8 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
     bg-transparent
     hover:text-blue-600 hover:border-blue-600
     transition-all duration-200
-    hover:scale-105 active:scale-95
+    hover:scale-105 focus-visible:outline-none focus:outline-none
+    focus-visible:outline-transparent focus:outline-transparent
   `;
 
   const privacyLinkClasses = `
@@ -182,7 +183,7 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
     ${
       theme === "light"
         ? "bg-white/95 ring-1 ring-black/10"
-        : "bg-black/95 ring-1 ring-white/20"
+        : "bg-black/95 ring-1 ring-white/10"
     }
     ${isExiting ? "scale-95" : isEntering ? "scale-95" : "scale-100"}
     transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
@@ -411,4 +412,4 @@ const ReactCookieConsenter: React.FC<CookieConsenterProps> = ({
   return createPortal(content, document.body);
 };
 
-export default ReactCookieConsenter;
+export default CookieConsenter;
