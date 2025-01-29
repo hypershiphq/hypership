@@ -23,7 +23,7 @@ export class HypershipClient {
           throw new Error(data.message || "An error occurred");
         }
         throw error;
-      },
+      }
     );
   }
 

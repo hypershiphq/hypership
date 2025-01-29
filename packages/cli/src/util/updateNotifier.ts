@@ -1,15 +1,15 @@
 import checkForUpdate from "update-check";
 import { readFileSync } from "fs";
 import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
 let updateInfo: any | null = null;
-let packageJson: any;
 
 export const checkForUpdates = async () => {
   if (!updateInfo) {
-    const __dirname = dirname(new URL(import.meta.url).pathname);
+    const __dirname = dirname(fileURLToPath(import.meta.url));
     const packageJsonPath = join(__dirname, "..", "package.json");
-    packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
     try {
       updateInfo = await checkForUpdate(packageJson);
     } catch (err) {
@@ -18,8 +18,10 @@ export const checkForUpdates = async () => {
   }
 
   if (updateInfo) {
-    const [currentMajor, currentMinor] = packageJson.version.split('.').map(Number);
-    const [latestMajor, latestMinor] = updateInfo.latest.split('.').map(Number);
+    const [currentMajor, currentMinor] = packageJson.version
+      .split(".")
+      .map(Number);
+    const [latestMajor, latestMinor] = updateInfo.latest.split(".").map(Number);
 
     if (latestMajor > currentMajor || latestMinor > currentMinor) {
       console.log(`
