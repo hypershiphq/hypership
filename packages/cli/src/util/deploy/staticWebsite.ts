@@ -29,6 +29,12 @@ export const deployStaticWebsite = async (
     return;
   }
 
+  const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
+    ? path.join(staticWebsitePath, "dist")
+    : fs.existsSync(path.join(staticWebsitePath, "build"))
+      ? path.join(staticWebsitePath, "build")
+      : path.join(staticWebsitePath, ".open-next");
+
   try {
     // Install dependencies
     await new Promise((resolve, reject) => {
@@ -62,12 +68,6 @@ export const deployStaticWebsite = async (
         }
       );
     });
-
-    const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
-      ? path.join(staticWebsitePath, "dist")
-      : fs.existsSync(path.join(staticWebsitePath, "build"))
-        ? path.join(staticWebsitePath, "build")
-        : path.join(staticWebsitePath, ".open-next");
 
     if (!fs.existsSync(distPath)) {
       throw new Error(
@@ -123,6 +123,16 @@ export const deployStaticWebsite = async (
     spinner.text = "Deployed successfully";
   } catch (error) {
     console.log(error);
+
+    // Clean up build directories
+    await fs.promises.rm(distPath, { recursive: true, force: true });
+    if (framework === "next") {
+      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
+        recursive: true,
+        force: true,
+      });
+    }
+
     if (
       error instanceof Error &&
       error.message === "Failed to build the project"
