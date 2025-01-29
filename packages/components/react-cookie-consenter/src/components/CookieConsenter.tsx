@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { CookieConsenterProps } from "../types/types";
 
@@ -127,6 +127,96 @@ const MobileModal: React.FC<
   );
 };
 
+const DEFAULT_BLOCKED_HOSTS = [
+  "www.google-analytics.com",
+  "connect.facebook.net",
+  "static.hotjar.com",
+  "cdn.segment.com",
+  "api.fullstory.com",
+  "intercom.io",
+  "matomo.org",
+];
+
+const DEFAULT_TRACKING_KEYWORDS = [
+  "googletagmanager.com",
+  "google-analytics.com",
+  "facebook.net",
+  "hotjar.com",
+  "segment.com",
+  "intercom.io",
+  "fullstory.com",
+  "matomo.js",
+  "ads.js",
+];
+
+const blockTrackingRequests = (blockedHosts: string[]) => {
+  // Override XMLHttpRequest to block requests to tracking domains
+  const originalXhrOpen = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function (method: string, url: string | URL) {
+    const urlString = url.toString();
+    if (blockedHosts.some((host) => urlString.includes(host))) {
+      console.warn(`[Cookie Consenter] Blocked tracking request: ${urlString}`);
+      return;
+    }
+    return originalXhrOpen.apply(this, arguments as any);
+  };
+
+  // Override fetch API to block tracking requests
+  const originalFetch = window.fetch;
+  window.fetch = function (url: RequestInfo | URL, options?: RequestInit) {
+    const urlString = url.toString();
+    if (
+      typeof urlString === "string" &&
+      blockedHosts.some((host) => urlString.includes(host))
+    ) {
+      console.warn(`[Cookie Consenter] Blocked tracking fetch: ${urlString}`);
+      return Promise.resolve(
+        new Response(null, { status: 403, statusText: "Blocked" })
+      );
+    }
+    return originalFetch.apply(this, arguments as any);
+  };
+};
+
+const blockTrackingScripts = (trackingKeywords: string[]) => {
+  // Remove all script tags that match tracking domains
+  document.querySelectorAll("script").forEach((script) => {
+    if (
+      script.src &&
+      trackingKeywords.some((keyword) => script.src.includes(keyword))
+    ) {
+      script.remove();
+      console.log(`[Cookie Consenter] Blocked script: ${script.src}`);
+    }
+  });
+
+  // Prevent new tracking scripts from being injected
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node instanceof HTMLElement && node.tagName === "SCRIPT") {
+          const src = node.getAttribute("src");
+          if (
+            src &&
+            trackingKeywords.some((keyword) => src.includes(keyword))
+          ) {
+            node.remove();
+            console.log(
+              `[Cookie Consenter] Blocked dynamically injected script: ${src}`
+            );
+          }
+        }
+      });
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true,
+  });
+  return observer;
+};
+
 const CookieConsenter: React.FC<CookieConsenterProps> = ({
   buttonText = "Accept",
   declineButtonText = "Decline",
@@ -137,8 +227,12 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   title = "",
   message = "This website uses cookies to enhance your experience.",
   cookieName = "cookie-consent",
+  cookieExpiration = 365,
   displayType = "banner",
+  position = "bottom",
   theme = "light",
+  experimentalBlockTracking = false,
+  experimentalBlockedDomains = [],
   onAccept,
   onDecline,
   onManage,
@@ -147,16 +241,39 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
   const isMobile = useIsMobile();
+  const observerRef = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
-    const hasConsent = localStorage.getItem(cookieName);
-    if (!hasConsent) {
+    const hasConsent = localStorage.getItem(cookieName) === "true";
+    const hasDeclined = localStorage.getItem(cookieName) === "false";
+
+    if (hasDeclined && experimentalBlockTracking) {
+      const allBlockedHosts = [
+        ...DEFAULT_BLOCKED_HOSTS,
+        ...experimentalBlockedDomains,
+      ];
+      const allTrackingKeywords = [
+        ...DEFAULT_TRACKING_KEYWORDS,
+        ...experimentalBlockedDomains,
+      ];
+
+      blockTrackingRequests(allBlockedHosts);
+      observerRef.current = blockTrackingScripts(allTrackingKeywords);
+    }
+
+    if (!hasConsent && !hasDeclined) {
       setIsVisible(true);
       setTimeout(() => {
         setIsEntering(false);
       }, 50);
     }
-  }, [cookieName]);
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [cookieName, experimentalBlockTracking, experimentalBlockedDomains]);
 
   const handleAccept = () => {
     setIsExiting(true);
@@ -186,28 +303,65 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
 
   if (!isVisible) return null;
 
+  // Temporary test function
+  const testTrackingBlocker = () => {
+    console.log("Testing tracking blocker...");
+
+    // Test script injection
+    const script = document.createElement("script");
+    script.src = "https://www.google-analytics.com/analytics.js";
+    document.body.appendChild(script);
+
+    // Test fetch request
+    fetch("https://www.google-analytics.com/collect")
+      .then((res) => console.log("Fetch response:", res.status))
+      .catch((err) => console.log("Fetch blocked:", err));
+
+    // Test XHR request
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://www.google-analytics.com/collect");
+    try {
+      xhr.send();
+    } catch (e) {
+      console.log("XHR blocked");
+    }
+  };
+
+  // Add temporary test button
+  const TestButton = () => (
+    <button
+      onClick={testTrackingBlocker}
+      className="fixed top-4 right-4 px-3 py-2 bg-red-500 text-white rounded-md text-sm z-[99999]"
+    >
+      Test Blocker
+    </button>
+  );
+
   // On mobile, always render the MobileModal regardless of displayType
   if (isMobile) {
     return createPortal(
-      <MobileModal
-        {...{
-          buttonText,
-          declineButtonText,
-          manageButtonText,
-          showManageButton,
-          privacyPolicyText,
-          privacyPolicyUrl,
-          title,
-          message,
-          theme,
-          handleAccept,
-          handleDecline,
-          handleManage,
-          isExiting,
-          isEntering,
-          displayType,
-        }}
-      />,
+      <>
+        {experimentalBlockTracking && <TestButton />}
+        <MobileModal
+          {...{
+            buttonText,
+            declineButtonText,
+            manageButtonText,
+            showManageButton,
+            privacyPolicyText,
+            privacyPolicyUrl,
+            title,
+            message,
+            theme,
+            handleAccept,
+            handleDecline,
+            handleManage,
+            isExiting,
+            isEntering,
+            displayType,
+          }}
+        />
+      </>,
       document.body
     );
   }
@@ -554,19 +708,22 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   const content = (
-    <div className={getBaseClasses().trim()}>
-      {displayType === "modal" ? (
-        <div className={getContentClasses().trim()}>
-          {renderContent()}
-          {renderButtons()}
-        </div>
-      ) : (
-        <div className={getContentClasses().trim()}>
-          {renderContent()}
-          {renderButtons()}
-        </div>
-      )}
-    </div>
+    <>
+      {experimentalBlockTracking && <TestButton />}
+      <div className={getBaseClasses().trim()}>
+        {displayType === "modal" ? (
+          <div className={getContentClasses().trim()}>
+            {renderContent()}
+            {renderButtons()}
+          </div>
+        ) : (
+          <div className={getContentClasses().trim()}>
+            {renderContent()}
+            {renderButtons()}
+          </div>
+        )}
+      </div>
+    </>
   );
 
   return createPortal(content, document.body);

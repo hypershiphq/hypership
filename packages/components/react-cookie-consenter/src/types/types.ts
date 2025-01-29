@@ -101,4 +101,25 @@ export interface CookieConsenterProps {
    * Whether the consent UI is entering
    */
   isEntering?: boolean;
+
+  /**
+   * Experimental: Enable automatic blocking of common analytics and tracking scripts
+   * This will block common third-party tracking scripts and requests
+   * @default false
+   * @experimental
+   */
+  experimentalBlockTracking?: boolean;
+
+  /**
+   * Experimental: Custom domains to block in addition to the default list
+   * Only works when experimentalBlockTracking is enabled
+   * @experimental
+   */
+  experimentalBlockedDomains?: string[];
+
+  /**
+   * Whether to force show the cookie consent banner
+   * @default false
+   */
+  forceShow?: boolean;
 }

@@ -39,6 +39,7 @@ function App() {
         privacyPolicyText="Privacy Policy"
         theme="light"
         displayType="banner"
+        experimentalBlockTracking={true}
         onManage={() => {
           // Handle manage cookies click
         }}

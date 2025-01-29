@@ -1,3 +1,3 @@
 import "./styles/tailwind.css";
-export { default as CookieConsenter } from "./components/ReactCookieConsenter";
+export { default as CookieConsenter } from "./components/CookieConsenter";
 export type { CookieConsenterProps } from "./types/types";
