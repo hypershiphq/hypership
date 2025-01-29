@@ -65,7 +65,7 @@ const MobileModal: React.FC<
             ${
               theme === "light"
                 ? "bg-white/95 ring-1 ring-black/10"
-                : "bg-gray-900/95 ring-1 ring-white/20"
+                : "bg-black/95 ring-1 ring-white/10"
             }
             rounded-2xl backdrop-blur-sm backdrop-saturate-150
           `}
@@ -73,7 +73,7 @@ const MobileModal: React.FC<
           <div className="flex flex-col gap-3">
             {title && (
               <h3
-                className={`font-semibold my-0 ${theme === "light" ? "text-gray-900" : "text-white"}`}
+                className={`font-semibold -my-2 mt-2 ${theme === "light" ? "text-gray-900" : "text-white"}`}
               >
                 {title}
               </h3>
@@ -339,7 +339,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   if (isMobile) {
     return createPortal(
       <>
-        {experimentalBlockTracking && <TestButton />}
         <MobileModal
           {...{
             buttonText,
@@ -707,7 +706,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
 
   const content = (
     <>
-      {experimentalBlockTracking && <TestButton />}
       <div className={getBaseClasses().trim()}>
         {displayType === "modal" ? (
           <div className={getContentClasses().trim()}>

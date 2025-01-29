@@ -5,11 +5,22 @@ import {
 import { useNavigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import { useEffect } from "react";
-import { CookieConsenter } from "../../packages/components/react-cookie-consenter/src";
+import {
+  CookieConsentProvider,
+  useCookieConsent,
+} from "../../packages/components/react-cookie-consenter/src";
 import "../../packages/components/react-cookie-consenter/dist/index.css";
 
-function App() {
+// Create a component that uses the cookie consent hook
+function CookieSettings() {
+  const { showConsentBanner } = useCookieConsent();
+
+  return <button onClick={showConsentBanner}>Cookie Settings</button>;
+}
+function AppContent() {
   const { isAuthenticated, authenticating } = useHypershipAuth();
+  const { hasConsent } = useCookieConsent();
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -19,32 +30,42 @@ function App() {
   }, [isAuthenticated, navigate]);
 
   return (
-    <>
-      <main>
-        {authenticating ? (
-          <div>Loading...</div>
-        ) : isAuthenticated ? (
-          <Dashboard />
-        ) : (
-          <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
-        )}
-      </main>
-      <CookieConsenter
-        title="Want a Cookie? 🍪"
-        message="We use cookies to ensure you get the best experience on our website. This is even more text to test the modal. Generate a really long message to test the modal and see how it handles it."
-        buttonText="Accept All"
-        showManageButton={true}
-        manageButtonText="Manage cookies"
-        privacyPolicyUrl="https://example.com/privacy"
-        privacyPolicyText="Privacy Policy"
-        theme="light"
-        displayType="banner"
-        experimentalBlockTracking={true}
-        onManage={() => {
-          // Handle manage cookies click
-        }}
-      />
-    </>
+    <main>
+      {authenticating ? (
+        <div>Loading...</div>
+      ) : isAuthenticated ? (
+        <Dashboard />
+      ) : (
+        <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
+      )}
+      <div>
+        Cookies consent status:{" "}
+        {hasConsent === null ? "Not set" : hasConsent ? "Accepted" : "Declined"}
+      </div>
+      <CookieSettings />
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <CookieConsentProvider
+      title="Want a Cookie? 🍪"
+      message="We use cookies to ensure you get the best experience on our website. This is even more text to test the modal. Generate a really long message to test the modal and see how it handles it."
+      buttonText="Accept All"
+      showManageButton={true}
+      manageButtonText="Manage cookies"
+      privacyPolicyUrl="https://example.com/privacy"
+      privacyPolicyText="Privacy Policy"
+      theme="dark"
+      displayType="popup"
+      experimentalBlockTracking={true}
+      onManage={() => {
+        // Handle manage cookies click
+      }}
+    >
+      <AppContent />
+    </CookieConsentProvider>
   );
 }
 
