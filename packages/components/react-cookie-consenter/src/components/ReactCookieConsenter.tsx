@@ -18,7 +18,13 @@ const useIsMobile = () => {
   return isMobile;
 };
 
-const MobileModal: React.FC<CookieConsenterProps> = ({
+const MobileModal: React.FC<
+  CookieConsenterProps & {
+    handleAccept: () => void;
+    handleDecline: () => void;
+    handleManage?: () => void;
+  }
+> = ({
   buttonText,
   declineButtonText,
   manageButtonText,
@@ -28,17 +34,21 @@ const MobileModal: React.FC<CookieConsenterProps> = ({
   title,
   message,
   theme,
-  onAccept,
-  onDecline,
-  onManage,
+  handleAccept,
+  handleDecline,
+  handleManage,
   isExiting,
   isEntering,
+  displayType = "banner",
 }) => {
   return (
-    <div className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm">
+    <>
+      {displayType === "modal" && (
+        <div className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm" />
+      )}
       <div
         className={`
-        fixed inset-x-0 bottom-0 px-4 pb-4 pt-2
+        fixed inset-x-0 bottom-0 px-4 pb-4 pt-2 z-[99999]
         transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
         ${
           isExiting
@@ -55,7 +65,7 @@ const MobileModal: React.FC<CookieConsenterProps> = ({
             ${
               theme === "light"
                 ? "bg-white/95 ring-1 ring-black/10"
-                : "bg-black/95 ring-1 ring-white/20"
+                : "bg-gray-900/95 ring-1 ring-white/20"
             }
             rounded-2xl backdrop-blur-sm backdrop-saturate-150
           `}
@@ -75,13 +85,13 @@ const MobileModal: React.FC<CookieConsenterProps> = ({
             </p>
             <div className="flex flex-col gap-3">
               <button
-                onClick={onAccept}
+                onClick={handleAccept}
                 className="w-full px-3 py-2.5 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
               >
                 {buttonText}
               </button>
               <button
-                onClick={onDecline}
+                onClick={handleDecline}
                 className={`w-full px-3 py-2.5 text-sm font-medium rounded-lg focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent
                   ${
                     theme === "light"
@@ -93,7 +103,7 @@ const MobileModal: React.FC<CookieConsenterProps> = ({
               </button>
               {showManageButton && (
                 <button
-                  onClick={onManage}
+                  onClick={handleManage}
                   className="w-full px-3 py-2.5 text-sm font-medium bg-transparent text-blue-500 border border-blue-500 rounded-lg hover:text-blue-400 hover:border-blue-400 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
                 >
                   {manageButtonText}
@@ -113,7 +123,7 @@ const MobileModal: React.FC<CookieConsenterProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
@@ -166,6 +176,14 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     }, 500);
   };
 
+  const handleManage = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      setIsVisible(false);
+      if (onManage) onManage();
+    }, 500);
+  };
+
   if (!isVisible) return null;
 
   // On mobile, always render the MobileModal regardless of displayType
@@ -182,11 +200,12 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           title,
           message,
           theme,
-          onAccept,
-          onDecline,
-          onManage,
+          handleAccept,
+          handleDecline,
+          handleManage,
           isExiting,
           isEntering,
+          displayType,
         }}
       />,
       document.body
