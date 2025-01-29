@@ -37,7 +37,7 @@ function App() {
         manageButtonText="Manage cookies"
         privacyPolicyUrl="https://example.com/privacy"
         privacyPolicyText="Privacy Policy"
-        theme="dark"
+        theme="light"
         displayType="banner"
         onManage={() => {
           // Handle manage cookies click

@@ -2,6 +2,121 @@ import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { CookieConsenterProps } from "../types/types";
 
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 640); // matches Tailwind's sm breakpoint
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+};
+
+const MobileModal: React.FC<CookieConsenterProps> = ({
+  buttonText,
+  declineButtonText,
+  manageButtonText,
+  showManageButton,
+  privacyPolicyText,
+  privacyPolicyUrl,
+  title,
+  message,
+  theme,
+  onAccept,
+  onDecline,
+  onManage,
+  isExiting,
+  isEntering,
+}) => {
+  return (
+    <div className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm">
+      <div
+        className={`
+        fixed inset-x-0 bottom-0 px-4 pb-4 pt-2
+        transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+        ${
+          isExiting
+            ? "translate-y-full"
+            : isEntering
+              ? "translate-y-full"
+              : "translate-y-0"
+        }
+      `}
+      >
+        <div
+          className={`
+            p-4 mx-auto max-w-[calc(100vw-32px)]
+            ${
+              theme === "light"
+                ? "bg-white/95 ring-1 ring-black/10"
+                : "bg-black/95 ring-1 ring-white/20"
+            }
+            rounded-2xl backdrop-blur-sm backdrop-saturate-150
+          `}
+        >
+          <div className="flex flex-col gap-3">
+            {title && (
+              <h3
+                className={`font-semibold my-0 ${theme === "light" ? "text-gray-900" : "text-white"}`}
+              >
+                {title}
+              </h3>
+            )}
+            <p
+              className={`text-sm ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
+            >
+              {message}
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={onAccept}
+                className="w-full px-3 py-2.5 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
+              >
+                {buttonText}
+              </button>
+              <button
+                onClick={onDecline}
+                className={`w-full px-3 py-2.5 text-sm font-medium rounded-lg focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent
+                  ${
+                    theme === "light"
+                      ? "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                      : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                  }`}
+              >
+                {declineButtonText}
+              </button>
+              {showManageButton && (
+                <button
+                  onClick={onManage}
+                  className="w-full px-3 py-2.5 text-sm font-medium bg-transparent text-blue-500 border border-blue-500 rounded-lg hover:text-blue-400 hover:border-blue-400 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
+                >
+                  {manageButtonText}
+                </button>
+              )}
+            </div>
+            {privacyPolicyUrl && (
+              <a
+                href={privacyPolicyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`text-xs ${theme === "light" ? "text-gray-500 hover:text-gray-700" : "text-gray-400 hover:text-gray-200"}`}
+              >
+                {privacyPolicyText}
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const CookieConsenter: React.FC<CookieConsenterProps> = ({
   buttonText = "Accept",
   declineButtonText = "Decline",
@@ -21,6 +136,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const hasConsent = localStorage.getItem(cookieName);
@@ -51,6 +167,31 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   if (!isVisible) return null;
+
+  // On mobile, always render the MobileModal regardless of displayType
+  if (isMobile) {
+    return createPortal(
+      <MobileModal
+        {...{
+          buttonText,
+          declineButtonText,
+          manageButtonText,
+          showManageButton,
+          privacyPolicyText,
+          privacyPolicyUrl,
+          title,
+          message,
+          theme,
+          onAccept,
+          onDecline,
+          onManage,
+          isExiting,
+          isEntering,
+        }}
+      />,
+      document.body
+    );
+  }
 
   const bannerBaseClasses = `
     fixed bottom-4 left-1/2 -translate-x-1/2 w-full md:max-w-2xl

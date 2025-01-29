@@ -91,4 +91,14 @@ export interface CookieConsenterProps {
    * Callback function when manage cookies is clicked
    */
   onManage?: () => void;
+
+  /**
+   * Whether the consent UI is exiting
+   */
+  isExiting?: boolean;
+
+  /**
+   * Whether the consent UI is entering
+   */
+  isEntering?: boolean;
 }
