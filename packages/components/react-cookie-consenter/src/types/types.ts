@@ -4,6 +4,17 @@ export interface CookieCategories {
   Advertising: boolean;
 }
 
+export interface ConsentStatus {
+  consented: boolean;
+  timestamp: string;
+}
+
+export interface DetailedCookieConsent {
+  Analytics: ConsentStatus;
+  Social: ConsentStatus;
+  Advertising: ConsentStatus;
+}
+
 export interface CookieConsenterProps {
   /**
    * Text for the accept button
@@ -90,6 +101,11 @@ export interface CookieConsenterProps {
   initialPreferences?: CookieCategories;
 
   /**
+   * Detailed consent information including timestamps
+   */
+  detailedConsent?: DetailedCookieConsent | null;
+
+  /**
    * Callback function when cookies are accepted
    */
   onAccept?: () => void;
@@ -104,6 +120,12 @@ export interface CookieConsenterProps {
    * If categories are provided, it means preferences were saved
    */
   onManage?: (categories?: CookieCategories) => void;
+
+  /**
+   * Whether the manage cookies view is currently shown
+   * @default false
+   */
+  isManaging?: boolean;
 
   /**
    * Whether the consent UI is exiting

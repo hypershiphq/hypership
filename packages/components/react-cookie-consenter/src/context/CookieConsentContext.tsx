@@ -6,7 +6,11 @@ import React, {
   useRef,
 } from "react";
 import CookieConsenter from "../components/CookieConsenter";
-import type { CookieConsenterProps } from "../types/types";
+import type {
+  CookieConsenterProps,
+  DetailedCookieConsent,
+  CookieCategories,
+} from "../types/types";
 
 const DEFAULT_BLOCKED_HOSTS = [
   "www.google-analytics.com",
@@ -121,9 +125,11 @@ const blockTrackingScripts = (trackingKeywords: string[]) => {
 interface CookieConsentContextValue {
   hasConsent: boolean | null;
   isDeclined: boolean;
+  detailedConsent: DetailedCookieConsent | null;
   showConsentBanner: () => void;
   acceptCookies: () => void;
   declineCookies: () => void;
+  updateDetailedConsent: (preferences: CookieCategories) => void;
 }
 
 const CookieConsentContext = createContext<CookieConsentContextValue | null>(
@@ -135,6 +141,17 @@ export interface CookieConsentProviderProps
   children: React.ReactNode;
 }
 
+const createConsentStatus = (consented: boolean) => ({
+  consented,
+  timestamp: new Date().toISOString(),
+});
+
+const createDetailedConsent = (consented: boolean): DetailedCookieConsent => ({
+  Analytics: createConsentStatus(consented),
+  Social: createConsentStatus(consented),
+  Advertising: createConsentStatus(consented),
+});
+
 export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   children,
   cookieName = "cookie-consent",
@@ -144,15 +161,29 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   ...props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [hasConsent, setHasConsent] = useState<boolean | null>(() => {
-    const consent = localStorage.getItem(cookieName);
-    return consent === "true" ? true : consent === "false" ? false : null;
-  });
+  const [isManaging, setIsManaging] = useState(false);
+  const [detailedConsent, setDetailedConsent] =
+    useState<DetailedCookieConsent | null>(() => {
+      const storedConsent = localStorage.getItem(cookieName);
+      if (storedConsent) {
+        try {
+          return JSON.parse(storedConsent);
+        } catch (e) {
+          return null;
+        }
+      }
+      return null;
+    });
+
+  const hasConsent = detailedConsent
+    ? Object.values(detailedConsent).some((status) => status.consented)
+    : null;
+
   const observerRef = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
     // Show banner if no consent decision has been made
-    if (hasConsent === null) {
+    if (detailedConsent === null) {
       setIsVisible(true);
     }
 
@@ -192,27 +223,46 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
         observerRef.current.disconnect();
       }
     };
-  }, [hasConsent, experimentallyBlockTracking, experimentalBlockedDomains]);
+  }, [
+    detailedConsent,
+    experimentallyBlockTracking,
+    experimentalBlockedDomains,
+  ]);
 
   const showConsentBanner = () => {
-    setHasConsent(null);
+    // setDetailedConsent(null);
     setIsVisible(true);
-    localStorage.setItem(cookieName, "null");
+    // localStorage.removeItem(cookieName);
   };
 
   const acceptCookies = () => {
-    localStorage.setItem(cookieName, "true");
-    setHasConsent(true);
+    const newConsent = createDetailedConsent(true);
+    localStorage.setItem(cookieName, JSON.stringify(newConsent));
+    setDetailedConsent(newConsent);
     setIsVisible(false);
   };
 
   const declineCookies = () => {
-    localStorage.setItem(cookieName, "false");
-    setHasConsent(false);
+    const newConsent = createDetailedConsent(false);
+    localStorage.setItem(cookieName, JSON.stringify(newConsent));
+    setDetailedConsent(newConsent);
     setIsVisible(false);
   };
 
+  const updateDetailedConsent = (preferences: CookieCategories) => {
+    const timestamp = new Date().toISOString();
+    const newConsent: DetailedCookieConsent = {
+      Analytics: { consented: preferences.Analytics, timestamp },
+      Social: { consented: preferences.Social, timestamp },
+      Advertising: { consented: preferences.Advertising, timestamp },
+    };
+    localStorage.setItem(cookieName, JSON.stringify(newConsent));
+    setDetailedConsent(newConsent);
+    setIsManaging(false);
+  };
+
   const handleManage = () => {
+    setIsManaging(true);
     setIsVisible(false);
     if (onManage) {
       onManage();
@@ -220,23 +270,36 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   };
 
   const value: CookieConsentContextValue = {
-    hasConsent: hasConsent,
+    hasConsent,
     isDeclined: hasConsent === false,
+    detailedConsent,
     showConsentBanner,
     acceptCookies,
     declineCookies,
+    updateDetailedConsent,
   };
 
   return (
     <CookieConsentContext.Provider value={value}>
       {children}
-      {isVisible && (
+      {(isVisible || isManaging) && (
         <CookieConsenter
           {...props}
           cookieName={cookieName}
           onAccept={acceptCookies}
           onDecline={declineCookies}
           onManage={handleManage}
+          detailedConsent={detailedConsent}
+          initialPreferences={
+            detailedConsent
+              ? {
+                  Analytics: detailedConsent.Analytics.consented,
+                  Social: detailedConsent.Social.consented,
+                  Advertising: detailedConsent.Advertising.consented,
+                }
+              : undefined
+          }
+          isManaging={isManaging}
         />
       )}
     </CookieConsentContext.Provider>

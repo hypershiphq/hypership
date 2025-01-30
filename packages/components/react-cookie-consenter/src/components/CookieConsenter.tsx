@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { CookieConsenterProps, CookieCategories } from "../types/types";
+import {
+  CookieConsenterProps,
+  CookieCategories,
+  DetailedCookieConsent,
+} from "../types/types";
 import { ManageConsent } from "./ManageConsent";
 
 const useIsMobile = () => {
@@ -29,6 +33,8 @@ const MobileModal: React.FC<
     isManaging: boolean;
     handleSavePreferences: (categories: CookieCategories) => void;
     handleCancelManage: () => void;
+    initialPreferences?: CookieCategories;
+    detailedConsent?: DetailedCookieConsent | null;
   }
 > = ({
   buttonText,
@@ -49,6 +55,8 @@ const MobileModal: React.FC<
   handleSavePreferences,
   handleCancelManage,
   displayType = "banner",
+  initialPreferences,
+  detailedConsent,
 }) => {
   return (
     <>
@@ -84,6 +92,8 @@ const MobileModal: React.FC<
               theme={theme}
               onSave={handleSavePreferences}
               onCancel={handleCancelManage}
+              initialPreferences={initialPreferences}
+              detailedConsent={detailedConsent}
             />
           ) : (
             <div className="flex flex-col gap-3">
@@ -163,10 +173,12 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     Social: false,
     Advertising: false,
   },
+  detailedConsent,
+  isManaging = false,
 }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
-  const [isManaging, setIsManaging] = useState(false);
+  const [shouldRender, setShouldRender] = useState(true);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -174,6 +186,15 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
       setIsEntering(false);
     }, 50);
   }, []);
+
+  useEffect(() => {
+    if (isExiting) {
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+      }, 500); // Match the duration of the exit animation
+      return () => clearTimeout(timer);
+    }
+  }, [isExiting]);
 
   const handleAcceptClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -193,19 +214,26 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
 
   const handleManageClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    setIsManaging(true);
+    if (onManage) onManage();
   };
 
   const handleSavePreferences = (categories: CookieCategories) => {
     setIsExiting(true);
     setTimeout(() => {
-      if (onManage) onManage(categories);
+      if (onManage) {
+        onManage(categories);
+      }
     }, 500);
   };
 
   const handleCancelManage = () => {
-    setIsManaging(false);
+    setIsExiting(true);
+    setTimeout(() => {
+      if (onManage) onManage();
+    }, 500);
   };
+
+  if (!shouldRender) return null;
 
   // On mobile, always render the MobileModal regardless of displayType
   if (isMobile) {
@@ -230,6 +258,8 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           handleSavePreferences,
           handleCancelManage,
           displayType,
+          initialPreferences,
+          detailedConsent,
         }}
       />,
       document.body
@@ -445,6 +475,8 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           theme={theme}
           onSave={handleSavePreferences}
           onCancel={handleCancelManage}
+          initialPreferences={initialPreferences}
+          detailedConsent={detailedConsent}
         />
       );
     }

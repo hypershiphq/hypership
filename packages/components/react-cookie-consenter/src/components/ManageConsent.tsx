@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { CookieCategories } from "../types/types";
+import { CookieCategories, DetailedCookieConsent } from "../types/types";
 
 interface ManageConsentProps {
   theme?: "light" | "dark";
   onSave: (categories: CookieCategories) => void;
   onCancel?: () => void;
   initialPreferences?: CookieCategories;
+  detailedConsent?: DetailedCookieConsent | null;
 }
 
 export const ManageConsent: React.FC<ManageConsentProps> = ({
@@ -17,6 +18,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
     Social: false,
     Advertising: false,
   },
+  detailedConsent,
 }) => {
   const [consent, setConsent] = useState<CookieCategories>(initialPreferences);
 
@@ -29,6 +31,35 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
 
   const handleSave = () => {
     onSave(consent);
+  };
+
+  const formatDate = (timestamp: string) => {
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } catch (e) {
+      return "Invalid date";
+    }
+  };
+
+  const renderConsentStatus = (category: keyof CookieCategories) => {
+    if (!detailedConsent || !detailedConsent[category]) return null;
+
+    const status = detailedConsent[category];
+    return (
+      <p
+        className={`text-xs mt-1 ${theme === "light" ? "text-gray-400" : "text-gray-500"}`}
+      >
+        Status: {status.consented ? "Consented" : "Declined"} on{" "}
+        {formatDate(status.timestamp)}
+      </p>
+    );
   };
 
   return (
@@ -61,9 +92,14 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
             >
               Required for the website to function properly
             </p>
+            <p
+              className={`text-xs mt-1 ${theme === "light" ? "text-gray-400" : "text-gray-500"}`}
+            >
+              Status: Always enabled
+            </p>
           </div>
           <div
-            className={`text-center px-3 py-1 text-xs font-medium rounded-full ${theme === "light" ? "bg-gray-100 text-gray-600" : "bg-gray-800 text-gray-300"}`}
+            className={`px-3 py-1 text-xs text-center font-medium rounded-full ${theme === "light" ? "bg-gray-100 text-gray-600" : "bg-gray-800 text-gray-300"}`}
           >
             Always On
           </div>
@@ -82,6 +118,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
             >
               Help us understand how visitors interact with our website
             </p>
+            {renderConsentStatus("Analytics")}
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -117,6 +154,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
             >
               Enable social media features and sharing
             </p>
+            {renderConsentStatus("Social")}
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
@@ -152,6 +190,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
             >
               Personalize advertisements and measure their performance
             </p>
+            {renderConsentStatus("Advertising")}
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
