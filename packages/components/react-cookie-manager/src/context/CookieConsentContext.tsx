@@ -31,7 +31,6 @@ const blockTrackingRequests = (blockedHosts: string[]) => {
   XMLHttpRequest.prototype.open = function (method: string, url: string | URL) {
     const urlString = url.toString();
     if (blockedHosts.some((host) => urlString.includes(host))) {
-      console.warn(`[Cookie Consenter] Blocked tracking request: ${urlString}`);
       return;
     }
     return originalXhrOpen!.apply(this, arguments as any);
@@ -44,7 +43,6 @@ const blockTrackingRequests = (blockedHosts: string[]) => {
       typeof urlString === "string" &&
       blockedHosts.some((host) => urlString.includes(host))
     ) {
-      console.warn(`[Cookie Consenter] Blocked tracking fetch: ${urlString}`);
       return Promise.resolve(
         new Response(null, { status: 403, statusText: "Blocked" })
       );
@@ -61,7 +59,6 @@ const blockTrackingScripts = (trackingKeywords: string[]) => {
       trackingKeywords.some((keyword) => script.src.includes(keyword))
     ) {
       script.remove();
-      console.log(`[Cookie Consenter] Blocked script: ${script.src}`);
     }
   });
 
@@ -76,9 +73,6 @@ const blockTrackingScripts = (trackingKeywords: string[]) => {
             trackingKeywords.some((keyword) => src.includes(keyword))
           ) {
             node.remove();
-            console.log(
-              `[Cookie Consenter] Blocked dynamically injected script: ${src}`
-            );
           }
         }
       });
@@ -99,7 +93,6 @@ const restoreOriginalRequests = () => {
   if (originalFetch) {
     window.fetch = originalFetch;
   }
-  console.log("[Cookie Consenter] Restored original XHR and fetch functions");
 };
 
 interface CookieConsentContextValue {
@@ -193,11 +186,6 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
       ];
 
       if (blockedHosts.length > 0) {
-        console.log("[Cookie Consenter] Blocking tracking with:", {
-          blockedHosts,
-          blockedKeywords,
-        });
-
         blockTrackingRequests(blockedHosts);
         observerRef.current = blockTrackingScripts(blockedKeywords);
       } else {
@@ -219,7 +207,6 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
 
     return () => {
       if (observerRef.current) {
-        console.log("[Cookie Consenter] Cleaning up observer");
         observerRef.current.disconnect();
       }
     };
