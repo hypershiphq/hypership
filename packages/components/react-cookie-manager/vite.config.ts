@@ -18,10 +18,28 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime"],
+      external: ["react", "react/jsx-runtime", "react-dom"],
       output: {
         assetFileNames: "style.css",
+        manualChunks: undefined,
+        inlineDynamicImports: true,
+        minifyInternalExports: true,
       },
     },
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: [
+          "console.log",
+          "console.info",
+          "console.debug",
+          "console.trace",
+        ],
+      },
+    },
+    sourcemap: false,
+    reportCompressedSize: true,
   },
 });

@@ -17,10 +17,7 @@ function CookieSettings() {
 
   return (
     <div className="flex flex-col gap-4">
-      <button
-        onClick={showConsentBanner}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
-      >
+      <button onClick={showConsentBanner} className="">
         Cookie Settings
       </button>
 

@@ -1,6 +1,6 @@
 {
   "name": "react-cookie-manager",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "🍪 The ultimate GDPR-compliant React cookie consent solution. Automatically block trackers, manage consent preferences, and protect user privacy with an elegant UI. Perfect for modern web applications.",
   "keywords": [
     "react",
@@ -59,10 +59,12 @@
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.17",
+    "cssnano": "^7.0.6",
     "postcss": "^8.4.35",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "tailwindcss": "^3.4.1",
+    "terser": "^5.37.0",
     "tsup": "^8.3.5",
     "typescript": "^5.5.2",
     "vite": "^6.0.3",
