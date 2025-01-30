@@ -17,6 +17,41 @@ function CookieSettings() {
 
   return <button onClick={showConsentBanner}>Cookie Settings</button>;
 }
+
+// Temporary test function
+const testTrackingBlocker = () => {
+  console.log("Testing tracking blocker...");
+
+  // Test script injection
+  const script = document.createElement("script");
+  script.src = "https://www.google-analytics.com/analytics.js";
+  document.body.appendChild(script);
+
+  // Test fetch request
+  fetch("https://www.google-analytics.com/collect")
+    .then((res) => console.log("Fetch response:", res.status))
+    .catch((err) => console.log("Fetch blocked:", err));
+
+  // Test XHR request
+  const xhr = new XMLHttpRequest();
+  xhr.open("GET", "https://www.google-analytics.com/collect");
+  try {
+    xhr.send();
+  } catch (e) {
+    console.log("XHR blocked");
+  }
+};
+
+// Add temporary test button
+const TestButton = () => (
+  <button
+    onClick={testTrackingBlocker}
+    className="fixed top-4 right-4 px-3 py-2 bg-red-500 text-white rounded-md text-sm z-[99999]"
+  >
+    Test Blocker
+  </button>
+);
+
 function AppContent() {
   const { isAuthenticated, authenticating } = useHypershipAuth();
   const { hasConsent } = useCookieConsent();
@@ -31,18 +66,19 @@ function AppContent() {
 
   return (
     <main>
-      {authenticating ? (
+      {/* {authenticating ? (
         <div>Loading...</div>
       ) : isAuthenticated ? (
         <Dashboard />
       ) : (
         <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
-      )}
+      )} */}
       <div>
         Cookies consent status:{" "}
         {hasConsent === null ? "Not set" : hasConsent ? "Accepted" : "Declined"}
       </div>
       <CookieSettings />
+      <TestButton />
     </main>
   );
 }
@@ -59,7 +95,7 @@ function App() {
       privacyPolicyText="Privacy Policy"
       theme="dark"
       displayType="popup"
-      experimentalBlockTracking={true}
+      experimentallyBlockTracking={true}
       onManage={() => {
         // Handle manage cookies click
       }}

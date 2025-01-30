@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { CookieConsenterProps } from "../types/types";
 
@@ -23,6 +23,8 @@ const MobileModal: React.FC<
     handleAccept: () => void;
     handleDecline: () => void;
     handleManage?: () => void;
+    isExiting: boolean;
+    isEntering: boolean;
   }
 > = ({
   buttonText,
@@ -73,7 +75,7 @@ const MobileModal: React.FC<
           <div className="flex flex-col gap-3">
             {title && (
               <h3
-                className={`font-semibold -my-2 mt-2 ${theme === "light" ? "text-gray-900" : "text-white"}`}
+                className={`font-semibold my-0 ${theme === "light" ? "text-gray-900" : "text-white"}`}
               >
                 {title}
               </h3>
@@ -127,96 +129,6 @@ const MobileModal: React.FC<
   );
 };
 
-const DEFAULT_BLOCKED_HOSTS = [
-  "www.google-analytics.com",
-  "connect.facebook.net",
-  "static.hotjar.com",
-  "cdn.segment.com",
-  "api.fullstory.com",
-  "intercom.io",
-  "matomo.org",
-];
-
-const DEFAULT_TRACKING_KEYWORDS = [
-  "googletagmanager.com",
-  "google-analytics.com",
-  "facebook.net",
-  "hotjar.com",
-  "segment.com",
-  "intercom.io",
-  "fullstory.com",
-  "matomo.js",
-  "ads.js",
-];
-
-const blockTrackingRequests = (blockedHosts: string[]) => {
-  // Override XMLHttpRequest to block requests to tracking domains
-  const originalXhrOpen = XMLHttpRequest.prototype.open;
-  XMLHttpRequest.prototype.open = function (method: string, url: string | URL) {
-    const urlString = url.toString();
-    if (blockedHosts.some((host) => urlString.includes(host))) {
-      console.warn(`[Cookie Consenter] Blocked tracking request: ${urlString}`);
-      return;
-    }
-    return originalXhrOpen.apply(this, arguments as any);
-  };
-
-  // Override fetch API to block tracking requests
-  const originalFetch = window.fetch;
-  window.fetch = function (url: RequestInfo | URL, options?: RequestInit) {
-    const urlString = url.toString();
-    if (
-      typeof urlString === "string" &&
-      blockedHosts.some((host) => urlString.includes(host))
-    ) {
-      console.warn(`[Cookie Consenter] Blocked tracking fetch: ${urlString}`);
-      return Promise.resolve(
-        new Response(null, { status: 403, statusText: "Blocked" })
-      );
-    }
-    return originalFetch.apply(this, arguments as any);
-  };
-};
-
-const blockTrackingScripts = (trackingKeywords: string[]) => {
-  // Remove all script tags that match tracking domains
-  document.querySelectorAll("script").forEach((script) => {
-    if (
-      script.src &&
-      trackingKeywords.some((keyword) => script.src.includes(keyword))
-    ) {
-      script.remove();
-      console.log(`[Cookie Consenter] Blocked script: ${script.src}`);
-    }
-  });
-
-  // Prevent new tracking scripts from being injected
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      mutation.addedNodes.forEach((node) => {
-        if (node instanceof HTMLElement && node.tagName === "SCRIPT") {
-          const src = node.getAttribute("src");
-          if (
-            src &&
-            trackingKeywords.some((keyword) => src.includes(keyword))
-          ) {
-            node.remove();
-            console.log(
-              `[Cookie Consenter] Blocked dynamically injected script: ${src}`
-            );
-          }
-        }
-      });
-    });
-  });
-
-  observer.observe(document.documentElement, {
-    childList: true,
-    subtree: true,
-  });
-  return observer;
-};
-
 const CookieConsenter: React.FC<CookieConsenterProps> = ({
   buttonText = "Accept",
   declineButtonText = "Decline",
@@ -226,58 +138,25 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   privacyPolicyUrl,
   title = "",
   message = "This website uses cookies to enhance your experience.",
-  cookieName = "cookie-consent",
   displayType = "banner",
   theme = "light",
-  experimentalBlockTracking = false,
-  experimentalBlockedDomains = [],
   onAccept,
   onDecline,
   onManage,
 }) => {
-  const [isVisible, setIsVisible] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
   const isMobile = useIsMobile();
-  const observerRef = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
-    const hasConsent = localStorage.getItem(cookieName) === "true";
-    const hasDeclined = localStorage.getItem(cookieName) === "false";
-
-    if (hasDeclined && experimentalBlockTracking) {
-      const allBlockedHosts = [
-        ...DEFAULT_BLOCKED_HOSTS,
-        ...experimentalBlockedDomains,
-      ];
-      const allTrackingKeywords = [
-        ...DEFAULT_TRACKING_KEYWORDS,
-        ...experimentalBlockedDomains,
-      ];
-
-      blockTrackingRequests(allBlockedHosts);
-      observerRef.current = blockTrackingScripts(allTrackingKeywords);
-    }
-
-    if (!hasConsent && !hasDeclined) {
-      setIsVisible(true);
-      setTimeout(() => {
-        setIsEntering(false);
-      }, 50);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [cookieName, experimentalBlockTracking, experimentalBlockedDomains]);
+    setTimeout(() => {
+      setIsEntering(false);
+    }, 50);
+  }, []);
 
   const handleAccept = () => {
     setIsExiting(true);
     setTimeout(() => {
-      localStorage.setItem(cookieName, "true");
-      setIsVisible(false);
       if (onAccept) onAccept();
     }, 500);
   };
@@ -285,8 +164,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const handleDecline = () => {
     setIsExiting(true);
     setTimeout(() => {
-      localStorage.setItem(cookieName, "false");
-      setIsVisible(false);
       if (onDecline) onDecline();
     }, 500);
   };
@@ -294,92 +171,67 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const handleManage = () => {
     setIsExiting(true);
     setTimeout(() => {
-      setIsVisible(false);
       if (onManage) onManage();
     }, 500);
   };
 
-  if (!isVisible) return null;
-
-  // Temporary test function
-  const testTrackingBlocker = () => {
-    console.log("Testing tracking blocker...");
-
-    // Test script injection
-    const script = document.createElement("script");
-    script.src = "https://www.google-analytics.com/analytics.js";
-    document.body.appendChild(script);
-
-    // Test fetch request
-    fetch("https://www.google-analytics.com/collect")
-      .then((res) => console.log("Fetch response:", res.status))
-      .catch((err) => console.log("Fetch blocked:", err));
-
-    // Test XHR request
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://www.google-analytics.com/collect");
-    try {
-      xhr.send();
-    } catch (e) {
-      console.log("XHR blocked");
-    }
-  };
-
-  // Add temporary test button
-  const TestButton = () => (
-    <button
-      onClick={testTrackingBlocker}
-      className="fixed top-4 right-4 px-3 py-2 bg-red-500 text-white rounded-md text-sm z-[99999]"
-    >
-      Test Blocker
-    </button>
-  );
-
   // On mobile, always render the MobileModal regardless of displayType
   if (isMobile) {
     return createPortal(
-      <>
-        <MobileModal
-          {...{
-            buttonText,
-            declineButtonText,
-            manageButtonText,
-            showManageButton,
-            privacyPolicyText,
-            privacyPolicyUrl,
-            title,
-            message,
-            theme,
-            handleAccept,
-            handleDecline,
-            handleManage,
-            isExiting,
-            isEntering,
-            displayType,
-          }}
-        />
-      </>,
+      <MobileModal
+        {...{
+          buttonText,
+          declineButtonText,
+          manageButtonText,
+          showManageButton,
+          privacyPolicyText,
+          privacyPolicyUrl,
+          title,
+          message,
+          theme,
+          handleAccept,
+          handleDecline,
+          handleManage,
+          isExiting,
+          isEntering,
+          displayType,
+        }}
+      />,
       document.body
     );
   }
 
-  const bannerBaseClasses = `
-    fixed bottom-4 left-1/2 -translate-x-1/2 w-full md:max-w-2xl
+  const modalBaseClasses = `
+    fixed inset-0 flex items-center justify-center p-4
     ${
       theme === "light"
-        ? "bg-white/95 ring-1 ring-black/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]"
+        ? "bg-black/20 backdrop-blur-sm"
+        : "bg-black/40 backdrop-blur-sm"
+    }
+    transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+    z-[99999]
+    ${isExiting ? "opacity-0" : isEntering ? "opacity-0" : "opacity-100"}
+  `;
+
+  const modalContentClasses = `
+    w-full max-w-lg rounded-xl p-6
+    ${
+      theme === "light"
+        ? "bg-white/95 ring-1 ring-black/10"
         : "bg-black/95 ring-1 ring-white/10"
     }
-    rounded-lg backdrop-blur-sm backdrop-saturate-150 
-    transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-    z-[99999] hover:-translate-y-2
-    ${
-      isExiting
-        ? "opacity-0 transform translate-y-full"
-        : isEntering
-          ? "opacity-0 transform translate-y-full"
-          : "opacity-100 transform translate-y-0"
-    }
+    ${isExiting ? "scale-95" : isEntering ? "scale-95" : "scale-100"}
+    transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+  `;
+
+  const modalTitleClasses = `
+    text-lg font-semibold mb-3
+    ${theme === "light" ? "text-gray-900" : "text-white"}
+  `;
+
+  const modalMessageClasses = `
+    text-sm font-medium mb-6
+    ${theme === "light" ? "text-gray-700" : "text-gray-200"}
   `;
 
   const popupBaseClasses = `
@@ -398,6 +250,25 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
         : isEntering
           ? "opacity-0 scale-95"
           : "opacity-100 scale-100"
+    }
+  `;
+
+  const bannerBaseClasses = `
+    fixed bottom-4 left-1/2 -translate-x-1/2 w-full md:max-w-2xl
+    ${
+      theme === "light"
+        ? "bg-white/95 ring-1 ring-black/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]"
+        : "bg-black/95 ring-1 ring-white/10"
+    }
+    rounded-lg backdrop-blur-sm backdrop-saturate-150 
+    transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
+    z-[99999] hover:-translate-y-2
+    ${
+      isExiting
+        ? "opacity-0 transform translate-y-full"
+        : isEntering
+          ? "opacity-0 transform translate-y-full"
+          : "opacity-100 transform translate-y-0"
     }
   `;
 
@@ -475,39 +346,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
         : "text-gray-400 hover:text-gray-200"
     }
     transition-colors duration-200
-  `;
-
-  const modalBaseClasses = `
-    fixed inset-0 flex items-center justify-center p-4
-    ${
-      theme === "light"
-        ? "bg-black/20 backdrop-blur-sm"
-        : "bg-black/40 backdrop-blur-sm"
-    }
-    transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-    z-[99999]
-    ${isExiting ? "opacity-0" : isEntering ? "opacity-0" : "opacity-100"}
-  `;
-
-  const modalContentClasses = `
-    w-full max-w-lg rounded-xl p-6
-    ${
-      theme === "light"
-        ? "bg-white/95 ring-1 ring-black/10"
-        : "bg-black/95 ring-1 ring-white/10"
-    }
-    ${isExiting ? "scale-95" : isEntering ? "scale-95" : "scale-100"}
-    transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]
-  `;
-
-  const modalTitleClasses = `
-    text-lg font-semibold mb-3
-    ${theme === "light" ? "text-gray-900" : "text-white"}
-  `;
-
-  const modalMessageClasses = `
-    text-sm font-medium mb-6
-    ${theme === "light" ? "text-gray-700" : "text-gray-200"}
   `;
 
   const getBaseClasses = () => {

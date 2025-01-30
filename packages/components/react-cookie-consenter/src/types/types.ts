@@ -104,15 +104,15 @@ export interface CookieConsenterProps {
 
   /**
    * Experimental: Enable automatic blocking of common analytics and tracking scripts
-   * This will block common third-party tracking scripts and requests
+   * This will block common third-party tracking scripts and requests by default until consent is given
    * @default false
    * @experimental
    */
-  experimentalBlockTracking?: boolean;
+  experimentallyBlockTracking?: boolean;
 
   /**
    * Experimental: Custom domains to block in addition to the default list
-   * Only works when experimentalBlockTracking is enabled
+   * Only works when experimentallyBlockTracking is enabled
    * @experimental
    */
   experimentalBlockedDomains?: string[];
