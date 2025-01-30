@@ -116,7 +116,7 @@ const CookieManagerContext = createContext<CookieConsentContextValue | null>(
   null
 );
 
-export interface CookieConsentProviderProps
+export interface CookieManagerProps
   extends Omit<CookieConsenterProps, "onAccept" | "onDecline" | "forceShow"> {
   children: React.ReactNode;
 }
@@ -132,7 +132,7 @@ const createDetailedConsent = (consented: boolean): DetailedCookieConsent => ({
   Advertising: createConsentStatus(consented),
 });
 
-export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
+export const CookieManager: React.FC<CookieManagerProps> = ({
   children,
   cookieName = "cookie-consent",
   onManage,
@@ -324,9 +324,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
 export const useCookieConsent = () => {
   const context = useContext(CookieManagerContext);
   if (!context) {
-    throw new Error(
-      "useCookieConsent must be used within a CookieConsentProvider"
-    );
+    throw new Error("useCookieConsent must be used within a CookieManager");
   }
   return context;
 };

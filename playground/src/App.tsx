@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import { useEffect } from "react";
 import {
-  CookieConsentProvider,
+  CookieManager,
   useCookieConsent,
 } from "../../packages/components/react-cookie-manager/src";
 import "../../packages/components/react-cookie-manager/dist/index.css";
@@ -118,7 +118,7 @@ function AppContent() {
 
 function App() {
   return (
-    <CookieConsentProvider
+    <CookieManager
       title="Would You Like A Cookie? 🍪"
       message="We value your privacy. Choose which cookies you want to allow. Essential cookies are always enabled as they are necessary for the website to function properly."
       buttonText="Accept All"
@@ -137,7 +137,7 @@ function App() {
       }}
     >
       <AppContent />
-    </CookieConsentProvider>
+    </CookieManager>
   );
 }
 
