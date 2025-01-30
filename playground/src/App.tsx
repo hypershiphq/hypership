@@ -96,13 +96,13 @@ function AppContent() {
 
   return (
     <main>
-      {/* {authenticating ? (
+      {authenticating ? (
         <div>Loading...</div>
       ) : isAuthenticated ? (
         <Dashboard />
       ) : (
         <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
-      )} */}
+      )}
       <div>
         Cookies consent status:{" "}
         {hasConsent === null ? "Not set" : hasConsent ? "Accepted" : "Declined"}
@@ -124,7 +124,7 @@ function App() {
       manageButtonText="Manage Cookies"
       privacyPolicyUrl="https://example.com/privacy"
       privacyPolicyText="Privacy Policy"
-      theme="light"
+      theme="dark"
       displayType="popup"
       onManage={(preferences) => {
         if (preferences) {

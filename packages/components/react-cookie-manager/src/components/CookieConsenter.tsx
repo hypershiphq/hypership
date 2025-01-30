@@ -287,7 +287,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     w-full max-w-lg rounded-xl p-6
     ${
       theme === "light"
-        ? "bg-white/95 ring-1 ring-black/10"
+        ? "bg-white/95 ring-2 ring-gray-200"
         : "bg-black/95 ring-1 ring-white/10"
     }
     ${isExiting ? "scale-95" : isEntering ? "scale-95" : "scale-100"}
@@ -308,7 +308,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     fixed bottom-4 left-4 w-80
     ${
       theme === "light"
-        ? "bg-white/95 ring-1 ring-black/10"
+        ? "bg-white/95 ring-1 ring-black/10 shadow-lg"
         : "bg-black/95 ring-1 ring-white/10"
     }
     rounded-lg backdrop-blur-sm backdrop-saturate-150 
@@ -327,7 +327,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     fixed bottom-4 left-1/2 -translate-x-1/2 w-full md:max-w-2xl
     ${
       theme === "light"
-        ? "bg-white/95 ring-1 ring-black/10 shadow-[0_-8px_30px_rgb(0,0,0,0.12)]"
+        ? "bg-white/95 border border-black/10 shadow-lg"
         : "bg-black/95 ring-1 ring-white/10"
     }
     rounded-lg backdrop-blur-sm backdrop-saturate-150 
@@ -371,10 +371,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     text-xs font-medium
     ${theme === "light" ? "text-gray-700" : "text-gray-200"}
   `;
-
-  const bannerButtonGroupClasses = "flex items-center justify-between w-full";
-  const popupButtonGroupClasses = "flex items-center justify-between w-full";
-  const modalButtonGroupClasses = "flex items-center justify-between w-full";
 
   const acceptButtonClasses = `
     px-3 py-1.5 text-xs font-medium rounded-md
@@ -459,17 +455,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
         return popupMessageClasses;
       default:
         return bannerMessageClasses;
-    }
-  };
-
-  const getButtonGroupClasses = () => {
-    switch (displayType) {
-      case "modal":
-        return modalButtonGroupClasses;
-      case "popup":
-        return popupButtonGroupClasses;
-      default:
-        return bannerButtonGroupClasses;
     }
   };
 
