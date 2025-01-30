@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { CookieConsenterProps } from "../types/types";
+import { CookieConsenterProps, CookieCategories } from "../types/types";
+import { ManageConsent } from "./ManageConsent";
 
 const useIsMobile = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -20,11 +21,14 @@ const useIsMobile = () => {
 
 const MobileModal: React.FC<
   CookieConsenterProps & {
-    handleAccept: () => void;
-    handleDecline: () => void;
-    handleManage?: () => void;
+    handleAccept: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    handleDecline: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    handleManage: (e: React.MouseEvent<HTMLButtonElement>) => void;
     isExiting: boolean;
     isEntering: boolean;
+    isManaging: boolean;
+    handleSavePreferences: (categories: CookieCategories) => void;
+    handleCancelManage: () => void;
   }
 > = ({
   buttonText,
@@ -41,6 +45,9 @@ const MobileModal: React.FC<
   handleManage,
   isExiting,
   isEntering,
+  isManaging,
+  handleSavePreferences,
+  handleCancelManage,
   displayType = "banner",
 }) => {
   return (
@@ -72,57 +79,65 @@ const MobileModal: React.FC<
             rounded-2xl backdrop-blur-sm backdrop-saturate-150
           `}
         >
-          <div className="flex flex-col gap-3">
-            {title && (
-              <h3
-                className={`font-semibold my-0 ${theme === "light" ? "text-gray-900" : "text-white"}`}
-              >
-                {title}
-              </h3>
-            )}
-            <p
-              className={`text-sm ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
-            >
-              {message}
-            </p>
+          {isManaging ? (
+            <ManageConsent
+              theme={theme}
+              onSave={handleSavePreferences}
+              onCancel={handleCancelManage}
+            />
+          ) : (
             <div className="flex flex-col gap-3">
-              <button
-                onClick={handleAccept}
-                className="w-full px-3 py-2.5 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
-              >
-                {buttonText}
-              </button>
-              <button
-                onClick={handleDecline}
-                className={`w-full px-3 py-2.5 text-sm font-medium rounded-lg focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent
-                  ${
-                    theme === "light"
-                      ? "bg-gray-200 hover:bg-gray-300 text-gray-800"
-                      : "bg-gray-800 hover:bg-gray-700 text-gray-300"
-                  }`}
-              >
-                {declineButtonText}
-              </button>
-              {showManageButton && (
-                <button
-                  onClick={handleManage}
-                  className="w-full px-3 py-2.5 text-sm font-medium bg-transparent text-blue-500 border border-blue-500 rounded-lg hover:text-blue-400 hover:border-blue-400 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
+              {title && (
+                <h3
+                  className={`font-semibold my-0 ${theme === "light" ? "text-gray-900" : "text-white"}`}
                 >
-                  {manageButtonText}
+                  {title}
+                </h3>
+              )}
+              <p
+                className={`text-sm ${theme === "light" ? "text-gray-700" : "text-gray-200"}`}
+              >
+                {message}
+              </p>
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleAccept}
+                  className="w-full px-3 py-2.5 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-600 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
+                >
+                  {buttonText}
                 </button>
+                <button
+                  onClick={handleDecline}
+                  className={`w-full px-3 py-2.5 text-sm font-medium rounded-lg focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent
+                    ${
+                      theme === "light"
+                        ? "bg-gray-200 hover:bg-gray-300 text-gray-800"
+                        : "bg-gray-800 hover:bg-gray-700 text-gray-300"
+                    }`}
+                >
+                  {declineButtonText}
+                </button>
+                {showManageButton && (
+                  <button
+                    onClick={handleManage}
+                    className="w-full px-3 py-2.5 text-sm font-medium bg-transparent text-blue-500 border border-blue-500 rounded-lg hover:text-blue-400 hover:border-blue-400 focus-visible:outline-none focus:outline-none focus-visible:outline-transparent focus:outline-transparent"
+                  >
+                    {manageButtonText}
+                  </button>
+                )}
+              </div>
+              {privacyPolicyUrl && (
+                <a
+                  href={privacyPolicyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`text-xs ${theme === "light" ? "text-gray-500 hover:text-gray-700" : "text-gray-400 hover:text-gray-200"}`}
+                >
+                  {privacyPolicyText}
+                </a>
               )}
             </div>
-            {privacyPolicyUrl && (
-              <a
-                href={privacyPolicyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`text-xs ${theme === "light" ? "text-gray-500 hover:text-gray-700" : "text-gray-400 hover:text-gray-200"}`}
-              >
-                {privacyPolicyText}
-              </a>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </>
@@ -143,9 +158,15 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   onAccept,
   onDecline,
   onManage,
+  initialPreferences = {
+    Analytics: false,
+    Social: false,
+    Advertising: false,
+  },
 }) => {
   const [isExiting, setIsExiting] = useState(false);
   const [isEntering, setIsEntering] = useState(true);
+  const [isManaging, setIsManaging] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -154,25 +175,36 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
     }, 50);
   }, []);
 
-  const handleAccept = () => {
+  const handleAcceptClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setIsExiting(true);
     setTimeout(() => {
       if (onAccept) onAccept();
     }, 500);
   };
 
-  const handleDecline = () => {
+  const handleDeclineClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     setIsExiting(true);
     setTimeout(() => {
       if (onDecline) onDecline();
     }, 500);
   };
 
-  const handleManage = () => {
+  const handleManageClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsManaging(true);
+  };
+
+  const handleSavePreferences = (categories: CookieCategories) => {
     setIsExiting(true);
     setTimeout(() => {
-      if (onManage) onManage();
+      if (onManage) onManage(categories);
     }, 500);
+  };
+
+  const handleCancelManage = () => {
+    setIsManaging(false);
   };
 
   // On mobile, always render the MobileModal regardless of displayType
@@ -189,11 +221,14 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           title,
           message,
           theme,
-          handleAccept,
-          handleDecline,
-          handleManage,
+          handleAccept: handleAcceptClick,
+          handleDecline: handleDeclineClick,
+          handleManage: handleManageClick,
           isExiting,
           isEntering,
+          isManaging,
+          handleSavePreferences,
+          handleCancelManage,
           displayType,
         }}
       />,
@@ -404,6 +439,16 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   const renderContent = () => {
+    if (isManaging) {
+      return (
+        <ManageConsent
+          theme={theme}
+          onSave={handleSavePreferences}
+          onCancel={handleCancelManage}
+        />
+      );
+    }
+
     if (displayType === "banner") {
       return (
         <div className="flex flex-col gap-4">
@@ -425,20 +470,20 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
             <div className="flex items-center gap-3">
               {showManageButton && (
                 <button
-                  onClick={onManage}
+                  onClick={handleManageClick}
                   className={manageButtonClasses.trim()}
                 >
                   {manageButtonText}
                 </button>
               )}
               <button
-                onClick={handleDecline}
+                onClick={handleDeclineClick}
                 className={declineButtonClasses.trim()}
               >
                 {declineButtonText}
               </button>
               <button
-                onClick={handleAccept}
+                onClick={handleAcceptClick}
                 className={acceptButtonClasses.trim()}
               >
                 {buttonText}
@@ -457,18 +502,20 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   const renderButtons = () => {
+    if (isManaging) return null;
+
     if (displayType === "popup") {
       return (
         <div className="flex flex-col gap-3 w-full">
           <div className="flex items-center gap-3">
             <button
-              onClick={handleDecline}
+              onClick={handleDeclineClick}
               className={declineButtonClasses.trim()}
             >
               {declineButtonText}
             </button>
             <button
-              onClick={handleAccept}
+              onClick={handleAcceptClick}
               className={acceptButtonClasses.trim()}
             >
               {buttonText}
@@ -477,7 +524,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           <div className="flex flex-col gap-2 w-full">
             {showManageButton && (
               <button
-                onClick={onManage}
+                onClick={handleManageClick}
                 className={`${manageButtonClasses.trim()} w-full justify-center`}
               >
                 {manageButtonText}
@@ -515,20 +562,20 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
             <div className="flex items-center gap-3">
               {showManageButton && (
                 <button
-                  onClick={onManage}
+                  onClick={handleManageClick}
                   className={manageButtonClasses.trim()}
                 >
                   {manageButtonText}
                 </button>
               )}
               <button
-                onClick={handleDecline}
+                onClick={handleDeclineClick}
                 className={declineButtonClasses.trim()}
               >
                 {declineButtonText}
               </button>
               <button
-                onClick={handleAccept}
+                onClick={handleAcceptClick}
                 className={acceptButtonClasses.trim()}
               >
                 {buttonText}

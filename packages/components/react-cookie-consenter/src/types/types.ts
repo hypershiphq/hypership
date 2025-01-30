@@ -1,3 +1,9 @@
+export interface CookieCategories {
+  Analytics: boolean;
+  Social: boolean;
+  Advertising: boolean;
+}
+
 export interface CookieConsenterProps {
   /**
    * Text for the accept button
@@ -78,6 +84,12 @@ export interface CookieConsenterProps {
   theme?: "light" | "dark";
 
   /**
+   * Initial cookie category preferences
+   * @default { Analytics: false, Social: false, Advertising: false }
+   */
+  initialPreferences?: CookieCategories;
+
+  /**
    * Callback function when cookies are accepted
    */
   onAccept?: () => void;
@@ -88,9 +100,10 @@ export interface CookieConsenterProps {
   onDecline?: () => void;
 
   /**
-   * Callback function when manage cookies is clicked
+   * Callback function when manage cookies is clicked or preferences are saved
+   * If categories are provided, it means preferences were saved
    */
-  onManage?: () => void;
+  onManage?: (categories?: CookieCategories) => void;
 
   /**
    * Whether the consent UI is exiting
