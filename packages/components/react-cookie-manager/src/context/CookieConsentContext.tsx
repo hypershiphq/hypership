@@ -159,8 +159,8 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
   const observerRef = useRef<MutationObserver | null>(null);
 
   useEffect(() => {
-    // Show banner if no consent decision has been made
-    if (detailedConsent === null) {
+    // Show banner if no consent decision has been made AND manage consent is not shown
+    if (detailedConsent === null && !showManageConsent) {
       setIsVisible(true);
     }
 
@@ -213,7 +213,10 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
   }, [detailedConsent, disableAutomaticBlocking, blockedDomains]);
 
   const showConsentBanner = () => {
-    setIsVisible(true);
+    if (!showManageConsent) {
+      // Only show banner if manage consent is not shown
+      setIsVisible(true);
+    }
   };
 
   const acceptCookies = () => {
@@ -248,13 +251,6 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
   const handleManage = () => {
     setIsVisible(false);
     setShowManageConsent(true);
-    if (onManage && detailedConsent) {
-      onManage({
-        Analytics: detailedConsent.Analytics.consented,
-        Social: detailedConsent.Social.consented,
-        Advertising: detailedConsent.Advertising.consented,
-      });
-    }
   };
 
   const handleCancelManage = () => {

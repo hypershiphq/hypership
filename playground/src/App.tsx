@@ -5,11 +5,11 @@ import {
 import { useNavigate } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import { useEffect } from "react";
-import { CookieManager } from "react-cookie-manager";
-import { useCookieConsent } from "react-cookie-manager";
-import "react-cookie-manager/style.css";
-
-// import "../../packages/components/react-cookie-manager/dist/style.css";
+import {
+  CookieManager,
+  useCookieConsent,
+} from "../../packages/components/react-cookie-manager/src";
+import "../../packages/components/react-cookie-manager/dist/style.css";
 
 // Create a component that uses the cookie consent hook and displays detailed status
 function CookieSettings() {
@@ -99,13 +99,13 @@ function AppContent() {
 
   return (
     <main>
-      {authenticating ? (
+      {/* {authenticating ? (
         <div>Loading...</div>
       ) : isAuthenticated ? (
         <Dashboard />
       ) : (
         <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
-      )}
+      )} */}
       <div>
         Cookies consent status:{" "}
         {hasConsent === null ? "Not set" : hasConsent ? "Accepted" : "Declined"}
@@ -130,7 +130,6 @@ function App() {
       theme="light"
       displayType="popup"
       onManage={(preferences) => {
-        console.log("Cookie preferences updated:", preferences);
         if (preferences) {
           console.log("Cookie preferences updated:", preferences);
         }

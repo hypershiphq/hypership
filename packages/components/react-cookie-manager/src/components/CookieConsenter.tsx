@@ -182,7 +182,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    console.log("🍪 React Cookie Manager Version:", "1.0.7");
     setTimeout(() => {
       setIsEntering(false);
     }, 50);
@@ -236,6 +235,11 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
 
   if (!shouldRender) return null;
 
+  // If isManaging is true, don't render the consenter
+  if (isManaging) {
+    return null;
+  }
+
   // On mobile, always render the MobileModal regardless of displayType
   if (isMobile) {
     return createPortal(
@@ -255,7 +259,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
           handleManage: handleManageClick,
           isExiting,
           isEntering,
-          isManaging,
+          isManaging: false,
           handleSavePreferences,
           handleCancelManage,
           displayType,
@@ -470,18 +474,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   const renderContent = () => {
-    if (isManaging) {
-      return (
-        <ManageConsent
-          theme={theme}
-          onSave={handleSavePreferences}
-          onCancel={handleCancelManage}
-          initialPreferences={initialPreferences}
-          detailedConsent={detailedConsent}
-        />
-      );
-    }
-
     if (displayType === "banner") {
       return (
         <div className="flex flex-col gap-4">
@@ -535,8 +527,6 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   };
 
   const renderButtons = () => {
-    if (isManaging) return null;
-
     if (displayType === "popup") {
       return (
         <div className="flex flex-col gap-3 w-full">
