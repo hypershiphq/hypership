@@ -1,7 +1,16 @@
-{
-  "license": "Copyright 2025 Hypership Cloud, Ltd. Licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International license (the “License”). A summary of the License is available here: https://creativecommons.org/licenses/by-nc-sa/4.0/. The text version of the License is here: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode.txt. Please see the License for the specific language governing permissions and limitations under the License. Unless agreed to in writing or required by law, software distributed under the License on an \"as is\" basis without warranties or conditions of any kind, either express or implied. This license does not apply to any Disconnect logos or marks contained in this repo.",
-  "categories": {
-    "Analytics": [
+interface TrackerCategories {
+  categories: {
+    Analytics: string[];
+    Social: string[];
+    ConsentManagers: string[];
+    Email: string[];
+    Advertising: string[];
+  };
+}
+
+export const trackers: TrackerCategories = {
+  categories: {
+    Analytics: [
       "63squares.com",
       "abtasty.com",
       "3dstats.com",
@@ -443,32 +452,9 @@
       "zdassets.com",
       "zendesk.com",
       "zopim.com",
-      "zoominfo.com"
+      "zoominfo.com",
     ],
-    "Anti-fraud": [
-      "funcaptcha.com",
-      "browseranalytic.com",
-      "captcha-delivery.com",
-      "datadome.co",
-      "geetest.com",
-      "recaptcha.net",
-      "adxyield.com",
-      "adzmath.com",
-      "clean.gg",
-      "perimeterx.com",
-      "perimeterx.net",
-      "px-cdn.net",
-      "px-cloud.net",
-      "whiteops.com",
-      "hcaptcha.com",
-      "nofraud.com",
-      "notolytix.com",
-      "simility.com",
-      "sift.com",
-      "siftscience.com",
-      "signifyd.com"
-    ],
-    "Social": [
+    Social: [
       "causes.com",
       "digg.com",
       "developers.google.com",
@@ -520,9 +506,9 @@
       "pulse.yahoo.com",
       "rocketmail.com",
       "webmessenger.yahoo.com",
-      "ymail.com"
+      "ymail.com",
     ],
-    "ConsentManagers": [
+    ConsentManagers: [
       "cookielaw.org",
       "onetrust.com",
       "onetrust.io",
@@ -530,9 +516,9 @@
       "privacy-mgmt.com",
       "summerhamster.com",
       "cookiebot.com",
-      "cookiebot.eu"
+      "cookiebot.eu",
     ],
-    "Email": [
+    Email: [
       "10web.io",
       "4dem.it",
       "8d8.biz",
@@ -1014,9 +1000,9 @@
       "maillist-manage.com",
       "maillist-manage.com.au",
       "maillist-manage.eu",
-      "maillist-manage.in"
+      "maillist-manage.in",
     ],
-    "Advertising": [
+    Advertising: [
       "24log.com",
       "2leep.com",
       "33across.com",
@@ -4698,7 +4684,7 @@
       "authedwebmine.cz",
       "webmine.cz",
       "webminepool.com",
-      "webmining.co"
-    ]
-  }
-}
+      "webmining.co",
+    ],
+  },
+};

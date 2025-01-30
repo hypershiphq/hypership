@@ -12,28 +12,7 @@ import type {
   CookieCategories,
 } from "../types/types";
 import { ManageConsent } from "../components/ManageConsent";
-
-const DEFAULT_BLOCKED_HOSTS = [
-  "www.google-analytics.com",
-  "connect.facebook.net",
-  "static.hotjar.com",
-  "cdn.segment.com",
-  "api.fullstory.com",
-  "intercom.io",
-  "matomo.org",
-];
-
-const DEFAULT_TRACKING_KEYWORDS = [
-  "googletagmanager.com",
-  "google-analytics.com",
-  "facebook.net",
-  "hotjar.com",
-  "segment.com",
-  "intercom.io",
-  "fullstory.com",
-  "matomo.js",
-  "ads.js",
-];
+import { getBlockedHosts, getBlockedKeywords } from "../utils/tracker-utils";
 
 // Store original functions
 let originalXhrOpen: typeof XMLHttpRequest.prototype.open | null = null;
@@ -74,16 +53,6 @@ const blockTrackingRequests = (blockedHosts: string[]) => {
   };
 };
 
-const restoreOriginalRequests = () => {
-  if (originalXhrOpen) {
-    XMLHttpRequest.prototype.open = originalXhrOpen;
-  }
-  if (originalFetch) {
-    window.fetch = originalFetch;
-  }
-  console.log("[Cookie Consenter] Restored original XHR and fetch functions");
-};
-
 const blockTrackingScripts = (trackingKeywords: string[]) => {
   // Remove all script tags that match tracking domains
   document.querySelectorAll("script").forEach((script) => {
@@ -121,6 +90,16 @@ const blockTrackingScripts = (trackingKeywords: string[]) => {
     subtree: true,
   });
   return observer;
+};
+
+const restoreOriginalRequests = () => {
+  if (originalXhrOpen) {
+    XMLHttpRequest.prototype.open = originalXhrOpen;
+  }
+  if (originalFetch) {
+    window.fetch = originalFetch;
+  }
+  console.log("[Cookie Consenter] Restored original XHR and fetch functions");
 };
 
 interface CookieConsentContextValue {
@@ -190,31 +169,40 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
 
     // Handle tracking blocking
     if (experimentallyBlockTracking) {
-      if (hasConsent === true) {
-        // Restore original functions when consent is given
+      // Get current preferences
+      const currentPreferences = detailedConsent
+        ? {
+            Analytics: detailedConsent.Analytics.consented,
+            Social: detailedConsent.Social.consented,
+            Advertising: detailedConsent.Advertising.consented,
+          }
+        : null;
+
+      // Get blocked hosts and keywords based on preferences
+      const blockedHosts = [
+        ...getBlockedHosts(currentPreferences),
+        ...experimentalBlockedDomains,
+      ];
+      const blockedKeywords = [
+        ...getBlockedKeywords(currentPreferences),
+        ...experimentalBlockedDomains,
+      ];
+
+      if (blockedHosts.length > 0) {
+        console.log("[Cookie Consenter] Blocking tracking with:", {
+          blockedHosts,
+          blockedKeywords,
+        });
+
+        blockTrackingRequests(blockedHosts);
+        observerRef.current = blockTrackingScripts(blockedKeywords);
+      } else {
+        // If no hosts are blocked, restore original functions
         restoreOriginalRequests();
         if (observerRef.current) {
           observerRef.current.disconnect();
           observerRef.current = null;
         }
-      } else {
-        // Block tracking when no consent or declined
-        const allBlockedHosts = [
-          ...DEFAULT_BLOCKED_HOSTS,
-          ...experimentalBlockedDomains,
-        ];
-        const allTrackingKeywords = [
-          ...DEFAULT_TRACKING_KEYWORDS,
-          ...experimentalBlockedDomains,
-        ];
-
-        console.log("[Cookie Consenter] Blocking tracking with:", {
-          allBlockedHosts,
-          allTrackingKeywords,
-        });
-
-        blockTrackingRequests(allBlockedHosts);
-        observerRef.current = blockTrackingScripts(allTrackingKeywords);
       }
     }
 
