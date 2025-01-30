@@ -5,6 +5,11 @@ import dts from "vite-plugin-dts";
 
 export default defineConfig({
   plugins: [react(), dts({ include: ["src"] })],
+  css: {
+    modules: {
+      generateScopedName: "[name]__[local]___[hash:base64:5]",
+    },
+  },
   build: {
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
@@ -15,9 +20,8 @@ export default defineConfig({
     rollupOptions: {
       external: ["react", "react/jsx-runtime"],
       output: {
-        assetFileNames: "index.[ext]",
+        assetFileNames: "style.css",
       },
     },
-    cssCodeSplit: true,
   },
 });

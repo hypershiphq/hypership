@@ -22,11 +22,19 @@ npm install react-cookie-manager
 yarn add react-cookie-manager
 ```
 
+## Importing Styles
+
+The component requires its CSS file to be imported in your application. Add the following import to your app's entry point (e.g., `App.tsx` or `index.tsx`):
+
+```javascript
+import "react-cookie-manager/style.css";
+```
+
 ## Basic Usage
 
 ```jsx
 import { CookieManager } from "react-cookie-manager";
-import "react-cookie-manager/dist/index.css";
+import "react-cookie-manager/style.css";
 
 function App() {
   return (
@@ -47,7 +55,7 @@ function App() {
 
 ```jsx
 import { CookieManager } from "react-cookie-manager";
-import "react-cookie-manager/dist/index.css";
+import "react-cookie-manager/style.css";
 
 function App() {
   return (

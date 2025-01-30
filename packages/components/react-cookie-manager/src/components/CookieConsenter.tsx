@@ -182,6 +182,7 @@ const CookieConsenter: React.FC<CookieConsenterProps> = ({
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    console.log("🍪 React Cookie Manager Version:", "1.0.7");
     setTimeout(() => {
       setIsEntering(false);
     }, 50);
