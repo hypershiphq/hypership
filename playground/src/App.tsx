@@ -121,13 +121,13 @@ function App() {
     <CookieConsentProvider
       title="Cookie Preferences 🍪"
       message="We value your privacy. Choose which cookies you want to allow. Essential cookies are always enabled as they are necessary for the website to function properly."
-      buttonText="Accept Selected"
+      buttonText="Accept All"
       declineButtonText="Decline All"
       showManageButton={true}
       manageButtonText="Manage Preferences"
       privacyPolicyUrl="https://example.com/privacy"
       privacyPolicyText="Privacy Policy"
-      theme="dark"
+      theme="light"
       displayType="popup"
       experimentallyBlockTracking={true}
       onManage={(preferences) => {

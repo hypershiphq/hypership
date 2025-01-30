@@ -54,7 +54,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
     const status = detailedConsent[category];
     return (
       <p
-        className={`text-xs mt-1 ${theme === "light" ? "text-gray-400" : "text-gray-500"}`}
+        className={`text-xs mt-1 ${theme === "light" ? "text-gray-500" : "text-gray-500"}`}
       >
         Status: {status.consented ? "Consented" : "Declined"} on{" "}
         {formatDate(status.timestamp)}
@@ -88,18 +88,18 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
               Essential
             </h4>
             <p
-              className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
+              className={`text-xs ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}
             >
               Required for the website to function properly
             </p>
             <p
-              className={`text-xs mt-1 ${theme === "light" ? "text-gray-400" : "text-gray-500"}`}
+              className={`text-xs mt-1 ${theme === "light" ? "text-gray-500" : "text-gray-500"}`}
             >
               Status: Always enabled
             </p>
           </div>
           <div
-            className={`px-3 py-1 text-xs text-center font-medium rounded-full ${theme === "light" ? "bg-gray-100 text-gray-600" : "bg-gray-800 text-gray-300"}`}
+            className={`px-3 py-1 text-xs text-center font-medium rounded-full ${theme === "light" ? "bg-gray-200 text-gray-600" : "bg-gray-800 text-gray-300"}`}
           >
             Always On
           </div>
@@ -114,7 +114,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
               Analytics
             </h4>
             <p
-              className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
+              className={`text-xs ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}
             >
               Help us understand how visitors interact with our website
             </p>
@@ -150,7 +150,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
               Social
             </h4>
             <p
-              className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
+              className={`text-xs ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}
             >
               Enable social media features and sharing
             </p>
@@ -186,7 +186,7 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
               Advertising
             </h4>
             <p
-              className={`text-xs ${theme === "light" ? "text-gray-500" : "text-gray-400"}`}
+              className={`text-xs ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}
             >
               Personalize advertisements and measure their performance
             </p>

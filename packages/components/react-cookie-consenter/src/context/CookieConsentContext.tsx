@@ -11,6 +11,7 @@ import type {
   DetailedCookieConsent,
   CookieCategories,
 } from "../types/types";
+import { ManageConsent } from "../components/ManageConsent";
 
 const DEFAULT_BLOCKED_HOSTS = [
   "www.google-analytics.com",
@@ -161,7 +162,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   ...props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
-  const [isManaging, setIsManaging] = useState(false);
+  const [showManageConsent, setShowManageConsent] = useState(false);
   const [detailedConsent, setDetailedConsent] =
     useState<DetailedCookieConsent | null>(() => {
       const storedConsent = localStorage.getItem(cookieName);
@@ -231,7 +232,6 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
 
   const showConsentBanner = () => {
     console.log("showConsentBanner");
-    setIsManaging(false);
     setIsVisible(true);
   };
 
@@ -258,15 +258,20 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
     };
     localStorage.setItem(cookieName, JSON.stringify(newConsent));
     setDetailedConsent(newConsent);
-    setIsManaging(false);
-    setIsVisible(false);
+    setShowManageConsent(false);
   };
 
   const handleManage = () => {
-    setIsManaging(true);
+    setIsVisible(false);
+    setShowManageConsent(true);
     if (onManage) {
       onManage();
     }
+  };
+
+  const handleCancelManage = () => {
+    setShowManageConsent(false);
+    setIsVisible(true);
   };
 
   const value: CookieConsentContextValue = {
@@ -282,7 +287,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   return (
     <CookieConsentContext.Provider value={value}>
       {children}
-      {(isVisible || isManaging) && (
+      {isVisible && (
         <CookieConsenter
           {...props}
           cookieName={cookieName}
@@ -299,8 +304,30 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
                 }
               : undefined
           }
-          isManaging={isManaging}
         />
+      )}
+      {showManageConsent && (
+        <div className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
+          <div
+            className={`w-full max-w-lg rounded-xl p-6 ${props.theme === "light" ? "bg-white/95 ring-1 ring-black/10" : "bg-black/95 ring-1 ring-white/10"}`}
+          >
+            <ManageConsent
+              theme={props.theme}
+              onSave={updateDetailedConsent}
+              onCancel={handleCancelManage}
+              initialPreferences={
+                detailedConsent
+                  ? {
+                      Analytics: detailedConsent.Analytics.consented,
+                      Social: detailedConsent.Social.consented,
+                      Advertising: detailedConsent.Advertising.consented,
+                    }
+                  : undefined
+              }
+              detailedConsent={detailedConsent}
+            />
+          </div>
+        </div>
       )}
     </CookieConsentContext.Provider>
   );
