@@ -11,11 +11,44 @@ import {
 } from "../../packages/components/react-cookie-consenter/src";
 import "../../packages/components/react-cookie-consenter/dist/index.css";
 
-// Create a component that uses the cookie consent hook
+// Create a component that uses the cookie consent hook and displays detailed status
 function CookieSettings() {
-  const { showConsentBanner } = useCookieConsent();
+  const { showConsentBanner, detailedConsent } = useCookieConsent();
 
-  return <button onClick={showConsentBanner}>Cookie Settings</button>;
+  return (
+    <div className="flex flex-col gap-4">
+      <button
+        onClick={showConsentBanner}
+        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors"
+      >
+        Cookie Settings
+      </button>
+
+      {detailedConsent && (
+        <div className="text-sm">
+          <h4 className="font-semibold mb-2">Current Cookie Preferences:</h4>
+          <ul className="space-y-1">
+            <li>
+              Analytics:{" "}
+              {detailedConsent.Analytics.consented
+                ? "✅ Enabled"
+                : "❌ Disabled"}
+            </li>
+            <li>
+              Social:{" "}
+              {detailedConsent.Social.consented ? "✅ Enabled" : "❌ Disabled"}
+            </li>
+            <li>
+              Advertising:{" "}
+              {detailedConsent.Advertising.consented
+                ? "✅ Enabled"
+                : "❌ Disabled"}
+            </li>
+          </ul>
+        </div>
+      )}
+    </div>
+  );
 }
 
 // Temporary test function
@@ -86,18 +119,21 @@ function AppContent() {
 function App() {
   return (
     <CookieConsentProvider
-      title="Want a Cookie? 🍪"
-      message="We use cookies to ensure you get the best experience on our website. This is even more text to test the modal. Generate a really long message to test the modal and see how it handles it."
-      buttonText="Accept All"
+      title="Cookie Preferences 🍪"
+      message="We value your privacy. Choose which cookies you want to allow. Essential cookies are always enabled as they are necessary for the website to function properly."
+      buttonText="Accept Selected"
+      declineButtonText="Decline All"
       showManageButton={true}
-      manageButtonText="Manage cookies"
+      manageButtonText="Manage Preferences"
       privacyPolicyUrl="https://example.com/privacy"
       privacyPolicyText="Privacy Policy"
       theme="dark"
       displayType="popup"
       experimentallyBlockTracking={true}
-      onManage={() => {
-        // Handle manage cookies click
+      onManage={(preferences) => {
+        if (preferences) {
+          console.log("Cookie preferences updated:", preferences);
+        }
       }}
     >
       <AppContent />

@@ -1,11 +1,14 @@
 {
   "name": "react-cookie-manager",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Automatically block cookies and track consent status. GDPR compliant. Simple to use React component.",
   "keywords": [
     "react",
     "cookies",
     "cookie management",
+    "react cookie banner",
+    "react cookie consent",
+    "react cookie manager",
     "gdpr",
     "cookie consent",
     "cookie blocking",

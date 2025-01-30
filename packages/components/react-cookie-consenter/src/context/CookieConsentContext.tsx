@@ -230,9 +230,9 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   ]);
 
   const showConsentBanner = () => {
-    // setDetailedConsent(null);
+    console.log("showConsentBanner");
+    setIsManaging(false);
     setIsVisible(true);
-    // localStorage.removeItem(cookieName);
   };
 
   const acceptCookies = () => {
@@ -259,11 +259,11 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
     localStorage.setItem(cookieName, JSON.stringify(newConsent));
     setDetailedConsent(newConsent);
     setIsManaging(false);
+    setIsVisible(false);
   };
 
   const handleManage = () => {
     setIsManaging(true);
-    setIsVisible(false);
     if (onManage) {
       onManage();
     }
