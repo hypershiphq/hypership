@@ -10,6 +10,7 @@ import {
   useCookieConsent,
 } from "../../packages/components/react-cookie-manager/src";
 import "../../packages/components/react-cookie-manager/dist/index.css";
+import { CookieCategories } from "../../packages/components/react-cookie-manager/src/types/types";
 
 // Create a component that uses the cookie consent hook and displays detailed status
 function CookieSettings() {
@@ -129,8 +130,8 @@ function App() {
       privacyPolicyText="Privacy Policy"
       theme="light"
       displayType="popup"
-      experimentallyBlockTracking={true}
       onManage={(preferences) => {
+        console.log("Cookie preferences updated:", preferences);
         if (preferences) {
           console.log("Cookie preferences updated:", preferences);
         }

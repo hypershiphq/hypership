@@ -119,6 +119,10 @@ const CookieManagerContext = createContext<CookieConsentContextValue | null>(
 export interface CookieManagerProps
   extends Omit<CookieConsenterProps, "onAccept" | "onDecline" | "forceShow"> {
   children: React.ReactNode;
+  cookieName?: string;
+  onManage?: (preferences?: CookieCategories) => void;
+  disableAutomaticBlocking?: boolean;
+  blockedDomains?: string[];
 }
 
 const createConsentStatus = (consented: boolean) => ({
@@ -136,8 +140,8 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
   children,
   cookieName = "cookie-consent",
   onManage,
-  experimentallyBlockTracking = false,
-  experimentalBlockedDomains = [],
+  disableAutomaticBlocking = false,
+  blockedDomains = [],
   ...props
 }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -168,7 +172,7 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
     }
 
     // Handle tracking blocking
-    if (experimentallyBlockTracking) {
+    if (!disableAutomaticBlocking) {
       // Get current preferences
       const currentPreferences = detailedConsent
         ? {
@@ -181,11 +185,11 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
       // Get blocked hosts and keywords based on preferences
       const blockedHosts = [
         ...getBlockedHosts(currentPreferences),
-        ...experimentalBlockedDomains,
+        ...blockedDomains,
       ];
       const blockedKeywords = [
         ...getBlockedKeywords(currentPreferences),
-        ...experimentalBlockedDomains,
+        ...blockedDomains,
       ];
 
       if (blockedHosts.length > 0) {
@@ -204,6 +208,13 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
           observerRef.current = null;
         }
       }
+    } else {
+      // If blocking is disabled, restore original functions
+      restoreOriginalRequests();
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+        observerRef.current = null;
+      }
     }
 
     return () => {
@@ -212,14 +223,9 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
         observerRef.current.disconnect();
       }
     };
-  }, [
-    detailedConsent,
-    experimentallyBlockTracking,
-    experimentalBlockedDomains,
-  ]);
+  }, [detailedConsent, disableAutomaticBlocking, blockedDomains]);
 
   const showConsentBanner = () => {
-    console.log("showConsentBanner");
     setIsVisible(true);
   };
 
@@ -247,13 +253,20 @@ export const CookieManager: React.FC<CookieManagerProps> = ({
     localStorage.setItem(cookieName, JSON.stringify(newConsent));
     setDetailedConsent(newConsent);
     setShowManageConsent(false);
+    if (onManage) {
+      onManage(preferences);
+    }
   };
 
   const handleManage = () => {
     setIsVisible(false);
     setShowManageConsent(true);
-    if (onManage) {
-      onManage();
+    if (onManage && detailedConsent) {
+      onManage({
+        Analytics: detailedConsent.Analytics.consented,
+        Social: detailedConsent.Social.consented,
+        Advertising: detailedConsent.Advertising.consented,
+      });
     }
   };
 

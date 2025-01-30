@@ -215,12 +215,6 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
       </div>
 
       <div className="flex gap-3 mt-2">
-        <button
-          onClick={handleSave}
-          className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:scale-105"
-        >
-          Save Preferences
-        </button>
         {onCancel && (
           <button
             onClick={onCancel}
@@ -233,6 +227,12 @@ export const ManageConsent: React.FC<ManageConsentProps> = ({
             Cancel
           </button>
         )}
+        <button
+          onClick={handleSave}
+          className="flex-1 px-3 py-1.5 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 hover:scale-105"
+        >
+          Save Preferences
+        </button>
       </div>
     </div>
   );
