@@ -1,4 +1,4 @@
-# React Cookie Consenter
+# React Cookie Manager
 
 A lightweight, customizable React component for cookie consent management. This component provides a clean and user-friendly way to obtain cookie consent from your website visitors.
 
@@ -14,15 +14,15 @@ A lightweight, customizable React component for cookie consent management. This 
 ## Installation
 
 ```bash
-npm install @hypership/react-cookie-consenter
+npm install @hypership/react-cookie-manager
 # or
-yarn add @hypership/react-cookie-consenter
+yarn add @hypership/react-cookie-manager
 ```
 
 ## Usage
 
 ```jsx
-import { ReactCookieConsenter } from "@hypership/react-cookie-consenter";
+import { ReactCookieConsenter } from "react-cookie-manager";
 
 function App() {
   return (

@@ -112,7 +112,7 @@ interface CookieConsentContextValue {
   updateDetailedConsent: (preferences: CookieCategories) => void;
 }
 
-const CookieConsentContext = createContext<CookieConsentContextValue | null>(
+const CookieManagerContext = createContext<CookieConsentContextValue | null>(
   null
 );
 
@@ -273,7 +273,7 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
   };
 
   return (
-    <CookieConsentContext.Provider value={value}>
+    <CookieManagerContext.Provider value={value}>
       {children}
       {isVisible && (
         <CookieConsenter
@@ -317,12 +317,12 @@ export const CookieConsentProvider: React.FC<CookieConsentProviderProps> = ({
           </div>
         </div>
       )}
-    </CookieConsentContext.Provider>
+    </CookieManagerContext.Provider>
   );
 };
 
 export const useCookieConsent = () => {
-  const context = useContext(CookieConsentContext);
+  const context = useContext(CookieManagerContext);
   if (!context) {
     throw new Error(
       "useCookieConsent must be used within a CookieConsentProvider"

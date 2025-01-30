@@ -8,8 +8,8 @@ import { useEffect } from "react";
 import {
   CookieConsentProvider,
   useCookieConsent,
-} from "../../packages/components/react-cookie-consenter/src";
-import "../../packages/components/react-cookie-consenter/dist/index.css";
+} from "../../packages/components/react-cookie-manager/src";
+import "../../packages/components/react-cookie-manager/dist/index.css";
 
 // Create a component that uses the cookie consent hook and displays detailed status
 function CookieSettings() {
@@ -119,12 +119,12 @@ function AppContent() {
 function App() {
   return (
     <CookieConsentProvider
-      title="Cookie Preferences 🍪"
+      title="Would You Like A Cookie? 🍪"
       message="We value your privacy. Choose which cookies you want to allow. Essential cookies are always enabled as they are necessary for the website to function properly."
       buttonText="Accept All"
       declineButtonText="Decline All"
       showManageButton={true}
-      manageButtonText="Manage Preferences"
+      manageButtonText="Manage Cookies"
       privacyPolicyUrl="https://example.com/privacy"
       privacyPolicyText="Privacy Policy"
       theme="light"
