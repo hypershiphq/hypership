@@ -29,12 +29,6 @@ export const deployStaticWebsite = async (
     return;
   }
 
-  const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
-    ? path.join(staticWebsitePath, "dist")
-    : fs.existsSync(path.join(staticWebsitePath, "build"))
-      ? path.join(staticWebsitePath, "build")
-      : path.join(staticWebsitePath, ".open-next");
-
   try {
     // Install dependencies
     await new Promise((resolve, reject) => {
@@ -56,6 +50,21 @@ export const deployStaticWebsite = async (
           ? `NODE_ENV=production npx --yes open-next build`
           : "NODE_ENV=production npm run build";
 
+      // Create open-next.config.js
+      fs.writeFileSync(
+        path.join(staticWebsitePath, "open-next.config.ts"),
+        `const config = {
+          default: {
+            minify: true,
+          },
+          dangerous: {
+            disableTagCache: true,
+            disableIncrementalCache: true,
+          } 
+        }
+        export default config;`
+      );
+
       exec(
         `cd ${staticWebsitePath} && ${buildCommand}`,
         (error, stdout, stderr) => {
@@ -68,6 +77,12 @@ export const deployStaticWebsite = async (
         }
       );
     });
+
+    const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
+    ? path.join(staticWebsitePath, "dist")
+    : fs.existsSync(path.join(staticWebsitePath, "build"))
+      ? path.join(staticWebsitePath, "build")
+      : path.join(staticWebsitePath, ".open-next");
 
     if (!fs.existsSync(distPath)) {
       throw new Error(
@@ -113,6 +128,7 @@ export const deployStaticWebsite = async (
     // Clean up
     await fs.promises.unlink(zipPath);
     await fs.promises.rm(distPath, { recursive: true });
+    await fs.promises.rm(path.join(staticWebsitePath, "open-next.config.ts"));
 
     if (framework === "next") {
       await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
@@ -127,6 +143,7 @@ export const deployStaticWebsite = async (
     // Clean up build directories
     await fs.promises.rm(distPath, { recursive: true, force: true });
     if (framework === "next") {
+      await fs.promises.rm(path.join(staticWebsitePath, "open-next.config.ts"));
       await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
         recursive: true,
         force: true,
