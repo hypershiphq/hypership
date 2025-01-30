@@ -94,7 +94,7 @@ function App() {
       privacyPolicyUrl="https://example.com/privacy"
       privacyPolicyText="Privacy Policy"
       theme="dark"
-      displayType="modal"
+      displayType="popup"
       experimentallyBlockTracking={true}
       onManage={() => {
         // Handle manage cookies click
