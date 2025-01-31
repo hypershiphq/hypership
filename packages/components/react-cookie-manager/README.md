@@ -6,7 +6,6 @@ A powerful, customizable React component for cookie consent management with buil
 
 ## Features
 
-- 🇪🇺 GDPR Compliant – Ensures full compliance with EU regulations
 - 🌐 Multiple display types (banner, popup, modal)
 - 🛡️ Automatic tracking prevention (Google Analytics, etc.)
 - 🎯 Granular cookie category controls (Analytics, Social, Advertising)
@@ -15,6 +14,13 @@ A powerful, customizable React component for cookie consent management with buil
 - 🔧 Highly customizable UI
 - 💾 Persistent consent storage
 - 🔒 Privacy-first approach
+- 🇪🇺 Note: Full GDPR compliance requires you to store user consent in your own database.
+
+## 🎮 Try it out!
+
+### [🔗 Live Demo](https://react-cookie-manager.hypership.dev/)
+
+See React Cookie Manager in action and explore all its features in our interactive demo.
 
 ## Automatically Disable Tracking
 
@@ -101,10 +107,7 @@ function App() {
 ## Advanced Usage with Hook
 
 ```jsx
-import {
-  CookieManager,
-  useCookieConsent,
-} from "@hypership/react-cookie-manager";
+import { CookieManager, useCookieConsent } from "react-cookie-manager";
 
 function CookieSettings() {
   const { showConsentBanner, detailedConsent } = useCookieConsent();
