@@ -47,11 +47,15 @@ export const deployStaticWebsite = async (
 
     // Remove .open-next & .next directory
     if (fs.existsSync(path.join(staticWebsitePath, ".open-next"))) {
-      await fs.promises.rm(path.join(staticWebsitePath, ".open-next"));
+      await fs.promises.rm(path.join(staticWebsitePath, ".open-next"), {
+        recursive: true,
+      });
     }
 
     if (fs.existsSync(path.join(staticWebsitePath, ".next"))) {
-      await fs.promises.rm(path.join(staticWebsitePath, ".next"));
+      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
+        recursive: true,
+      });
     }
 
     // Build
