@@ -5,6 +5,8 @@ import fs from "fs";
 import path from "path";
 import type { Ora } from "ora";
 
+import { pollDeploymentStatus } from "./deploymentStatus.js";
+
 export const deployStaticWebsite = async (
   preSignedUrl: string,
   deploymentId: string,
@@ -42,6 +44,15 @@ export const deployStaticWebsite = async (
     });
 
     spinner.text = "Building (this may take a couple of minutes)";
+
+    // Remove .open-next & .next directory
+    if (fs.existsSync(path.join(staticWebsitePath, ".open-next"))) {
+      await fs.promises.rm(path.join(staticWebsitePath, ".open-next"));
+    }
+
+    if (fs.existsSync(path.join(staticWebsitePath, ".next"))) {
+      await fs.promises.rm(path.join(staticWebsitePath, ".next"));
+    }
 
     // Build
     await new Promise((resolve, reject) => {
@@ -136,10 +147,15 @@ export const deployStaticWebsite = async (
       });
     }
 
+    // Poll for deployment status
+    const status = await pollDeploymentStatus(deploymentId);
+
+    if (status === "failed") {
+      throw new Error("Failed to deploy static website");
+    }
+
     spinner.text = "Deployed successfully";
   } catch (error) {
-    console.log(error);
-
     // Clean up build directories
     await fs.promises.rm(distPath, { recursive: true, force: true });
     if (framework === "next") {
