@@ -107,7 +107,12 @@ export const initProject = async (projectId: string) => {
     await createHypershipConfig(projectDetails?.id, project);
 
     // Create .env file
-    await createEnvFile(authToken, projectDetails?.id, project);
+    await createEnvFile(
+      authToken,
+      projectDetails?.id,
+      project,
+      projectDetails?.framework
+    );
 
     // Install dependencies
     await installDependencies(project);
