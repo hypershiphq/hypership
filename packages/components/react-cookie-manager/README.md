@@ -1,10 +1,11 @@
-# React Cookie Manager
+# 🍪 React Cookie Manager
 
 A powerful, customizable React component for cookie consent management with built-in tracking prevention. This component provides a modern, user-friendly way to obtain and manage cookie consent from your website visitors.
 
+![React Cookie Manager Demo](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/react-cookie-manager.gif)
+
 ## Features
 
-- 🇪🇺 GDPR Compliant – Ensures full compliance with EU regulations
 - 🌐 Multiple display types (banner, popup, modal)
 - 🛡️ Automatic tracking prevention (Google Analytics, etc.)
 - 🎯 Granular cookie category controls (Analytics, Social, Advertising)
@@ -13,6 +14,17 @@ A powerful, customizable React component for cookie consent management with buil
 - 🔧 Highly customizable UI
 - 💾 Persistent consent storage
 - 🔒 Privacy-first approach
+- 🇪🇺 Note: Full GDPR compliance requires you to store user consent in your own database.
+
+## 🎮 Try it out!
+
+### [🔗 Live Demo](https://react-cookie-manager.hypership.dev/)
+
+See React Cookie Manager in action and explore all its features in our interactive demo.
+
+## Automatically Disable Tracking
+
+Unlike other cookie consent managers and React components, this component automatically disables tracking for Google Analytics, Facebook Pixel, and other tracking services. This is done by blocking the tracking scripts from loading. Therefore, you don't need to manually disable tracking, saving you hours of work.
 
 ## Installation
 
@@ -29,6 +41,16 @@ The component requires its CSS file to be imported in your application. Add the 
 ```javascript
 import "react-cookie-manager/style.css";
 ```
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/modal.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/popup.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/popup-dark.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/banner.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/manage-cookies.png)
 
 ## Basic Usage
 
@@ -85,10 +107,7 @@ function App() {
 ## Advanced Usage with Hook
 
 ```jsx
-import {
-  CookieManager,
-  useCookieConsent,
-} from "@hypership/react-cookie-manager";
+import { CookieManager, useCookieConsent } from "react-cookie-manager";
 
 function CookieSettings() {
   const { showConsentBanner, detailedConsent } = useCookieConsent();
