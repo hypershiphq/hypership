@@ -1,6 +1,8 @@
-# React Cookie Manager
+# 🍪 React Cookie Manager
 
 A powerful, customizable React component for cookie consent management with built-in tracking prevention. This component provides a modern, user-friendly way to obtain and manage cookie consent from your website visitors.
+
+![React Cookie Manager Demo](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/react-cookie-manager.gif)
 
 ## Features
 
@@ -13,6 +15,10 @@ A powerful, customizable React component for cookie consent management with buil
 - 🔧 Highly customizable UI
 - 💾 Persistent consent storage
 - 🔒 Privacy-first approach
+
+## Automatically Disable Tracking
+
+Unlike other cookie consent managers and React components, this component automatically disables tracking for Google Analytics, Facebook Pixel, and other tracking services. This is done by blocking the tracking scripts from loading. Therefore, you don't need to manually disable tracking, saving you hours of work.
 
 ## Installation
 
@@ -29,6 +35,16 @@ The component requires its CSS file to be imported in your application. Add the 
 ```javascript
 import "react-cookie-manager/style.css";
 ```
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/modal.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/popup.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/popup-dark.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/banner.png)
+
+![React Cookie Manager Modal](https://raw.githubusercontent.com/hypershiphq/hypership/main/packages/components/react-cookie-manager/assets/manage-cookies.png)
 
 ## Basic Usage
 
