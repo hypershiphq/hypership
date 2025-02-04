@@ -6,8 +6,8 @@ import { HypershipClient } from "../client.js";
 export const createEnvFile = async (
   authToken: string,
   projectId: string,
-  project: { name: string; },
-  framework: string,
+  project: { name: string },
+  framework: string
 ) => {
   try {
     const rootDirectory = process.cwd();
@@ -18,7 +18,7 @@ export const createEnvFile = async (
       `/projects/keys?projectId=${projectId}`,
       {
         headers: { Authorization: `Bearer ${authToken}` },
-      },
+      }
     );
 
     const publicKey = response?.data?.publicKey;
