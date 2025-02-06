@@ -6,8 +6,11 @@ import path from "path";
 import type { Ora } from "ora";
 
 import { pollDeploymentStatus } from "./deploymentStatus.js";
+import { HypershipClient } from "../client.js";
 
 export const deployStaticWebsite = async (
+  authToken: string,
+  projectId: string,
   preSignedUrl: string,
   deploymentId: string,
   framework: string,
@@ -58,12 +61,30 @@ export const deployStaticWebsite = async (
       });
     }
 
+    // Env vars
+    const hypershipClient = new HypershipClient();
+    const response = await hypershipClient.get(
+      `/projects/envVars?projectId=${projectId}`,
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
+
+    const envVars = response?.data?.envVars;
+    if (!envVars) {
+      throw new Error("Failed to retrieve environment variables");
+    }
+
+    const envVarsString = Object.entries(envVars)
+      .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+      .join(" ");
+
     // Build
     await new Promise((resolve, reject) => {
       const buildCommand =
         framework === "next" || framework === "next-static"
-          ? `NODE_ENV=production npx --yes open-next build`
-          : "NODE_ENV=production npm run build";
+          ? `npx cross-env NODE_ENV=production ${envVarsString} npx --yes open-next build`
+          : `npx cross-env NODE_ENV=production ${envVarsString} npm run build`;
 
       // Create open-next.config.js
       fs.writeFileSync(
@@ -94,10 +115,10 @@ export const deployStaticWebsite = async (
     });
 
     const distPath = fs.existsSync(path.join(staticWebsitePath, "dist"))
-    ? path.join(staticWebsitePath, "dist")
-    : fs.existsSync(path.join(staticWebsitePath, "build"))
-      ? path.join(staticWebsitePath, "build")
-      : path.join(staticWebsitePath, ".open-next");
+      ? path.join(staticWebsitePath, "dist")
+      : fs.existsSync(path.join(staticWebsitePath, "build"))
+        ? path.join(staticWebsitePath, "build")
+        : path.join(staticWebsitePath, ".open-next");
 
     if (!fs.existsSync(distPath)) {
       throw new Error(

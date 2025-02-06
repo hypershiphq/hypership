@@ -62,6 +62,8 @@ export const deployProject = async () => {
 
     // Deploy static website
     await deployStaticWebsite(
+      authToken,
+      projectId,
       preSignedUrl,
       deploymentId,
       projectDetails?.framework,
@@ -70,9 +72,10 @@ export const deployProject = async () => {
 
     await setTimeout(1000);
     spinner.succeed("Hypership Project Deployed");
-    console.log(
-      `\n🔗 Your Hypership Project: \nhttps://${projectDetails?.slug}.hypership.dev \n`
-    );
+    const projectUrl = projectDetails?.customDomain
+      ? `https://${projectDetails.customDomain}`
+      : `https://${projectDetails?.slug}.hypership.dev`;
+    console.log(`\n🔗 Your Hypership Project: \n${projectUrl} \n`);
   } catch (error) {
     const message = error instanceof Error ? error.message : "default";
 
