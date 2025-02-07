@@ -105,7 +105,6 @@ export const deployStaticWebsite = async (
         `cd ${staticWebsitePath} && ${buildCommand}`,
         (error, stdout, stderr) => {
           if (error) {
-            console.log(error);
             reject(new Error("Failed to build the project"));
           } else {
             resolve(stdout);
