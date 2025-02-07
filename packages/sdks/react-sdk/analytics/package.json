@@ -1,6 +1,6 @@
 {
   "name": "@hypership/analytics-react",
-  "version": "0.0.4",
+  "version": "0.0.8",
   "description": "Hypership Analytics React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

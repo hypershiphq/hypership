@@ -20,22 +20,33 @@ export const SignIn: React.FC<SignInProps> = ({
     useHypershipAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (error === "Please confirm your email address before signing in.") {
+      onAccountConfirmationRequired && onAccountConfirmationRequired(email);
+    }
+  }, [error, email, onAccountConfirmationRequired]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!email) {
+      setErrorMessage("Please enter your email address.");
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage("Please enter your password.");
+      return;
+    }
+
     try {
       await signIn(email, password);
-      if (isAuthenticated) {
-        onSignInSuccess();
-      }
+      onSignInSuccess();
+      setErrorMessage(null);
     } catch (err: any) {
-      if (
-        err?.error?.code === "SIGN_IN_FAILED" &&
-        err?.error?.message === "User is not confirmed."
-      ) {
-        // Trigger the function prop to handle unconfirmed users
-        onAccountConfirmationRequired && onAccountConfirmationRequired(email);
-      }
+      // Error handling is already done in the auth context
     }
   };
 
