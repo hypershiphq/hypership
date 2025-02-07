@@ -7,6 +7,7 @@ export const createEnvFile = async (
   authToken: string,
   projectId: string,
   project: { name: string },
+  framework: string
 ) => {
   try {
     const rootDirectory = process.cwd();
@@ -17,7 +18,7 @@ export const createEnvFile = async (
       `/projects/keys?projectId=${projectId}`,
       {
         headers: { Authorization: `Bearer ${authToken}` },
-      },
+      }
     );
 
     const publicKey = response?.data?.publicKey;
@@ -25,7 +26,13 @@ export const createEnvFile = async (
       throw new Error("Failed to retrieve Public Key");
     }
 
-    const envFileContent = `VITE_HYPERSHIP_PUBLIC_KEY=${publicKey}`;
+    let envFileContent = "";
+
+    if (framework === "react") {
+      envFileContent = `VITE_HYPERSHIP_PUBLIC_KEY=${publicKey}`;
+    } else if (framework === "next") {
+      envFileContent = `NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY=${publicKey}`;
+    }
 
     await fs.promises.writeFile(envFilePath, envFileContent);
   } catch (error: unknown) {
