@@ -1,6 +1,6 @@
 # Hypership CLI
 
-![GitHub Hero Banner](/public/assets/images/github-hero-banner.png)
+![GitHub Hero Banner](https://raw.githubusercontent.com/hypershiphq/hypership/main/public/assets/images/github-hero-banner.png)
 
 <div align="center">
   <p>

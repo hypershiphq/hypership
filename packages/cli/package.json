@@ -1,6 +1,6 @@
 {
   "name": "hypership",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CLI for Hypership",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,11 @@
     "build": "vite build",
     "dev": "vite build && npm link --force && chmod +x ./dist/index.js"
   },
-  "keywords": [],
+  "keywords": [
+    "hypership",
+    "cli",
+    "hypershiphq"
+  ],
   "type": "module",
   "author": "Hypership",
   "license": "ISC",
@@ -46,5 +50,13 @@
     "picocolors": "^1.1.1",
     "update-check": "^1.5.4",
     "xdg-app-paths": "5.1.0"
+  },
+  "homepage": "https://hypership.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hypershiphq/hypership"
+  },
+  "bugs": {
+    "url": "https://github.com/hypershiphq/hypership/issues"
   }
 }
