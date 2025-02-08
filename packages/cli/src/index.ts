@@ -2,6 +2,7 @@ import { program } from "commander";
 import color from "picocolors";
 import * as readline from "readline";
 import { Writable } from "stream";
+import pkg from "../package.json" assert { type: "json" };
 
 import { authenticate } from "./commands/authenticate/index.js";
 import { logout } from "./commands/logout/index.js";
@@ -27,7 +28,7 @@ rl.on("SIGINT", () => {
 program
   .name("hypership")
   .description("CLI for Hypership platform")
-  .version("1.0.0");
+  .version(pkg.version);
 
 program
   .command("authenticate [cliKey]")
