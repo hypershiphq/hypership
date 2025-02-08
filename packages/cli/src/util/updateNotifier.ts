@@ -4,12 +4,13 @@ import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
 let updateInfo: any | null = null;
+let packageJson: any;
 
 export const checkForUpdates = async () => {
   if (!updateInfo) {
     const __dirname = dirname(fileURLToPath(import.meta.url));
     const packageJsonPath = join(__dirname, "..", "package.json");
-    const packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
+    packageJson = JSON.parse(readFileSync(packageJsonPath, "utf8"));
     try {
       updateInfo = await checkForUpdate(packageJson);
     } catch (err) {
