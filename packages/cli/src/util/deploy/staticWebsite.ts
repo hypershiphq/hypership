@@ -39,6 +39,7 @@ export const deployStaticWebsite = async (
     await new Promise((resolve, reject) => {
       exec(`cd ${staticWebsitePath} && npm i`, (error, stdout, stderr) => {
         if (error) {
+          console.log("\n\nError installing dependencies:", stderr);
           reject(new Error("Failed to install dependencies"));
         } else {
           resolve(stdout);
@@ -56,9 +57,16 @@ export const deployStaticWebsite = async (
     }
 
     if (fs.existsSync(path.join(staticWebsitePath, ".next"))) {
-      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
-        recursive: true,
-      });
+      const nextDir = path.join(staticWebsitePath, ".next");
+      const files = await fs.promises.readdir(nextDir);
+      for (const file of files) {
+        if (file !== "app-build-manifest.json") {
+          await fs.promises.rm(path.join(nextDir, file), {
+            recursive: true,
+            force: true,
+          });
+        }
+      }
     }
 
     // Env vars
@@ -105,6 +113,14 @@ export const deployStaticWebsite = async (
         `cd ${staticWebsitePath} && ${buildCommand}`,
         (error, stdout, stderr) => {
           if (error) {
+            const filteredStderr = stderr
+              .split('\n')
+              .filter(line => !line.includes("WARN You've disabled incremental cache.") && 
+                              !line.includes("WARN You've disabled tag cache.") && 
+                              !line.includes("It is safe to disable if you only use page router") &&
+                              !line.includes("This means that revalidatePath and revalidateTag from next/cache will not work."))
+              .join('\n');
+            console.error("\n\nError during build:", filteredStderr);
             reject(new Error("Failed to build the project"));
           } else {
             resolve(stdout);
@@ -166,9 +182,16 @@ export const deployStaticWebsite = async (
     await fs.promises.rm(path.join(staticWebsitePath, "open-next.config.ts"));
 
     if (framework === "next") {
-      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
-        recursive: true,
-      });
+      const nextDir = path.join(staticWebsitePath, ".next");
+      const files = await fs.promises.readdir(nextDir);
+      for (const file of files) {
+        if (file !== "app-build-manifest.json") {
+          await fs.promises.rm(path.join(nextDir, file), {
+            recursive: true,
+            force: true,
+          });
+        }
+      }
     }
 
     // Poll for deployment status
@@ -184,10 +207,16 @@ export const deployStaticWebsite = async (
     await fs.promises.rm(distPath, { recursive: true, force: true });
     if (framework === "next") {
       await fs.promises.rm(path.join(staticWebsitePath, "open-next.config.ts"));
-      await fs.promises.rm(path.join(staticWebsitePath, ".next"), {
-        recursive: true,
-        force: true,
-      });
+      const nextDir = path.join(staticWebsitePath, ".next");
+      const files = await fs.promises.readdir(nextDir);
+      for (const file of files) {
+        if (file !== "app-build-manifest.json") {
+          await fs.promises.rm(path.join(nextDir, file), {
+            recursive: true,
+            force: true,
+          });
+        }
+      }
     }
 
     if (
