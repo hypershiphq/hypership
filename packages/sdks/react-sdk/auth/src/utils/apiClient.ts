@@ -4,6 +4,72 @@ const BASE_URL = "https://backend.hypership.dev/v1";
 // Flag to track if token refresh is in progress
 let isRefreshing = false;
 
+/**
+ * Gets the access token from localStorage
+ */
+const getAccessToken = () => {
+  if (typeof window === "undefined") return null; // Skip on server-side
+
+  const token = localStorage.getItem("accessToken");
+  console.debug(
+    "[Hypership Auth] 🔑 Retrieved access token:",
+    token ? "Present" : "Not found"
+  );
+  return token;
+};
+
+// Setup fetch interceptor if we're in a browser environment
+if (typeof window !== "undefined") {
+  console.debug("[Hypership Auth] 🎯 Initializing fetch interceptor");
+  const originalFetch = window.fetch;
+
+  window.fetch = async (url: RequestInfo | URL, options: RequestInit = {}) => {
+    const token = getAccessToken();
+
+    console.debug("[Hypership Auth] 🌐 Intercepted request:", {
+      url: url.toString(),
+      originalHeaders: options.headers,
+      hasToken: !!token,
+    });
+
+    const headers = {
+      ...options.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      "Content-Type": "application/json",
+    };
+
+    console.debug("[Hypership Auth] ✨ Modified headers:", {
+      url: url.toString(),
+      finalHeaders: headers,
+    });
+
+    const modifiedOptions: RequestInit = {
+      ...options,
+      headers,
+      credentials: "include" as RequestCredentials,
+    };
+
+    try {
+      const response = await originalFetch(url, modifiedOptions);
+      console.debug("[Hypership Auth] ✅ Request completed:", {
+        url: url.toString(),
+        status: response.status,
+        ok: response.ok,
+      });
+      return response;
+    } catch (error: unknown) {
+      console.error("[Hypership Auth] ❌ Request failed:", {
+        url: url.toString(),
+        error: error instanceof Error ? error.message : String(error),
+      });
+      throw error;
+    }
+  };
+  console.debug(
+    "[Hypership Auth] 🚀 Fetch interceptor initialized successfully"
+  );
+}
+
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
   const headers: Record<string, string> = {
@@ -11,15 +77,18 @@ const getHeaders = (url?: string) => {
   };
 
   const publicKey = localStorage.getItem("hs-public-key");
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = getAccessToken();
+  const refreshToken = localStorage.getItem("refreshToken");
 
   if (publicKey) {
     headers["hs-public-key"] = publicKey;
   }
 
-  // Skip adding access token for refresh token requests
+  // Add access token to all requests except refresh
   if (accessToken && !url?.includes("/auth/refresh")) {
     headers["Authorization"] = `Bearer ${accessToken}`;
+  } else if (refreshToken && url?.includes("/auth/refresh")) {
+    headers["Authorization"] = `Bearer ${refreshToken}`;
   }
 
   return headers;
@@ -36,6 +105,7 @@ const handleTokenRefresh = async () => {
   }
 
   isRefreshing = true;
+
   try {
     const refreshToken = localStorage.getItem("refreshToken");
     if (!refreshToken) {

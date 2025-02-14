@@ -1,6 +1,6 @@
 {
   "name": "@hypership/auth-react",
-  "version": "0.0.25",
+  "version": "0.0.43",
   "description": "Hypership Auth React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -30,7 +30,9 @@
         "default": "./dist/server.js"
       }
     },
-    "./style": "./dist/style.css"
+    "./style.css": {
+      "default": "./dist/style.css"
+    }
   },
   "scripts": {
     "build": "vite build",
@@ -41,7 +43,6 @@
   "author": "Hypership",
   "license": "ISC",
   "devDependencies": {
-    "@types/jsonwebtoken": "^9.0.0",
     "@types/node": "^20.14.8",
     "@types/react": "^18.0.0",
     "@vitejs/plugin-react": "^4.3.4",
@@ -59,7 +60,6 @@
     "react-router-dom": ">=6.0.0"
   },
   "dependencies": {
-    "jsonwebtoken": "^9.0.0",
     "react-otp-input": "^3.1.1"
   }
 }
