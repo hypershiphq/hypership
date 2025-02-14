@@ -1,6 +1,6 @@
 {
   "name": "@hypership/auth-react",
-  "version": "0.0.43",
+  "version": "0.0.57",
   "description": "Hypership Auth React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -30,9 +30,7 @@
         "default": "./dist/server.js"
       }
     },
-    "./style.css": {
-      "default": "./dist/style.css"
-    }
+    "./style": "./dist/style.css"
   },
   "scripts": {
     "build": "vite build",
@@ -60,6 +58,7 @@
     "react-router-dom": ">=6.0.0"
   },
   "dependencies": {
+    "jose": "^5.9.6",
     "react-otp-input": "^3.1.1"
   }
 }

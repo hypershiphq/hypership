@@ -71,7 +71,7 @@ import { useHypershipAuth } from "@hypership/auth-react";
 
 function YourComponent() {
   const {
-    user,
+    currentUser,
     isAuthenticated,
     signIn,
     signUp,
@@ -88,6 +88,7 @@ function YourComponent() {
 ## Available Components
 
 - `AuthFlow`: Complete authentication flow UI
+- `AuthFlowPage`: Complete authentication flow UI with a page
 - `SignIn`: Standalone sign-in component
 - `SignUp`: Standalone sign-up component
 - `PasswordReset`: Password reset flow
@@ -99,9 +100,42 @@ function YourComponent() {
 The SDK supports both light and dark themes out of the box:
 
 ```jsx
-<HypershipAuthProvider apiKey="your-api-key" theme="dark">
+<HypershipAuthProvider apiKey="your-hypership-public-key" theme="dark">
   <YourApp />
 </HypershipAuthProvider>
+```
+
+## Styling
+
+To include the default styles in your application, import the CSS file:
+
+```jsx
+import "@hypership/auth-react/style";
+```
+
+## Using Current User Data
+
+You can access the current user's information using the `useHypershipAuth` hook:
+
+```jsx
+import { useHypershipAuth } from "@hypership/auth-react";
+
+function Component() {
+  const { currentUser } = useHypershipAuth();
+
+  return (
+    <>
+      <div>ID: {currentUser?.id}</div>
+      <div>Username: {currentUser?.username}</div>
+      <div>First Name: {currentUser?.firstName}</div>
+      <div>Last Name: {currentUser?.lastName}</div>
+      <div>Enabled: {currentUser?.enabled}</div>
+      <div>Metadata: {currentUser?.metadata}</div>
+    </>
+  );
+}
+
+export default Component;
 ```
 
 ## API Reference
@@ -120,7 +154,7 @@ Returns an object with:
 
 - Authentication State:
 
-  - `user`: Current user object or null
+  - `currentUser`: Current user object or null
   - `isAuthenticated`: Boolean indicating auth status
   - `error`: Error message or null
   - `theme`: Current theme ('light' or 'dark')
@@ -136,4 +170,4 @@ Returns an object with:
 - Methods:
   - `signIn(email: string, password: string): Promise<void>`
   - `signUp(email: string, password: string): Promise<void>`
-  - `
+  - `signOut(): Promise<void>`

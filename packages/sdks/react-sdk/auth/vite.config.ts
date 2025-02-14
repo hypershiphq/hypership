@@ -19,7 +19,17 @@ export default defineConfig({
       formats: ["es"],
     },
     rollupOptions: {
-      external: ["react", "react/jsx-runtime", "react-dom", "next/headers"],
+      external: [
+        "react",
+        "react/jsx-runtime",
+        "react-dom",
+        "next/headers",
+        "jose",
+        "crypto",
+        "buffer",
+        "stream",
+        "util",
+      ],
       output: {
         assetFileNames: "style.css",
         entryFileNames: "[name].js",
