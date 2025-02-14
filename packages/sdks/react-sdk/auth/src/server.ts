@@ -197,40 +197,57 @@ export async function authServerNextJs(secret: string): Promise<AuthResult> {
       allHeaders: Array.from(headersList.entries()),
     });
 
-    // Try all possible header variations
+    // Try all possible header variations in order of priority
     const authHeader =
       headersList.get("authorization") ||
       headersList.get("Authorization") ||
+      headersList.get("x-forwarded-authorization") ||
+      headersList.get("x-middleware-authorization") ||
       headersList.get("x-middleware-request-authorization") ||
-      headersList.get("x-middleware-request-x-forwarded-piggles") ||
       headersList.get("x-forwarded-piggles");
+
+    // Check cookie as fallback
+    let finalAuthHeader = authHeader;
+    if (!finalAuthHeader) {
+      const cookies = headersList.get("cookie");
+      if (cookies) {
+        const authTokenMatch = cookies.match(/authToken=(Bearer\s+[^;]+)/);
+        if (authTokenMatch) {
+          finalAuthHeader = authTokenMatch[1];
+          console.log("[Hypership Auth] Found auth token in cookie");
+        }
+      }
+    }
 
     // Detailed header analysis
     console.log("[Hypership Auth] Detailed header analysis:", {
       hasAuthorization: !!headersList.get("authorization"),
       hasAuthorizationUpper: !!headersList.get("Authorization"),
-      hasMiddlewareAuth: !!headersList.get(
+      hasForwardedAuth: !!headersList.get("x-forwarded-authorization"),
+      hasMiddlewareAuth: !!headersList.get("x-middleware-authorization"),
+      hasMiddlewareRequestAuth: !!headersList.get(
         "x-middleware-request-authorization"
       ),
-      hasForwardedPiggles: !!headersList.get(
-        "x-middleware-request-x-forwarded-piggles"
-      ),
-      hasRawForwardedPiggles: !!headersList.get("x-forwarded-piggles"),
-      foundAuthHeader: !!authHeader,
-      authHeaderValue: authHeader ? `${authHeader.substring(0, 20)}...` : null,
+      hasForwardedPiggles: !!headersList.get("x-forwarded-piggles"),
+      hasCookie: !!headersList.get("cookie"),
+      foundAuthHeader: !!finalAuthHeader,
+      authSource: finalAuthHeader ? (authHeader ? "header" : "cookie") : "none",
+      authHeaderValue: finalAuthHeader
+        ? `${finalAuthHeader.substring(0, 20)}...`
+        : null,
       allHeaderNames: Array.from(headersList.keys()),
     });
 
-    if (!authHeader) {
+    if (!finalAuthHeader) {
       console.log(
-        "[Hypership Auth] No authorization header found in any expected location"
+        "[Hypership Auth] No authorization found in headers or cookies"
       );
     }
 
     return authServer(
       {
         headers: {
-          authorization: authHeader || undefined,
+          authorization: finalAuthHeader || undefined,
         },
       },
       secret
