@@ -146,10 +146,29 @@ const apiClient = {
 
     let response = await fetch(`${BASE_URL}${url}`, requestOptions);
 
-    // Handle token expiration and errors
-    if (response.status === 400) {
-      const errorData = await response.json();
-      if (await this.isTokenExpired(response)) {
+    // Skip token refresh logic for requests to the Hypership backend
+    if (!url.startsWith("https://backend.hypership.dev")) {
+      // Handle token expiration and errors
+      if (response.status === 400) {
+        const errorData = await response.json();
+        if (await this.isTokenExpired(response)) {
+          try {
+            const newToken = await handleTokenRefresh();
+            // Retry original request with new token
+            requestOptions.headers = {
+              ...getHeaders(url),
+              ...(options.headers || {}),
+              Authorization: `Bearer ${newToken}`,
+            };
+            response = await fetch(`${BASE_URL}${url}`, requestOptions);
+          } catch (error) {
+            localStorage.removeItem("accessToken");
+            throw error;
+          }
+        } else {
+          throw errorData;
+        }
+      } else if (response.status === 401) {
         try {
           const newToken = await handleTokenRefresh();
           // Retry original request with new token
@@ -163,22 +182,6 @@ const apiClient = {
           localStorage.removeItem("accessToken");
           throw error;
         }
-      } else {
-        throw errorData;
-      }
-    } else if (response.status === 401) {
-      try {
-        const newToken = await handleTokenRefresh();
-        // Retry original request with new token
-        requestOptions.headers = {
-          ...getHeaders(url),
-          ...(options.headers || {}),
-          Authorization: `Bearer ${newToken}`,
-        };
-        response = await fetch(`${BASE_URL}${url}`, requestOptions);
-      } catch (error) {
-        localStorage.removeItem("accessToken");
-        throw error;
       }
     }
 
