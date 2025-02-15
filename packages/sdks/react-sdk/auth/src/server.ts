@@ -1,4 +1,6 @@
 import { headers } from "next/headers";
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 interface TokenPayload {
   sub: string;
@@ -37,13 +39,9 @@ function extractBearerToken(authHeader?: string): string | null {
 /**
  * Verifies and decodes a JWT token
  * @param token The JWT token to verify
- * @param secret The secret key used to verify the signature
  * @returns The decoded payload or null if invalid
  */
-async function verifyJWT(
-  token: string,
-  secret: string
-): Promise<TokenPayload | null> {
+async function verifyJWT(token: string): Promise<TokenPayload | null> {
   try {
     const [headerB64, payloadB64] = token.split(".");
     if (!headerB64 || !payloadB64) {
@@ -65,12 +63,10 @@ async function verifyJWT(
 /**
  * Server-side authentication function that verifies and decodes the bearer token from a request
  * @param request The request object containing headers or a direct token string
- * @param secret The secret key used to verify the token signature
  * @returns Object containing the verified token data or null if invalid
  */
 export async function authServer(
-  request: { headers: { authorization?: string } } | string,
-  secret: string
+  request: { headers: { authorization?: string } } | string
 ): Promise<AuthResult> {
   try {
     let token: string | null = null;
@@ -89,7 +85,7 @@ export async function authServer(
       };
     }
 
-    const verified = await verifyJWT(token, secret);
+    const verified = await verifyJWT(token);
 
     if (!verified) {
       return {
@@ -114,10 +110,9 @@ export async function authServer(
 
 /**
  * Next.js specific server-side authentication that automatically extracts the token from headers
- * @param secret The secret key used to verify the token signature
  * @returns Object containing the verified token data or null if invalid
  */
-export async function currentUser(secret: string): Promise<AuthResult> {
+export async function currentUser(): Promise<AuthResult> {
   try {
     const headersList = await headers();
 
@@ -139,14 +134,11 @@ export async function currentUser(secret: string): Promise<AuthResult> {
       }
     }
 
-    return authServer(
-      {
-        headers: {
-          authorization: finalAuthHeader || undefined,
-        },
+    return authServer({
+      headers: {
+        authorization: finalAuthHeader || undefined,
       },
-      secret
-    );
+    });
   } catch (error) {
     return {
       userId: null,
@@ -154,4 +146,37 @@ export async function currentUser(secret: string): Promise<AuthResult> {
       error: "Failed to access request headers",
     };
   }
+}
+
+function handleAuthHeaders(headers: Headers, cookies: string | null): Headers {
+  const updatedHeaders = new Headers(headers);
+  let authHeader = headers.get("Authorization");
+
+  if (authHeader) {
+    updatedHeaders.set(
+      "Set-Cookie",
+      `authToken=${authHeader}; HttpOnly; Secure; Path=/; SameSite=Lax`
+    );
+    updatedHeaders.set("x-forwarded-authorization", authHeader);
+    updatedHeaders.set("x-middleware-authorization", authHeader);
+  } else if (cookies) {
+    const cookieArray = cookies.split("; ");
+    const authTokenCookie = cookieArray.find((c) => c.startsWith("authToken="));
+
+    if (authTokenCookie) {
+      authHeader = authTokenCookie.split("=")[1];
+      updatedHeaders.set("x-forwarded-authorization", authHeader);
+      updatedHeaders.set("x-middleware-authorization", authHeader);
+    }
+  }
+
+  // Prevent browser caching from interfering with headers
+  updatedHeaders.set(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  updatedHeaders.set("Pragma", "no-cache");
+  updatedHeaders.set("Expires", "0");
+
+  return updatedHeaders;
 }
