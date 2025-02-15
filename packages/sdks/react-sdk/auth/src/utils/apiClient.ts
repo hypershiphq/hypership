@@ -5,14 +5,67 @@ const BASE_URL = "https://backend.hypership.dev/v1";
 let isRefreshing = false;
 
 /**
- * Gets the access token from localStorage
+ * Gets a cookie value by name
  */
-const getAccessToken = () => {
+const getCookie = (name: string): string | null => {
   if (typeof window === "undefined") return null; // Skip on server-side
 
-  const token = localStorage.getItem("accessToken");
-  return token;
+  const cookies = document.cookie.split(";");
+  const cookie = cookies.find((c) => c.trim().startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
 };
+
+/**
+ * Sets a cookie with the given name and value
+ */
+const setCookie = (
+  name: string,
+  value: string | null,
+  expirationDays: number = 15
+) => {
+  if (typeof window === "undefined") return; // Skip on server-side
+
+  if (value) {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + expirationDays);
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+  } else {
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  }
+};
+
+/**
+ * Gets the access token from cookies
+ */
+const getAccessToken = () => getCookie("accessToken");
+
+/**
+ * Sets the access token as a cookie
+ */
+const setAccessToken = (token: string | null) =>
+  setCookie("accessToken", token);
+
+/**
+ * Gets the public key from cookies
+ */
+const getPublicKey = () => getCookie("hs-public-key");
+
+/**
+ * Sets the public key as a cookie
+ */
+const setPublicKey = (key: string | null) =>
+  setCookie("hs-public-key", key, 365); // Store for 1 year
+
+/**
+ * Gets the refresh token from cookies
+ */
+const getRefreshToken = () => getCookie("refreshToken");
+
+/**
+ * Sets the refresh token as a cookie
+ */
+const setRefreshToken = (token: string | null) =>
+  setCookie("refreshToken", token, 30); // Store for 30 days
 
 // Setup fetch interceptor if we're in a browser environment
 if (typeof window !== "undefined") {
@@ -47,9 +100,9 @@ const getHeaders = (url?: string) => {
     "Content-Type": "application/json",
   };
 
-  const publicKey = localStorage.getItem("hs-public-key");
+  const publicKey = getPublicKey();
   const accessToken = getAccessToken();
-  const refreshToken = localStorage.getItem("refreshToken");
+  const refreshToken = getRefreshToken();
 
   if (publicKey) {
     headers["hs-public-key"] = publicKey;
@@ -72,13 +125,13 @@ const handleTokenRefresh = async () => {
     while (isRefreshing) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    return localStorage.getItem("accessToken");
+    return getAccessToken();
   }
 
   isRefreshing = true;
 
   try {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = getRefreshToken();
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
@@ -97,7 +150,7 @@ const handleTokenRefresh = async () => {
     }
 
     const data = await response.json();
-    localStorage.setItem("accessToken", data.accessToken);
+    setAccessToken(data.accessToken);
     return data.accessToken;
   } finally {
     isRefreshing = false;
@@ -133,7 +186,7 @@ const apiClient = {
             };
             response = await fetch(`${BASE_URL}${url}`, requestOptions);
           } catch (error) {
-            localStorage.removeItem("accessToken");
+            setAccessToken(null);
             throw error;
           }
         } else {
@@ -150,7 +203,7 @@ const apiClient = {
           };
           response = await fetch(`${BASE_URL}${url}`, requestOptions);
         } catch (error) {
-          localStorage.removeItem("accessToken");
+          setAccessToken(null);
           throw error;
         }
       }

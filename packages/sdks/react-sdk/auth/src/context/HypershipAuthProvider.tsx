@@ -21,6 +21,40 @@ interface AuthProviderProps {
   theme?: "light" | "dark"; // Optional theme prop with possible values
 }
 
+const getAccessToken = () => {
+  if (typeof window === "undefined") return null;
+  const cookies = document.cookie.split(";");
+  const accessTokenCookie = cookies.find((cookie) =>
+    cookie.trim().startsWith("accessToken=")
+  );
+  return accessTokenCookie
+    ? decodeURIComponent(accessTokenCookie.split("=")[1].trim())
+    : null;
+};
+
+const getCookie = (name: string): string | null => {
+  if (typeof window === "undefined") return null;
+  const cookies = document.cookie.split(";");
+  const cookie = cookies.find((c) => c.trim().startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
+};
+
+const setCookie = (
+  name: string,
+  value: string | null,
+  expirationDays: number = 15
+) => {
+  if (typeof window === "undefined") return;
+
+  if (value) {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + expirationDays);
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+  } else {
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  }
+};
+
 export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   children,
   apiKey,
@@ -28,7 +62,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
-  const accessToken = localStorage.getItem("accessToken");
+  const accessToken = getAccessToken();
   const initializeAuthRan = useRef(false);
 
   // Resolve the API key, trying to get it from getHypershipPublicKey if not provided
@@ -82,7 +116,8 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Effect to handle initial authentication and token refresh
   useEffect(() => {
-    localStorage.setItem("hs-public-key", resolvedApiKey);
+    // Store the public key in a cookie instead of localStorage
+    setCookie("hs-public-key", resolvedApiKey, 365); // Store for 1 year
 
     const isAccessTokenExpired = (token: string) => {
       try {
@@ -109,9 +144,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         const response = await apiClient.request("/auth/refresh", {
           method: "POST",
         });
-        const { accessToken: newAccessToken } = response;
-        localStorage.setItem("accessToken", newAccessToken);
-        return newAccessToken;
+        return response.accessToken;
       } catch (error) {
         console.error("Failed to refresh token:", error);
         throw error;
@@ -223,7 +256,14 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         throw new Error("No access token received");
       }
 
-      localStorage.setItem("accessToken", accessToken);
+      // Set the access token in cookie
+      setCookie("accessToken", accessToken);
+
+      // Also set the refresh token if it's in the response
+      if (response.refreshToken) {
+        setCookie("refreshToken", response.refreshToken, 30);
+      }
+
       setError(null);
     } catch (error: unknown) {
       console.error("Sign-in error:", error);
@@ -244,7 +284,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       } else {
         handleError("Sign-in failed. Please check your API key and try again.");
       }
-      localStorage.removeItem("accessToken");
       signOut();
       throw error;
     } finally {
@@ -254,7 +293,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   const signInWithGithub = (): Promise<void> => {
     return new Promise(() => {
-      const publicKey = localStorage.getItem("hs-public-key");
+      const publicKey = getCookie("hs-public-key");
 
       // Construct the OAuth URL with `hs-public-key` as a query parameter
       const oauthUrl = new URL("http://localhost:3002/v1/oauth/github");
@@ -305,7 +344,10 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Sign-out method
   const signOut = async () => {
-    localStorage.removeItem("accessToken");
+    // Clear all auth-related cookies
+    setCookie("accessToken", null);
+    setCookie("refreshToken", null);
+    setCookie("hs-public-key", null);
     initializeAuthRan.current = false;
     setUser(null);
   };
@@ -422,34 +464,34 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   return (
-    <ToastProvider>
-      <AuthContext.Provider
-        value={{
-          user,
-          signingIn,
-          signingUp,
-          authenticating,
-          passwordResetting,
-          passwordChanging,
-          confirmingAccount,
-          error,
-          signIn,
-          signUp,
-          signOut,
-          passwordReset,
-          confirmPasswordResetCode,
-          passwordChange,
-          confirmAccount,
-          confirmAccountCodeResend,
-          confirmAccountCodeResending,
-          signInWithGithub,
-          theme,
-          toggleTheme,
-        }}
-      >
+    <AuthContext.Provider
+      value={{
+        user,
+        error,
+        signingIn,
+        signingUp,
+        authenticating,
+        passwordResetting,
+        passwordChanging,
+        confirmingAccount,
+        confirmAccountCodeResending,
+        signIn,
+        signUp,
+        signOut,
+        signInWithGithub,
+        theme,
+        toggleTheme,
+        passwordReset,
+        confirmPasswordResetCode,
+        passwordChange,
+        confirmAccount,
+        confirmAccountCodeResend,
+      }}
+    >
+      <ToastProvider>
         {children}
         {showToast && <Toast message={toastMessage} type={toastType} />}
-      </AuthContext.Provider>
-    </ToastProvider>
+      </ToastProvider>
+    </AuthContext.Provider>
   );
 };
