@@ -61,39 +61,6 @@ const setPublicKey = (key: string | null) =>
  */
 const getRefreshToken = () => getCookie("refreshToken");
 
-/**
- * Sets the refresh token as a cookie
- */
-const setRefreshToken = (token: string | null) =>
-  setCookie("refreshToken", token, 30); // Store for 30 days
-
-// Setup fetch interceptor if we're in a browser environment
-if (typeof window !== "undefined") {
-  const originalFetch = window.fetch;
-
-  window.fetch = async (url: RequestInfo | URL, options: RequestInit = {}) => {
-    const token = getAccessToken();
-    const headers = {
-      ...options.headers,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      "Content-Type": "application/json",
-    };
-
-    const modifiedOptions: RequestInit = {
-      ...options,
-      headers,
-      credentials: "include" as RequestCredentials,
-    };
-
-    try {
-      const response = await originalFetch(url, modifiedOptions);
-      return response;
-    } catch (error: unknown) {
-      throw error;
-    }
-  };
-}
-
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
   const headers: Record<string, string> = {
@@ -170,29 +137,10 @@ const apiClient = {
 
     let response = await fetch(`${BASE_URL}${url}`, requestOptions);
 
-    // Skip token refresh logic for requests to the Hypership backend
-    if (!url.startsWith("https://backend.hypership.dev")) {
-      // Handle token expiration and errors
-      if (response.status === 400) {
-        const errorData = await response.json();
-        if (await this.isTokenExpired(response)) {
-          try {
-            const newToken = await handleTokenRefresh();
-            // Retry original request with new token
-            requestOptions.headers = {
-              ...getHeaders(url),
-              ...(options.headers || {}),
-              Authorization: `Bearer ${newToken}`,
-            };
-            response = await fetch(`${BASE_URL}${url}`, requestOptions);
-          } catch (error) {
-            setAccessToken(null);
-            throw error;
-          }
-        } else {
-          throw errorData;
-        }
-      } else if (response.status === 401) {
+    // Handle token expiration and errors
+    if (response.status === 400) {
+      const errorData = await response.json();
+      if (await this.isTokenExpired(response)) {
         try {
           const newToken = await handleTokenRefresh();
           // Retry original request with new token
@@ -206,6 +154,22 @@ const apiClient = {
           setAccessToken(null);
           throw error;
         }
+      } else {
+        throw errorData;
+      }
+    } else if (response.status === 401) {
+      try {
+        const newToken = await handleTokenRefresh();
+        // Retry original request with new token
+        requestOptions.headers = {
+          ...getHeaders(url),
+          ...(options.headers || {}),
+          Authorization: `Bearer ${newToken}`,
+        };
+        response = await fetch(`${BASE_URL}${url}`, requestOptions);
+      } catch (error) {
+        setAccessToken(null);
+        throw error;
       }
     }
 
