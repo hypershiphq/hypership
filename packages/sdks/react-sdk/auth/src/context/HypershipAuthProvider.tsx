@@ -347,7 +347,6 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
     // Clear all auth-related cookies
     setCookie("accessToken", null);
     setCookie("refreshToken", null);
-    setCookie("hs-public-key", null);
     initializeAuthRan.current = false;
     setUser(null);
   };
