@@ -4,22 +4,115 @@ const BASE_URL = "https://backend.hypership.dev/v1";
 // Flag to track if token refresh is in progress
 let isRefreshing = false;
 
+/**
+ * Gets a cookie value by name
+ */
+const getCookie = (name: string): string | null => {
+  if (typeof window === "undefined") return null; // Skip on server-side
+
+  const cookies = document.cookie.split(";");
+  const cookie = cookies.find((c) => c.trim().startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
+};
+
+/**
+ * Sets a cookie with the given name and value
+ */
+const setCookie = (
+  name: string,
+  value: string | null,
+  expirationDays: number = 15
+) => {
+  if (typeof window === "undefined") return; // Skip on server-side
+
+  if (value) {
+    const expirationDate = new Date();
+    expirationDate.setDate(expirationDate.getDate() + expirationDays);
+    document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expirationDate.toUTCString()}; secure; samesite=lax`;
+  } else {
+    document.cookie = `${name}=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+  }
+};
+
+/**
+ * Gets the access token from cookies
+ */
+const getAccessToken = () => getCookie("accessToken");
+
+/**
+ * Sets the access token as a cookie
+ */
+const setAccessToken = (token: string | null) =>
+  setCookie("accessToken", token);
+
+/**
+ * Gets the public key from cookies
+ */
+const getPublicKey = () => getCookie("hs-public-key");
+
+/**
+ * Sets the public key as a cookie
+ */
+const setPublicKey = (key: string | null) =>
+  setCookie("hs-public-key", key, 365); // Store for 1 year
+
+/**
+ * Gets the refresh token from cookies
+ */
+const getRefreshToken = () => getCookie("refreshToken");
+
+/**
+ * Sets the refresh token as a cookie
+ */
+const setRefreshToken = (token: string | null) =>
+  setCookie("refreshToken", token, 30); // Store for 30 days
+
+// Setup fetch interceptor if we're in a browser environment
+if (typeof window !== "undefined") {
+  const originalFetch = window.fetch;
+
+  window.fetch = async (url: RequestInfo | URL, options: RequestInit = {}) => {
+    const token = getAccessToken();
+    const headers = {
+      ...options.headers,
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      "Content-Type": "application/json",
+    };
+
+    const modifiedOptions: RequestInit = {
+      ...options,
+      headers,
+      credentials: "include" as RequestCredentials,
+    };
+
+    try {
+      const response = await originalFetch(url, modifiedOptions);
+      return response;
+    } catch (error: unknown) {
+      throw error;
+    }
+  };
+}
+
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
-  const publicKey = localStorage.getItem("hs-public-key");
-  const accessToken = localStorage.getItem("accessToken");
+  const publicKey = getPublicKey();
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
 
   if (publicKey) {
     headers["hs-public-key"] = publicKey;
   }
 
-  // Skip adding access token for refresh token requests
+  // Add access token to all requests except refresh
   if (accessToken && !url?.includes("/auth/refresh")) {
     headers["Authorization"] = `Bearer ${accessToken}`;
+  } else if (refreshToken && url?.includes("/auth/refresh")) {
+    headers["Authorization"] = `Bearer ${refreshToken}`;
   }
 
   return headers;
@@ -32,12 +125,13 @@ const handleTokenRefresh = async () => {
     while (isRefreshing) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
-    return localStorage.getItem("accessToken");
+    return getAccessToken();
   }
 
   isRefreshing = true;
+
   try {
-    const refreshToken = localStorage.getItem("refreshToken");
+    const refreshToken = getRefreshToken();
     if (!refreshToken) {
       throw new Error("No refresh token available");
     }
@@ -56,7 +150,7 @@ const handleTokenRefresh = async () => {
     }
 
     const data = await response.json();
-    localStorage.setItem("accessToken", data.accessToken);
+    setAccessToken(data.accessToken);
     return data.accessToken;
   } finally {
     isRefreshing = false;
@@ -76,10 +170,29 @@ const apiClient = {
 
     let response = await fetch(`${BASE_URL}${url}`, requestOptions);
 
-    // Handle token expiration and errors
-    if (response.status === 400) {
-      const errorData = await response.json();
-      if (await this.isTokenExpired(response)) {
+    // Skip token refresh logic for requests to the Hypership backend
+    if (!url.startsWith("https://backend.hypership.dev")) {
+      // Handle token expiration and errors
+      if (response.status === 400) {
+        const errorData = await response.json();
+        if (await this.isTokenExpired(response)) {
+          try {
+            const newToken = await handleTokenRefresh();
+            // Retry original request with new token
+            requestOptions.headers = {
+              ...getHeaders(url),
+              ...(options.headers || {}),
+              Authorization: `Bearer ${newToken}`,
+            };
+            response = await fetch(`${BASE_URL}${url}`, requestOptions);
+          } catch (error) {
+            setAccessToken(null);
+            throw error;
+          }
+        } else {
+          throw errorData;
+        }
+      } else if (response.status === 401) {
         try {
           const newToken = await handleTokenRefresh();
           // Retry original request with new token
@@ -90,25 +203,9 @@ const apiClient = {
           };
           response = await fetch(`${BASE_URL}${url}`, requestOptions);
         } catch (error) {
-          localStorage.removeItem("accessToken");
+          setAccessToken(null);
           throw error;
         }
-      } else {
-        throw errorData;
-      }
-    } else if (response.status === 401) {
-      try {
-        const newToken = await handleTokenRefresh();
-        // Retry original request with new token
-        requestOptions.headers = {
-          ...getHeaders(url),
-          ...(options.headers || {}),
-          Authorization: `Bearer ${newToken}`,
-        };
-        response = await fetch(`${BASE_URL}${url}`, requestOptions);
-      } catch (error) {
-        localStorage.removeItem("accessToken");
-        throw error;
       }
     }
 

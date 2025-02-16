@@ -1,9 +1,20 @@
-import React, { ReactNode, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 
-type PrivateProps = {
-  children: ReactNode;
+interface PrivateProps {
+  children: React.ReactNode;
   onUnauthorized?: () => void;
+}
+
+const getAccessToken = () => {
+  if (typeof window === "undefined") return null;
+  const cookies = document.cookie.split(";");
+  const accessTokenCookie = cookies.find((cookie) =>
+    cookie.trim().startsWith("accessToken=")
+  );
+  return accessTokenCookie
+    ? decodeURIComponent(accessTokenCookie.split("=")[1].trim())
+    : null;
 };
 
 export const Private: React.FC<PrivateProps> = ({
@@ -18,7 +29,7 @@ export const Private: React.FC<PrivateProps> = ({
       !authenticating &&
       !isAuthenticated &&
       onUnauthorized &&
-      !localStorage.getItem("accessToken")
+      !getAccessToken()
     ) {
       onUnauthorized();
     }
