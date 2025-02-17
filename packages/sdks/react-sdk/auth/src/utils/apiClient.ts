@@ -143,13 +143,17 @@ const apiClient = {
       if (await this.isTokenExpired(response)) {
         try {
           const newToken = await handleTokenRefresh();
-          // Retry original request with new token
-          requestOptions.headers = {
-            ...getHeaders(url),
+          // Update request options with new token
+          const newHeaders = {
+            ...getHeaders(url), // Get fresh headers
             ...(options.headers || {}),
             Authorization: `Bearer ${newToken}`,
           };
-          response = await fetch(`${BASE_URL}${url}`, requestOptions);
+          // Retry original request with new token
+          response = await fetch(`${BASE_URL}${url}`, {
+            ...requestOptions,
+            headers: newHeaders,
+          });
         } catch (error) {
           setAccessToken(null);
           throw error;
@@ -160,13 +164,17 @@ const apiClient = {
     } else if (response.status === 401) {
       try {
         const newToken = await handleTokenRefresh();
-        // Retry original request with new token
-        requestOptions.headers = {
-          ...getHeaders(url),
+        // Update request options with new token
+        const newHeaders = {
+          ...getHeaders(url), // Get fresh headers
           ...(options.headers || {}),
           Authorization: `Bearer ${newToken}`,
         };
-        response = await fetch(`${BASE_URL}${url}`, requestOptions);
+        // Retry original request with new token
+        response = await fetch(`${BASE_URL}${url}`, {
+          ...requestOptions,
+          headers: newHeaders,
+        });
       } catch (error) {
         setAccessToken(null);
         throw error;

@@ -9,6 +9,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: #1f2937;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-auth-wrapper {
+    color: #e5e7eb;
+  }
 }
 
 .hypership-container {
@@ -16,6 +23,14 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  border-radius: 8px;
+  background-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-container {
+    background-color: transparent;
+  }
 }
 
 .hypership-form {
@@ -23,6 +38,14 @@
   max-width: 400px;
   width: 100%;
   text-align: center;
+  padding: 2rem;
+  background-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-form {
+    background-color: transparent;
+  }
 }
 
 .hypership-input-group {
@@ -34,24 +57,29 @@
   display: block;
   margin-bottom: 0.5rem;
   font-size: 14px;
-  color: #555;
+  color: #374151;
 }
 
 .hypership-input-group input {
   width: 100%;
   padding: 0.75rem;
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #d1d5db;
   font-size: 14px;
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
-  background-color: #fff;
-  color: #333;
+  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #1f2937;
 }
 
 .hypership-input-group input:focus {
-  border-color: #4a90e2;
+  border-color: #3b82f6;
   outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.hypership-input-group input::placeholder {
+  color: #9ca3af;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -60,34 +88,18 @@
   }
 
   .hypership-input-group input {
-    background-color: #1f2937 !important;
-    border-color: #374151 !important;
-    color: #e5e7eb !important;
-  }
-
-  .hypership-input-group input::placeholder {
-    color: #9ca3af !important;
-  }
-
-  .hypership-input-group input:focus {
-    border-color: #60a5fa !important;
-  }
-}
-
-/* Dark mode styles */
-@media (prefers-color-scheme: dark) {
-  .hypership-input-group input {
-    background-color: #1f2937;
+    background-color: #111827;
     border-color: #374151;
     color: #e5e7eb;
   }
 
-  .hypership-input-group input::placeholder {
-    color: #b3b8c1;
-  }
-
   .hypership-input-group input:focus {
     border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+  }
+
+  .hypership-input-group input::placeholder {
+    color: #6b7280;
   }
 }
 
@@ -110,13 +122,27 @@
   justify-content: center;
 }
 
+.hypership-button-primary:hover {
+  background-color: #2563eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-button-primary {
+    background-color: #3b82f6;
+  }
+
+  .hypership-button-primary:hover {
+    background-color: #60a5fa;
+  }
+}
+
 .hypership-button-github {
   margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  background-color: black;
+  background-color: #24292e;
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -131,21 +157,52 @@
   transition: all 0.3s ease;
 }
 
+.hypership-button-github:hover {
+  background-color: #1b1f23;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-button-github {
+    background-color: #1b1f23;
+  }
+
+  .hypership-button-github:hover {
+    background-color: #24292e;
+  }
+}
+
 .hypership-button-google {
   margin-top: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: white;
-  color: black;
+  background-color: #ffffff;
+  color: #1f2937;
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 1rem;
-  border: 1px solid #ddd;
+  border: 1px solid #d1d5db;
   cursor: pointer;
   width: 100%;
   height: 2.8rem;
   position: relative;
+  transition: all 0.3s ease;
+}
+
+.hypership-button-google:hover {
+  background-color: #f9fafb;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-button-google {
+    background-color: #111827;
+    border-color: #374151;
+    color: #e5e7eb;
+  }
+
+  .hypership-button-google:hover {
+    background-color: #1f2937;
+  }
 }
 
 .hypership-button-apple {
@@ -163,6 +220,11 @@
   height: 2.8rem;
   position: relative;
   border: none;
+  transition: all 0.3s ease;
+}
+
+.hypership-button-apple:hover {
+  background-color: #1a1a1a;
 }
 
 .button-content {
@@ -188,92 +250,6 @@
   text-align: center;
 }
 
-.hypership-button-primary:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
-  z-index: -1;
-}
-
-.hypership-button-primary:hover {
-  background-color: #2563eb;
-}
-
-/* Password Strength Bars */
-.hypership-password-strength-bar {
-  display: flex;
-  gap: 4px;
-  margin-top: 0.5rem;
-}
-
-.hypership-bar {
-  height: 6px;
-  flex: 1;
-  background-color: #ddd;
-  border-radius: 3px;
-  transition: all 0.2s ease-in-out;
-  opacity: 0.3;
-}
-
-.hypership-bar.red {
-  background-color: #f87171;
-  opacity: 1;
-}
-
-.hypership-bar.yellow {
-  background-color: #facc15;
-  opacity: 1;
-}
-
-.hypership-bar.green {
-  background-color: #4ade80;
-  opacity: 1;
-}
-
-.hypership-error-message {
-  background-color: #fef2f2;
-  color: #991b1b;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  border: 1px solid #f2e0e0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-error-message {
-    background-color: #4b1c1c;
-    color: #fca5a5;
-    border: 1px solid #7f1d1d;
-  }
-}
-.hypership-success-message {
-  background-color: #f0fdf4;
-  color: #166534;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-success-message {
-    background-color: #1c4532;
-    color: #d1fae5;
-    border: 1px solid #166534;
-  }
-}
-
 .hypership-button-secondary {
   background: none;
   border: none;
@@ -288,20 +264,7 @@
 
 .hypership-button-secondary:hover {
   color: #374151;
-  background-color: #f5f5f5;
-}
-
-.hypership-button-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.2rem;
-}
-
-@media (min-width: 1024px) {
-  .hypership-button-group {
-    margin-top: 2rem;
-  }
+  background-color: #f3f4f6;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -311,7 +274,80 @@
 
   .hypership-button-secondary:hover {
     color: #e5e7eb;
-    background-color: #1f2937;
+    background-color: #374151;
+  }
+}
+
+.hypership-button-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.hypership-divider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin: 1.5rem 0;
+  color: #6b7280;
+}
+
+.hypership-divider::before,
+.hypership-divider::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid #d1d5db;
+  margin: 0 1rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-divider {
+    color: #9ca3af;
+  }
+
+  .hypership-divider::before,
+  .hypership-divider::after {
+    border-color: #374151;
+  }
+}
+
+.hypership-error-message {
+  background-color: #fef2f2;
+  color: #991b1b;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid #fecaca;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-error-message {
+    background-color: #7f1d1d;
+    color: #fecaca;
+    border-color: #991b1b;
+  }
+}
+
+.hypership-success-message {
+  background-color: #f0fdf4;
+  color: #166534;
+  margin-bottom: 1rem;
+  font-size: 14px;
+  padding: 0.75rem;
+  border-radius: 4px;
+  text-align: center;
+  border: 1px solid #bbf7d0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .hypership-success-message {
+    background-color: #064e3b;
+    color: #bbf7d0;
+    border-color: #166534;
   }
 }
 
@@ -320,96 +356,71 @@
   height: 22px;
   width: 22px;
   display: block;
+  color: #ffffff;
 }
 
-.auth-page-container {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  justify-content: center;
-  background-color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .auth-page-container {
-    background-color: #111827;
-  }
-}
-
-.auth-page-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  width: 100%;
-  max-width: 100%;
-}
-
-@media (prefers-color-scheme: dark) {
-  .auth-page-left {
-    background-color: #111827;
-    color: #e5e7eb;
-  }
-}
-
-.auth-page-title {
-  font-size: 2rem;
+.hypership-toast {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 1000;
+  animation:
+    slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    slideUp 0.5s 5.5s forwards;
+  background-color: #ffffff;
   color: #1f2937;
-  font-weight: 600;
-  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
 }
 
 @media (prefers-color-scheme: dark) {
-  .auth-page-title {
+  .hypership-toast {
+    background-color: #1f2937;
     color: #e5e7eb;
+    border-color: #374151;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   }
 }
 
-.auth-form-container {
-  width: 100%;
-  max-width: 400px;
+/* Password Strength Bars */
+.hypership-password-strength-bar {
+  display: flex;
+  gap: 4px;
+  margin-top: 0.5rem;
 }
 
-.auth-page-right {
+.hypership-bar {
+  height: 6px;
   flex: 1;
-  background-size: cover;
-  background-position: center;
+  background-color: #e5e7eb;
+  border-radius: 3px;
+  transition: all 0.2s ease-in-out;
+  opacity: 0.3;
 }
 
-@media (max-width: 768px) {
-  .hypership-input-group input {
-    font-size: 16px;
-  }
-
-  .auth-page-right {
-    display: none;
-  }
-
-  .auth-page-left {
-    padding: 1.5rem;
-  }
-
-  .auth-page-title {
-    font-size: 1.75rem;
+@media (prefers-color-scheme: dark) {
+  .hypership-bar {
+    background-color: #374151;
   }
 }
 
-@media (max-width: 500px) {
-  .hypership-form {
-    padding: 1rem;
-  }
+.hypership-bar.red {
+  background-color: #ef4444;
+  opacity: 1;
 }
 
-@media (max-width: 932px) and (orientation: landscape) {
-  .hypership-powered-by {
-    display: none;
-  }
-  .auth-page-title {
-    font-size: 1.5rem;
-  }
+.hypership-bar.yellow {
+  background-color: #f59e0b;
+  opacity: 1;
+}
+
+.hypership-bar.green {
+  background-color: #10b981;
+  opacity: 1;
 }
 
 @keyframes spin {
@@ -418,29 +429,6 @@
   }
   to {
     transform: rotate(360deg);
-  }
-}
-
-.hypership-toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 16px;
-  border-radius: 6px;
-  color: #333;
-  font-size: 14px;
-  z-index: 1000;
-  animation:
-    slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-    slideUp 0.5s 5.5s forwards;
-  background-color: #fff;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-toast {
-    background-color: rgb(45, 55, 72); /* Lighter background color */
-    color: #e0e0e0;
   }
 }
 

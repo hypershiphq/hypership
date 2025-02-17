@@ -22,27 +22,18 @@ export interface AuthResult {
  * @returns The bearer token or null if not found/invalid
  */
 function extractBearerToken(authHeader?: string): string | null {
-  console.log("[extractBearerToken] Input authHeader:", authHeader);
-
   if (!authHeader) {
-    console.log("[extractBearerToken] No auth header provided");
     return null;
   }
 
   const cleanHeader = authHeader.trim();
-  console.log("[extractBearerToken] Cleaned header:", cleanHeader);
 
   const bearerMatch = cleanHeader.match(/^(?:bearer|Bearer|BEARER)\s+(.+)$/i);
   if (!bearerMatch) {
-    console.log("[extractBearerToken] No bearer token match found");
     return null;
   }
 
   const token = bearerMatch[1].trim();
-  console.log(
-    "[extractBearerToken] Extracted token:",
-    token.substring(0, 20) + "..."
-  );
   return token;
 }
 
@@ -52,25 +43,20 @@ function extractBearerToken(authHeader?: string): string | null {
  * @returns The decoded payload or null if invalid
  */
 async function verifyJWT(token: string): Promise<TokenPayload | null> {
-  console.log("[verifyJWT] Starting token verification");
   try {
     const [headerB64, payloadB64] = token.split(".");
     if (!headerB64 || !payloadB64) {
-      console.log("[verifyJWT] Invalid token format - missing parts");
       return null;
     }
 
     try {
       const payloadJson = Buffer.from(payloadB64, "base64").toString();
-      console.log("[verifyJWT] Decoded payload:", payloadJson);
       const payload = JSON.parse(payloadJson);
       return payload;
     } catch (e) {
-      console.log("[verifyJWT] Failed to decode/parse payload:", e);
       return null;
     }
   } catch (error) {
-    console.log("[verifyJWT] Error during verification:", error);
     return null;
   }
 }
@@ -83,29 +69,20 @@ async function verifyJWT(token: string): Promise<TokenPayload | null> {
 export async function authServer(
   request: { headers: { authorization?: string; cookie?: string } } | string
 ): Promise<AuthResult> {
-  console.log("[authServer] Starting auth server check");
   try {
     let token: string | null = null;
 
     if (typeof request === "string") {
-      console.log("[authServer] Direct token string provided");
       token = request;
     } else {
-      console.log("[authServer] Headers:", request.headers);
       // First try Authorization header
       token = extractBearerToken(request.headers.authorization);
-      console.log(
-        "[authServer] Token from Authorization header:",
-        token ? "Found" : "Not found"
-      );
 
       // If no token in Authorization header, check cookies
       if (!token && request.headers.cookie) {
-        console.log("[authServer] Checking cookies:", request.headers.cookie);
         const accessTokenMatch =
           request.headers.cookie.match(/accessToken=([^;]+)/);
         if (accessTokenMatch) {
-          console.log("[authServer] Found accessToken in cookies");
           token = accessTokenMatch[1];
           // If the cookie value starts with 'Bearer', extract just the token
           if (token.startsWith("Bearer ")) {
@@ -116,7 +93,6 @@ export async function authServer(
     }
 
     if (!token) {
-      console.log("[authServer] No valid token found in request");
       return {
         userId: null,
         tokenData: null,
@@ -124,11 +100,9 @@ export async function authServer(
       };
     }
 
-    console.log("[authServer] Verifying token");
     const verified = await verifyJWT(token);
 
     if (!verified) {
-      console.log("[authServer] Token verification failed");
       return {
         userId: null,
         tokenData: null,
@@ -136,18 +110,11 @@ export async function authServer(
       };
     }
 
-    console.log("[authServer] Token verified successfully:", {
-      userId: verified.sub,
-      tokenType: verified.type,
-      exp: new Date(verified.exp * 1000).toISOString(),
-    });
-
     return {
       userId: verified.sub,
       tokenData: verified,
     };
   } catch (error) {
-    console.log("[authServer] Error during auth process:", error);
     return {
       userId: null,
       tokenData: null,
@@ -161,13 +128,8 @@ export async function authServer(
  * @returns Object containing the verified token data or null if invalid
  */
 export async function currentUser(): Promise<AuthResult> {
-  console.log("[currentUser] Starting currentUser check");
   try {
     const headersList = await headers();
-    console.log(
-      "[currentUser] All headers:",
-      Array.from(headersList.entries())
-    );
 
     const authHeader =
       headersList.get("authorization") ||
@@ -176,22 +138,14 @@ export async function currentUser(): Promise<AuthResult> {
       headersList.get("x-middleware-authorization") ||
       headersList.get("x-middleware-request-authorization");
 
-    console.log("[currentUser] Found auth header:", authHeader);
-
     let finalAuthHeader = authHeader;
     if (!finalAuthHeader) {
       const cookies = headersList.get("cookie");
-      console.log("[currentUser] Checking cookies:", cookies);
 
       if (cookies) {
         // Check for both authToken and accessToken in cookies
         const authTokenMatch = cookies.match(/authToken=([^;]+)/);
         const accessTokenMatch = cookies.match(/accessToken=([^;]+)/);
-
-        console.log("[currentUser] Cookie matches:", {
-          authToken: authTokenMatch ? "Found" : "Not found",
-          accessToken: accessTokenMatch ? "Found" : "Not found",
-        });
 
         if (authTokenMatch) {
           finalAuthHeader = authTokenMatch[1];
@@ -201,8 +155,6 @@ export async function currentUser(): Promise<AuthResult> {
       }
     }
 
-    console.log("[currentUser] Final auth header:", finalAuthHeader);
-
     const result = await authServer({
       headers: {
         authorization: finalAuthHeader || undefined,
@@ -210,15 +162,8 @@ export async function currentUser(): Promise<AuthResult> {
       },
     });
 
-    console.log("[currentUser] Auth result:", {
-      userId: result.userId,
-      hasTokenData: !!result.tokenData,
-      error: result.error,
-    });
-
     return result;
   } catch (error) {
-    console.log("[currentUser] Error during currentUser check:", error);
     return {
       userId: null,
       tokenData: null,
