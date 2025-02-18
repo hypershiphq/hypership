@@ -256,14 +256,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
         throw new Error("No access token received");
       }
 
-      // Set the access token in cookie
       setCookie("accessToken", accessToken);
-
-      // Also set the refresh token if it's in the response
-      if (response.refreshToken) {
-        setCookie("refreshToken", response.refreshToken, 30);
-      }
-
       setError(null);
     } catch (error: unknown) {
       console.error("Sign-in error:", error);
@@ -344,9 +337,8 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Sign-out method
   const signOut = async () => {
-    // Clear all auth-related cookies
+    // Only clear the access token - refresh token is handled by the server
     setCookie("accessToken", null);
-    setCookie("refreshToken", null);
     initializeAuthRan.current = false;
     setUser(null);
   };

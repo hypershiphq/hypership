@@ -1,6 +1,6 @@
 {
   "name": "@hypership/auth-react",
-  "version": "0.0.70",
+  "version": "0.0.79",
   "description": "Hypership Auth React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -35,7 +35,8 @@
   "scripts": {
     "build": "vite build",
     "build:watch": "vite build --watch",
-    "dev": "tsup --config tsup.config.ts && npm link"
+    "dev": "tsup --config tsup.config.ts && npm link",
+    "npm-publish": "npm run build && npm publish --access public"
   },
   "type": "module",
   "author": "Hypership",

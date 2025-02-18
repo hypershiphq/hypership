@@ -1,8 +1,8 @@
 // Create a base URL for the API
 const BASE_URL = "https://backend.hypership.dev/v1";
 
-// Flag to track if token refresh is in progress
-let isRefreshing = false;
+// Promise to track ongoing token refresh
+let refreshPromise: Promise<string | null> | null = null;
 
 /**
  * Gets a cookie value by name
@@ -12,7 +12,8 @@ const getCookie = (name: string): string | null => {
 
   const cookies = document.cookie.split(";");
   const cookie = cookies.find((c) => c.trim().startsWith(`${name}=`));
-  return cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
+  const value = cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
+  return value;
 };
 
 /**
@@ -61,39 +62,6 @@ const setPublicKey = (key: string | null) =>
  */
 const getRefreshToken = () => getCookie("refreshToken");
 
-/**
- * Sets the refresh token as a cookie
- */
-const setRefreshToken = (token: string | null) =>
-  setCookie("refreshToken", token, 30); // Store for 30 days
-
-// Setup fetch interceptor if we're in a browser environment
-if (typeof window !== "undefined") {
-  const originalFetch = window.fetch;
-
-  window.fetch = async (url: RequestInfo | URL, options: RequestInit = {}) => {
-    const token = getAccessToken();
-    const headers = {
-      ...options.headers,
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      "Content-Type": "application/json",
-    };
-
-    const modifiedOptions: RequestInit = {
-      ...options,
-      headers,
-      credentials: "include" as RequestCredentials,
-    };
-
-    try {
-      const response = await originalFetch(url, modifiedOptions);
-      return response;
-    } catch (error: unknown) {
-      throw error;
-    }
-  };
-}
-
 // Helper function to get headers with auth tokens
 const getHeaders = (url?: string) => {
   const headers: Record<string, string> = {
@@ -102,17 +70,15 @@ const getHeaders = (url?: string) => {
 
   const publicKey = getPublicKey();
   const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
 
+  // Always include public key if available
   if (publicKey) {
     headers["hs-public-key"] = publicKey;
   }
 
-  // Add access token to all requests except refresh
+  // Add access token to all requests except /auth/refresh
   if (accessToken && !url?.includes("/auth/refresh")) {
     headers["Authorization"] = `Bearer ${accessToken}`;
-  } else if (refreshToken && url?.includes("/auth/refresh")) {
-    headers["Authorization"] = `Bearer ${refreshToken}`;
   }
 
   return headers;
@@ -120,92 +86,138 @@ const getHeaders = (url?: string) => {
 
 // Helper function to handle refresh token
 const handleTokenRefresh = async () => {
-  if (isRefreshing) {
-    // Wait until refresh is complete
-    while (isRefreshing) {
-      await new Promise((resolve) => setTimeout(resolve, 100));
-    }
-    return getAccessToken();
+  // If there's already a refresh in progress, return the existing promise
+  if (refreshPromise) {
+    return refreshPromise;
   }
 
-  isRefreshing = true;
+  // Create new refresh promise
+  refreshPromise = (async () => {
+    try {
+      const publicKey = getPublicKey();
+      if (!publicKey) {
+        throw new Error("Public key is required for refresh");
+      }
 
+      const response = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: "POST",
+        credentials: "include", // Important: This ensures cookies are sent
+        headers: {
+          "Content-Type": "application/json",
+          "hs-public-key": publicKey,
+        },
+        body: JSON.stringify({}), // Empty body but needed for POST request
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.error?.message || "Token refresh failed");
+      }
+
+      const data = await response.json();
+      setAccessToken(data.accessToken);
+      return data.accessToken;
+    } catch (error) {
+      setAccessToken(null);
+      throw error;
+    } finally {
+      refreshPromise = null;
+    }
+  })();
+
+  return refreshPromise;
+};
+
+// Add this function to check if a token is expired
+const isTokenExpired = (token: string): boolean => {
   try {
-    const refreshToken = getRefreshToken();
-    if (!refreshToken) {
-      throw new Error("No refresh token available");
-    }
-
-    const response = await fetch(`${BASE_URL}/auth/refresh`, {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${refreshToken}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error("Token refresh failed");
-    }
-
-    const data = await response.json();
-    setAccessToken(data.accessToken);
-    return data.accessToken;
-  } finally {
-    isRefreshing = false;
+    const base64Url = token.split(".")[1];
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split("")
+        .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+        .join("")
+    );
+    const payload = JSON.parse(jsonPayload);
+    const now = Math.floor(Date.now() / 1000);
+    return payload.exp < now;
+  } catch (error) {
+    return true; // If we can't decode the token, consider it expired
   }
 };
 
 const apiClient = {
   async request(url: string, options: RequestInit = {}) {
-    const requestOptions: RequestInit = {
-      ...options,
-      credentials: "include",
-      headers: {
+    const makeRequest = async (token?: string) => {
+      const headers: Record<string, string> = {
         ...getHeaders(url),
-        ...(options.headers || {}),
-      },
+        ...Object.fromEntries(
+          Object.entries(options.headers || {}).map(([k, v]) => [k, String(v)])
+        ),
+      };
+
+      // If a token was passed, use it instead of getting from cookies
+      // But skip for refresh requests as they use HTTP-only cookie
+      if (token && !url?.includes("/auth/refresh")) {
+        headers.Authorization = `Bearer ${token}`;
+      } else if (url?.includes("/auth/refresh")) {
+        // Remove any Authorization header for refresh requests
+        delete headers.Authorization;
+      }
+
+      return fetch(`${BASE_URL}${url}`, {
+        ...options,
+        credentials: "include",
+        headers,
+      });
     };
 
-    let response = await fetch(`${BASE_URL}${url}`, requestOptions);
-
-    // Skip token refresh logic for requests to the Hypership backend
-    if (!url.startsWith("https://backend.hypership.dev")) {
-      // Handle token expiration and errors
-      if (response.status === 400) {
-        const errorData = await response.json();
-        if (await this.isTokenExpired(response)) {
-          try {
-            const newToken = await handleTokenRefresh();
-            // Retry original request with new token
-            requestOptions.headers = {
-              ...getHeaders(url),
-              ...(options.headers || {}),
-              Authorization: `Bearer ${newToken}`,
-            };
-            response = await fetch(`${BASE_URL}${url}`, requestOptions);
-          } catch (error) {
-            setAccessToken(null);
-            throw error;
-          }
-        } else {
-          throw errorData;
-        }
-      } else if (response.status === 401) {
+    // Check if we need to refresh before making the request
+    const currentToken = getAccessToken();
+    if (currentToken && !url?.includes("/auth/refresh")) {
+      if (isTokenExpired(currentToken)) {
         try {
           const newToken = await handleTokenRefresh();
-          // Retry original request with new token
-          requestOptions.headers = {
-            ...getHeaders(url),
-            ...(options.headers || {}),
-            Authorization: `Bearer ${newToken}`,
-          };
-          response = await fetch(`${BASE_URL}${url}`, requestOptions);
+          if (!newToken) {
+            throw new Error("Failed to refresh token");
+          }
+          return makeRequest(newToken).then(async (response) => {
+            if (!response.ok) {
+              const error = await response.json();
+              throw error;
+            }
+            return response.json();
+          });
         } catch (error) {
           setAccessToken(null);
           throw error;
         }
+      }
+    }
+
+    let response = await makeRequest();
+
+    // Handle unexpected token expiration and errors
+    if (response.status === 400 || response.status === 401) {
+      const shouldRefresh =
+        response.status === 401 ||
+        (response.status === 400 && (await this.isTokenExpired(response)));
+
+      if (shouldRefresh) {
+        try {
+          const newToken = await handleTokenRefresh();
+          if (!newToken) {
+            throw new Error("Failed to refresh token");
+          }
+          response = await makeRequest(newToken);
+        } catch (error) {
+          setAccessToken(null);
+          throw error;
+        }
+      } else if (response.status === 400) {
+        const errorData = await response.json();
+        throw errorData;
       }
     }
 
@@ -217,6 +229,7 @@ const apiClient = {
     return response.json();
   },
 
+  // This is now for checking error responses only
   async isTokenExpired(response: Response) {
     try {
       const data = await response.clone().json();
