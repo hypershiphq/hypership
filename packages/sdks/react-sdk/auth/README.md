@@ -14,6 +14,21 @@
 
 A powerful and flexible authentication SDK for React applications, part of the Hypership platform.
 
+## Contents
+
+- [Installation](#installation)
+- [Features](#features)
+- [Quick Start](#quick-start)
+- [Using the Hook](#using-the-hook)
+- [Available Components](#available-components)
+- [Theme Support](#theme-support)
+- [Styling](#styling)
+- [Using Current User Data](#using-current-user-data)
+- [Server-Side Authentication](#server-side-authentication)
+- [API Reference](#api-reference)
+  - [HypershipAuthProvider Props](#hypershipauthprovider-props)
+  - [useHypershipAuth Hook](#usehypershipauth-hook)
+
 ## Installation
 
 ```bash
@@ -137,6 +152,68 @@ function Component() {
 
 export default Component;
 ```
+
+## Server-Side Authentication
+
+For server-side components and server actions in Next.js, you can use the `currentUser` function to verify authentication and get the current user's information:
+
+```typescript
+import { currentUser } from "@hypership/auth-react/server";
+
+// Example of a Next.js Server Action
+("use server");
+
+interface Website {
+  id: string;
+  name: string;
+  url: string;
+  websiteUserId: string;
+  createdAt: Date;
+}
+
+export async function getWebsites(): Promise<Website[]> {
+  try {
+    const user = await currentUser();
+
+    if (!user?.userId) {
+      return [];
+    }
+
+    const websites = await prisma.website.findMany({
+      where: {
+        websiteUserId: user.userId,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+    return websites;
+  } catch {
+    return [];
+  }
+}
+
+// Example of using server-side auth in a Route Handler
+export async function GET() {
+  const user = await currentUser();
+
+  if (!user?.userId) {
+    return new Response("Unauthorized", { status: 401 });
+  }
+
+  // Perform authenticated operations
+  const data = await fetchUserData(user.userId);
+  return Response.json(data);
+}
+```
+
+The `currentUser` function automatically handles token verification and returns an object containing:
+
+- `userId`: The authenticated user's ID
+- `tokenData`: Additional token information including expiration
+- `error`: Any authentication errors that occurred
+
+This makes it easy to protect server-side routes and actions while maintaining type safety and security.
 
 ## API Reference
 
