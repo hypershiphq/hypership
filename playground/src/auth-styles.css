@@ -1,0 +1,4 @@
+/* Import the auth styles */
+@import "../../packages/sdks/react-sdk/auth/dist/style.css";
+
+/* You can add any additional custom overrides here */

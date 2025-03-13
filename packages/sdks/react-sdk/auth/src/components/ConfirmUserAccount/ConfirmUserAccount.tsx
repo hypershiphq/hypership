@@ -59,8 +59,11 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   }
 
   return (
-    <div className="hypership-container">
-      <form className="hypership-form" onSubmit={handleSubmit}>
+    <div className="min-w-[400px] flex justify-center items-center rounded-lg bg-transparent">
+      <form
+        className="w-full p-8 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+        onSubmit={handleSubmit}
+      >
         <Alert message={errorMessage || error} type="error" />
         <InputFieldEmail
           email={email}
@@ -68,28 +71,20 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
           placeholder="Enter your email"
           label="Email"
         />
-        <div className="hypership-input-group">
+        <div className="mb-4 w-full">
           <Alert
             message="Enter the confirmation code sent to your email"
             type="success"
           />
           <OtpInput
-            inputStyle="hypership-otp-button"
+            containerStyle="flex justify-between mt-4"
             value={otp}
             onChange={(otp) => handleOtpChange(otp)}
             numInputs={6}
             renderInput={(props) => (
               <input
                 {...props}
-                style={{
-                  fontSize: "1.25rem",
-                  textAlign: "center",
-                  border: "1px solid #e5e7eb", // Tailwind gray-200 for subtle border
-                  backgroundColor: "#f3f4f6", // Tailwind gray-100
-                  borderRadius: "4px",
-                  padding: "16px",
-                  margin: "0 4px",
-                }}
+                className="text-xl text-center border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded p-4 mx-1 w-12 h-12 focus:border-primary dark:focus:border-primary-dark focus:outline-none text-gray-800 dark:text-gray-200"
               />
             )}
           />

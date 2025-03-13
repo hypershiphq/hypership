@@ -30,7 +30,8 @@
         "default": "./dist/server.js"
       }
     },
-    "./style": "./dist/style.css"
+    "./dist/*": "./dist/*",
+    "./style.css": "./dist/style.css"
   },
   "scripts": {
     "build": "vite build",
@@ -45,13 +46,18 @@
     "@types/node": "^20.14.8",
     "@types/react": "^18.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "cssnano": "^7.0.6",
     "next": "^14.0.0",
+    "postcss": "^8.5.3",
+    "postcss-prefix-selector": "^2.1.0",
     "react": "^18.0.0",
+    "tailwindcss": "^3.4.1",
     "tsup": "^8.3.5",
     "typescript": "^5.5.2",
     "vite": "^6.0.3",
     "vite-plugin-dts": "^4.3.0",
-    "vite-plugin-lib-inject-css": "^2.1.1"
+    "vite-plugin-lib-inject-css": "^2.2.1"
   },
   "peerDependencies": {
     "next": ">=13.0.0",

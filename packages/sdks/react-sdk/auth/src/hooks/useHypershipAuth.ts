@@ -27,7 +27,7 @@ export const useHypershipAuth = (): {
   confirmAccount: (email: string, code: string) => Promise<void>;
   confirmAccountCodeResend: (email: string) => Promise<void>;
   error: string | null;
-  theme: "light" | "dark";
+  theme: "light" | "dark" | "system";
   toggleTheme: () => void;
 } => {
   const context = useContext(AuthContext);

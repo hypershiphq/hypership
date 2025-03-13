@@ -34,8 +34,11 @@ export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
   };
 
   return (
-    <div className="hypership-container">
-      <form className="hypership-form" onSubmit={handleSubmit}>
+    <div className="min-w-[400px] flex justify-center items-center rounded-lg bg-transparent">
+      <form
+        className="w-full p-8 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
+        onSubmit={handleSubmit}
+      >
         <InputFieldEmail
           email={email}
           setEmail={setEmail}

@@ -8,7 +8,7 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 22 }) => {
   return (
     <svg
       data-testid="spinner"
-      className="hypership-spinner"
+      className="animate-spin block text-current"
       style={{
         height: `${size}px`,
         width: `${size}px`,

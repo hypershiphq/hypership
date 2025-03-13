@@ -40,7 +40,7 @@ npm install @hypership/auth-react
 - 🔐 Complete authentication flow (Sign In, Sign Up, Password Reset)
 - 📧 Email verification and account confirmation
 - 🔄 Password reset and change functionality
-- 🌓 Built-in light/dark theme support
+- 🌓 Built-in light/dark theme support with Tailwind CSS
 - 🚀 GitHub OAuth integration
 - 🎨 Customizable UI components
 - 🔒 Secure token management
@@ -77,6 +77,87 @@ function LoginPage() {
 }
 ```
 
+## Theme Support
+
+The SDK now uses Tailwind CSS for styling and includes first-class support for dark mode:
+
+```jsx
+<HypershipAuthProvider apiKey="your-hypership-public-key">
+  <YourApp />
+</HypershipAuthProvider>
+```
+
+### Automatic Theme Detection
+
+Our components will automatically detect and adapt to your app's theme:
+
+1. **Tailwind Dark Mode**: If your app uses Tailwind's dark mode class on the HTML element
+2. **next-themes**: If your app uses the popular `next-themes` package
+3. **System Preference**: Falls back to the user's system preference
+
+### ThemeToggle Component
+
+Add a theme toggle button to your app with our built-in component:
+
+```jsx
+import { ThemeToggle } from "@hypership/auth-react";
+
+function YourComponent() {
+  return (
+    <div>
+      <h1>Your App</h1>
+      <ThemeToggle />
+    </div>
+  );
+}
+```
+
+### Theme Context
+
+Access and control the theme directly:
+
+```jsx
+import { useTheme } from "@hypership/auth-react";
+
+function YourComponent() {
+  const { theme, setTheme, resolvedTheme } = useTheme();
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <p>Resolved theme: {resolvedTheme}</p>
+      <button onClick={() => setTheme("dark")}>Dark Mode</button>
+      <button onClick={() => setTheme("light")}>Light Mode</button>
+      <button onClick={() => setTheme("system")}>System</button>
+    </div>
+  );
+}
+```
+
+### Dark Mode Helpers
+
+Work with dark mode easily:
+
+```jsx
+import { useDarkMode } from "@hypership/auth-react";
+
+function YourComponent() {
+  const isDarkMode = useDarkMode();
+
+  return (
+    <div>{isDarkMode ? "Dark mode is active" : "Light mode is active"}</div>
+  );
+}
+```
+
+## Styling
+
+Our components use Tailwind CSS for styling. If your project doesn't use Tailwind, don't worry - we bundle all the necessary styles.
+
+If your project already uses Tailwind CSS, our component styles will integrate seamlessly with your existing design system.
+
+To ensure proper theming, make sure your app's HTML element has the `dark` class when dark mode is active. Our ThemeProvider handles this automatically.
+
 ## Using the Hook
 
 Access authentication state and methods using the `useHypershipAuth` hook:
@@ -109,24 +190,6 @@ function YourComponent() {
 - `PasswordReset`: Password reset flow
 - `ConfirmUserAccount`: Account confirmation component
 - `Private`: Protected route wrapper
-
-## Theme Support
-
-The SDK supports both light and dark themes out of the box:
-
-```jsx
-<HypershipAuthProvider apiKey="your-hypership-public-key" theme="dark">
-  <YourApp />
-</HypershipAuthProvider>
-```
-
-## Styling
-
-To include the default styles in your application, import the CSS file:
-
-```jsx
-import "@hypership/auth-react/style";
-```
 
 ## Using Current User Data
 

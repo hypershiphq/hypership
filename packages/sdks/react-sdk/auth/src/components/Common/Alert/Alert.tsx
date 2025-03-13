@@ -11,8 +11,12 @@ export const Alert: React.FC<AlertProps> = ({ message, type }) => {
   // Determine the class based on alert type
   const alertClass =
     type === "success"
-      ? "hypership-success-message"
-      : "hypership-error-message";
+      ? "bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800"
+      : "bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 border border-red-200 dark:border-red-800";
 
-  return <p className={alertClass}>{message}</p>;
+  return (
+    <p className={`mb-4 text-sm p-3 rounded text-center ${alertClass}`}>
+      {message}
+    </p>
+  );
 };

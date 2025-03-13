@@ -1,481 +1,137 @@
-.hypership-logo {
-  width: 16px;
-  height: 16px;
-  margin-left: 0.3rem;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-.hypership-auth-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #1f2937;
-}
+@layer components {
+  .hypership-logo {
+    @apply w-4 h-4 ml-[0.3rem];
+  }
 
-@media (prefers-color-scheme: dark) {
   .hypership-auth-wrapper {
-    color: #e5e7eb;
+    @apply flex flex-col items-center justify-center text-text-light dark:text-text-dark;
   }
-}
 
-.hypership-container {
-  min-width: 400px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  background-color: transparent;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-container {
-    background-color: transparent;
+    @apply min-w-[400px] flex justify-center items-center rounded-lg bg-transparent;
   }
-}
 
-.hypership-form {
-  border-radius: 8px;
-  max-width: 400px;
-  width: 100%;
-  text-align: center;
-  padding: 2rem;
-  background-color: transparent;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-form {
-    background-color: transparent;
+    @apply w-full p-8 rounded-lg bg-bg-light dark:bg-bg-dark border border-border-light dark:border-border-dark;
   }
-}
 
-.hypership-input-group {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
+  .hypership-input-group {
+    @apply mb-4 w-full;
+  }
 
-.hypership-input-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 13px;
-  color: #374151;
-}
-
-.hypership-input-group input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 4px;
-  border: 1px solid #d1d5db;
-  font-size: 13px;
-  height: 36px;
-  box-sizing: border-box;
-  transition: all 0.3s ease;
-  background-color: #ffffff;
-  color: #1f2937;
-}
-
-@media screen and (max-width: 768px) {
   .hypership-input-group label {
-    font-size: 14px;
-    margin-bottom: 0.5rem;
+    @apply block mb-2 font-medium text-text-light dark:text-text-dark;
   }
 
   .hypership-input-group input {
-    padding: 0.75rem;
-    font-size: 16px;
-    height: 44px;
-    -webkit-text-size-adjust: 100%;
-  }
-
-  .hypership-button-primary {
-    padding: 0.75rem;
-    height: 44px;
-    font-size: 16px;
-  }
-}
-
-.hypership-input-group input:focus {
-  border-color: #3b82f6;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-}
-
-.hypership-input-group input::placeholder {
-  color: #9ca3af;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-input-group label {
-    color: #e5e7eb;
-  }
-
-  .hypership-input-group input {
-    background-color: #111827;
-    border-color: #374151;
-    color: #e5e7eb;
-  }
-
-  .hypership-input-group input:focus {
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+    @apply w-full p-2 rounded border border-border-light dark:border-border-dark bg-input-light dark:bg-input-dark 
+           text-text-light dark:text-text-dark outline-none transition-colors 
+           focus:border-primary focus:dark:border-primary-dark focus:ring-1 focus:ring-primary dark:focus:ring-primary-dark;
   }
 
   .hypership-input-group input::placeholder {
-    color: #6b7280;
+    @apply text-gray-400 dark:text-gray-500;
   }
-}
 
-.hypership-button-primary {
-  width: 100%;
-  padding: 0.5rem;
-  background-color: #2563eb;
-  border: 1px solid rgba(37, 99, 235, 0.3);
-  height: 36px;
-  border-radius: 4px;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: 0.01em;
-  -webkit-font-smoothing: antialiased;
-}
-
-.hypership-button-primary:hover {
-  background-color: #2563eb;
-  border-color: rgba(37, 99, 235, 0.5);
-}
-
-.hypership-button-primary:active {
-  background-color: #1d4ed8;
-  border-color: rgba(37, 99, 235, 0.6);
-}
-
-.hypership-button-primary:disabled {
-  background-color: #94a3b8;
-  border-color: rgba(148, 163, 184, 0.3);
-  cursor: not-allowed;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-button-primary {
-    background-color: #3b82f6;
-    border-color: rgba(59, 130, 246, 0.4);
+    @apply w-full py-3 bg-primary dark:bg-primary-dark text-white border-none rounded font-medium cursor-pointer 
+           transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .hypership-button-primary:hover {
-    background-color: #3b82f6;
-    border-color: rgba(59, 130, 246, 0.6);
-  }
-
-  .hypership-button-primary:active {
-    background-color: #2563eb;
-    border-color: rgba(59, 130, 246, 0.7);
-  }
-
-  .hypership-button-primary:disabled {
-    background-color: #475569;
-    border-color: rgba(71, 85, 105, 0.4);
-  }
-}
-
-@media screen and (max-width: 768px) {
-  .hypership-button-primary {
-    padding: 0.75rem;
-    height: 44px;
-    font-size: 16px;
-    border-radius: 6px;
-  }
-}
-
-.hypership-button-github {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  background-color: #24292e;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-  height: 2.8rem;
-  position: relative;
-  z-index: 1;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.hypership-button-github:hover {
-  background-color: #1b1f23;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-button-github {
-    background-color: #1b1f23;
-  }
-
-  .hypership-button-github:hover {
-    background-color: #24292e;
-  }
-}
-
-.hypership-button-google {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #ffffff;
-  color: #1f2937;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  border: 1px solid #d1d5db;
-  cursor: pointer;
-  width: 100%;
-  height: 2.8rem;
-  position: relative;
-  transition: all 0.3s ease;
-}
-
-.hypership-button-google:hover {
-  background-color: #f9fafb;
-}
-
-@media (prefers-color-scheme: dark) {
-  .hypership-button-google {
-    background-color: #111827;
-    border-color: #374151;
-    color: #e5e7eb;
-  }
-
-  .hypership-button-google:hover {
-    background-color: #1f2937;
-  }
-}
-
-.hypership-button-apple {
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: black;
-  color: white;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-size: 1rem;
-  cursor: pointer;
-  width: 100%;
-  height: 2.8rem;
-  position: relative;
-  border: none;
-  transition: all 0.3s ease;
-}
-
-.hypership-button-apple:hover {
-  background-color: #1a1a1a;
-}
-
-.button-content {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  width: 100%;
-  position: relative;
-}
-
-.button-content-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-  width: 100%;
-  position: relative;
-}
-
-.button-label {
-  flex: 1;
-  text-align: center;
-}
-
-.hypership-button-secondary {
-  background: none;
-  border: none;
-  color: #6b7280;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 0.5rem 1rem;
-  width: fit-content;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-}
-
-.hypership-button-secondary:hover {
-  color: #374151;
-  background-color: #f3f4f6;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-button-secondary {
-    color: #9ca3af;
+    @apply bg-transparent border-none text-gray-500 dark:text-gray-400 cursor-pointer text-sm py-2 px-4 rounded 
+           transition-colors hover:text-gray-700 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800;
   }
 
-  .hypership-button-secondary:hover {
-    color: #e5e7eb;
-    background-color: #374151;
+  .hypership-button-github {
+    @apply mt-4 flex items-center justify-center gap-2 bg-[#24292e] dark:bg-[#1b1f23] text-white py-2 px-4 rounded 
+           text-base border-none cursor-pointer w-full h-[2.8rem] relative z-[1] overflow-hidden transition-colors
+           hover:bg-[#1b1f23] dark:hover:bg-[#24292e];
   }
-}
 
-.hypership-button-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-}
+  .hypership-button-google {
+    @apply mt-4 flex items-center justify-center bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200 
+           py-2 px-4 rounded text-base border border-gray-300 dark:border-gray-700 cursor-pointer w-full h-[2.8rem]
+           relative transition-colors hover:bg-gray-50 dark:hover:bg-gray-800;
+  }
 
-.hypership-divider {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  margin: 1.5rem 0;
-  color: #6b7280;
-}
+  .hypership-button-apple {
+    @apply mt-4 flex items-center justify-center bg-black text-white py-2 px-4 rounded text-base cursor-pointer 
+           w-full h-[2.8rem] relative border-none transition-colors hover:bg-[#1a1a1a];
+  }
 
-.hypership-divider::before,
-.hypership-divider::after {
-  content: "";
-  flex: 1;
-  border-top: 1px solid #d1d5db;
-  margin: 0 1rem;
-}
+  .button-content {
+    @apply flex items-center gap-2 justify-center w-full relative;
+  }
 
-@media (prefers-color-scheme: dark) {
+  .button-content-wrapper {
+    @apply flex items-center gap-2 justify-center w-full relative;
+  }
+
+  .button-label {
+    @apply flex-1 text-center;
+  }
+
+  .hypership-button-group {
+    @apply flex flex-col items-center gap-2 mt-6;
+  }
+
   .hypership-divider {
-    color: #9ca3af;
+    @apply w-full flex items-center my-6 text-gray-500 dark:text-gray-400;
   }
 
   .hypership-divider::before,
   .hypership-divider::after {
-    border-color: #374151;
+    content: "";
+    @apply flex-1 border-t border-gray-300 dark:border-gray-700 mx-4;
   }
-}
 
-.hypership-error-message {
-  background-color: #fef2f2;
-  color: #991b1b;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  border: 1px solid #fecaca;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-error-message {
-    background-color: #7f1d1d;
-    color: #fecaca;
-    border-color: #991b1b;
+    @apply bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200 mb-4 text-sm p-3 rounded 
+           text-center border border-red-200 dark:border-red-800;
   }
-}
 
-.hypership-success-message {
-  background-color: #f0fdf4;
-  color: #166534;
-  margin-bottom: 1rem;
-  font-size: 14px;
-  padding: 0.75rem;
-  border-radius: 4px;
-  text-align: center;
-  border: 1px solid #bbf7d0;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-success-message {
-    background-color: #064e3b;
-    color: #bbf7d0;
-    border-color: #166534;
+    @apply bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200 mb-4 text-sm p-3 
+           rounded text-center border border-green-200 dark:border-green-800;
   }
-}
 
-.hypership-spinner {
-  animation: spin 1s linear infinite;
-  height: 22px;
-  width: 22px;
-  display: block;
-  color: #ffffff;
-}
+  .hypership-spinner {
+    @apply animate-spin h-[22px] w-[22px] block text-white;
+  }
 
-.hypership-toast {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 12px 24px;
-  border-radius: 6px;
-  font-size: 14px;
-  z-index: 1000;
-  animation:
-    slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
-    slideUp 0.5s 5.5s forwards;
-  background-color: #ffffff;
-  color: #1f2937;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e5e7eb;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-toast {
-    background-color: #1f2937;
-    color: #e5e7eb;
-    border-color: #374151;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    @apply fixed top-5 left-1/2 -translate-x-1/2 py-3 px-6 rounded-lg text-sm z-[1000] 
+           bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow border 
+           border-gray-200 dark:border-gray-700 cursor-pointer;
+    animation:
+      slideDown 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+      slideUp 0.5s 5.5s forwards;
   }
-}
 
-/* Password Strength Bars */
-.hypership-password-strength-bar {
-  display: flex;
-  gap: 4px;
-  margin-top: 0.5rem;
-}
+  .hypership-password-strength-bar {
+    @apply flex gap-1 mt-2;
+  }
 
-.hypership-bar {
-  height: 6px;
-  flex: 1;
-  background-color: #e5e7eb;
-  border-radius: 3px;
-  transition: all 0.2s ease-in-out;
-  opacity: 0.3;
-}
-
-@media (prefers-color-scheme: dark) {
   .hypership-bar {
-    background-color: #374151;
+    @apply h-1.5 flex-1 rounded bg-gray-200 dark:bg-gray-700 transition-all opacity-30;
   }
-}
 
-.hypership-bar.red {
-  background-color: #ef4444;
-  opacity: 1;
-}
+  .hypership-bar.red {
+    @apply bg-red-500 opacity-100;
+  }
 
-.hypership-bar.yellow {
-  background-color: #f59e0b;
-  opacity: 1;
-}
+  .hypership-bar.yellow {
+    @apply bg-yellow-500 opacity-100;
+  }
 
-.hypership-bar.green {
-  background-color: #10b981;
-  opacity: 1;
+  .hypership-bar.green {
+    @apply bg-green-500 opacity-100;
+  }
 }
 
 @keyframes spin {

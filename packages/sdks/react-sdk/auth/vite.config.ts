@@ -15,6 +15,7 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, "src/index.ts"),
         server: resolve(__dirname, "src/server.ts"),
+        styles: resolve(__dirname, "src/styles.ts"),
       },
       formats: ["es"],
     },

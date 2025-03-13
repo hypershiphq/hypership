@@ -42,14 +42,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
 
   // Return the appropriate component based on currentView state
   return (
-    <>
+    <div className="hypership-auth-wrapper">
       {currentView === "signIn" && (
-        <div className="hypership-auth-wrapper">
+        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
           <SignIn
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
           />
-          <div className="hypership-button-group">
+          <div className="flex flex-col items-center gap-2 mt-6">
             <ButtonSecondary
               buttonLabel="Don't have an account? Sign up"
               onClick={() => setCurrentView("signUp")}
@@ -62,14 +62,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "signUp" && (
-        <div className="hypership-auth-wrapper">
+        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
           <SignUp
             onSignUpSuccess={(email) => {
               setEmail(email);
               setCurrentView("confirmAccount");
             }}
           />
-          <div className="hypership-button-group">
+          <div className="flex flex-col items-center gap-2 mt-6">
             <ButtonSecondary
               buttonLabel="Already have an account? Sign in"
               onClick={() => setCurrentView("signIn")}
@@ -78,7 +78,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "confirmAccount" && (
-        <div className="hypership-auth-wrapper">
+        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
           <ConfirmUserAccount
             email={email}
             onConfirmationSuccess={() => {
@@ -89,11 +89,11 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "passwordReset" && (
-        <div className="hypership-auth-wrapper">
+        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
           />
-          <div className="hypership-button-group">
+          <div className="flex flex-col items-center gap-2 mt-6">
             <ButtonSecondary
               buttonLabel="Back to Sign In"
               onClick={() => setCurrentView("signIn")}
@@ -101,7 +101,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
