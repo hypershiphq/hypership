@@ -1,6 +1,6 @@
 {
   "name": "@hypership/auth-react",
-  "version": "0.0.82",
+  "version": "1.0.0",
   "description": "Hypership Auth React SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",

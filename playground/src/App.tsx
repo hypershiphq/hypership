@@ -21,10 +21,7 @@ function AppContent() {
       ) : isAuthenticated ? (
         <Dashboard />
       ) : (
-        <AuthFlowPage
-          initialView="confirmAccount"
-          onAuthSuccess={() => navigate("/private")}
-        />
+        <AuthFlowPage onAuthSuccess={() => navigate("/private")} />
       )}
     </main>
   );
