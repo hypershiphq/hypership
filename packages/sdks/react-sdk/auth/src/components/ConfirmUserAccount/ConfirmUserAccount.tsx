@@ -4,7 +4,6 @@ import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { HypershipPoweredBy } from "../Common/HypershipPoweredBy/HypershipPoweredBy";
-import { ButtonSecondary } from "../Common/ButtonSecondary/ButtonSecondary";
 import { SignIn } from "../SignIn/SignIn";
 import { Alert } from "../Common/Alert/Alert";
 
@@ -90,14 +89,18 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
               Confirmation code
             </label>
             <OtpInput
-              containerStyle="flex justify-between"
               value={otp}
-              onChange={(otp) => handleOtpChange(otp)}
+              onChange={setOtp}
               numInputs={6}
+              containerStyle="flex justify-between gap-2 w-full"
               renderInput={(props) => (
                 <input
                   {...props}
-                  className="w-[40px] h-[40px] text-center border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-lg shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary-dark/20 focus:border-primary dark:focus:border-primary-dark"
+                  style={{
+                    width: "50px",
+                    height: "60px",
+                  }}
+                  className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm transition-all duration-150 outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary-dark/20 focus:border-primary dark:focus:border-primary-dark placeholder:text-gray-400 dark:placeholder:text-gray-500 text-center"
                 />
               )}
             />
@@ -110,11 +113,16 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
               loading={confirmingAccount}
             />
             <div className="text-center">
-              <ButtonSecondary
-                buttonLabel="Resend confirmation code"
-                loading={confirmAccountCodeResending}
+              <button
+                type="button"
                 onClick={() => confirmAccountCodeResend(email)}
-              />
+                disabled={confirmAccountCodeResending}
+                className="text-sm text-primary dark:text-purple-400 hover:text-primary/80 dark:hover:text-purple-300 transition-colors"
+              >
+                {confirmAccountCodeResending
+                  ? "Sending..."
+                  : "Resend confirmation code"}
+              </button>
             </div>
           </div>
 

@@ -8,14 +8,21 @@ import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 // Props for AuthFlow
 interface AuthFlowProps {
   onAuthSuccess: () => void;
+  initialView?: "signIn" | "signUp" | "confirmAccount" | "passwordReset";
+  /** Optional email to pre-populate for confirmAccount or passwordReset views */
+  initialEmail?: string;
 }
 
-export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
+export const AuthFlow: React.FC<AuthFlowProps> = ({
+  onAuthSuccess,
+  initialView = "signIn",
+  initialEmail = "",
+}) => {
   const [currentView, setCurrentView] = useState<
     "signIn" | "signUp" | "confirmAccount" | "passwordReset"
-  >("signIn");
+  >(initialView);
   const { error } = useHypershipAuth();
-  const [email, setEmail] = useState<string>("");
+  const [email, setEmail] = useState<string>(initialEmail);
 
   useEffect(() => {
     if (error === "Please confirm your email address before signing in.") {

@@ -3,6 +3,14 @@ import AuthFlow from "../AuthFlow/AuthFlow";
 
 interface AuthFlowPageProps {
   onAuthSuccess: () => void;
+  /**
+   * The initial auth view to show
+   */
+  initialView?: "signIn" | "signUp" | "confirmAccount" | "passwordReset";
+  /**
+   * Optional email to pre-populate for confirmAccount or passwordReset views
+   */
+  initialEmail?: string;
   title?: string;
   /**
    * URL or path to background image. For local images, import them first:
@@ -15,6 +23,8 @@ interface AuthFlowPageProps {
 
 export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
   onAuthSuccess,
+  initialView = "signIn",
+  initialEmail = "",
   title = "",
   backgroundImage,
   rightComponent,
@@ -37,7 +47,11 @@ export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
           </h1>
         )}
         <div className="w-full max-w-md mx-auto">
-          <AuthFlow onAuthSuccess={onAuthSuccess} />
+          <AuthFlow
+            onAuthSuccess={onAuthSuccess}
+            initialView={initialView}
+            initialEmail={initialEmail}
+          />
         </div>
       </div>
 

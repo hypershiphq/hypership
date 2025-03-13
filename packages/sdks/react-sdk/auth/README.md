@@ -27,6 +27,8 @@ A powerful and flexible authentication SDK for React applications, part of the H
 - [Server-Side Authentication](#server-side-authentication)
 - [API Reference](#api-reference)
   - [HypershipAuthProvider Props](#hypershipauthprovider-props)
+  - [AuthFlow Props](#authflow-props)
+  - [AuthFlowPage Props](#authflowpage-props)
   - [useHypershipAuth Hook](#usehypershipauth-hook)
 
 ## Installation
@@ -74,6 +76,15 @@ function LoginPage() {
   };
 
   return <AuthFlow onAuthSuccess={handleAuthSuccess} />;
+}
+
+// Or start with the sign up form:
+function SignUpPage() {
+  const handleAuthSuccess = () => {
+    // Handle successful authentication
+  };
+
+  return <AuthFlow onAuthSuccess={handleAuthSuccess} initialView="signUp" />;
 }
 ```
 
@@ -238,13 +249,111 @@ function YourComponent() {
 
 ## Available Components
 
-- `AuthFlow`: Complete authentication flow UI
-- `AuthFlowPage`: Complete authentication flow UI with a page
+- `AuthFlow`: Complete authentication flow UI with configurable initial view (sign in or sign up)
+- `AuthFlowPage`: Complete authentication flow UI with a page and configurable initial view
 - `SignIn`: Standalone sign-in component
 - `SignUp`: Standalone sign-up component
 - `PasswordReset`: Password reset flow
 - `ConfirmUserAccount`: Account confirmation component
 - `Private`: Protected route wrapper
+
+### Using AuthFlow with initialView
+
+You can choose which authentication view to show initially:
+
+```jsx
+import { AuthFlow } from "@hypership/auth-react";
+
+// Start with sign in (default)
+function LoginPage() {
+  return <AuthFlow onAuthSuccess={handleSuccess} />;
+}
+
+// Start with sign up
+function RegisterPage() {
+  return <AuthFlow onAuthSuccess={handleSuccess} initialView="signUp" />;
+}
+
+// Start with password reset
+function ResetPasswordPage() {
+  // Optionally pre-populate the email
+  return (
+    <AuthFlow
+      onAuthSuccess={handleSuccess}
+      initialView="passwordReset"
+      initialEmail="user@example.com" // Optional
+    />
+  );
+}
+
+// Start with account confirmation
+function ConfirmAccountPage() {
+  // You can pre-populate the email for a smoother experience
+  return (
+    <AuthFlow
+      onAuthSuccess={handleSuccess}
+      initialView="confirmAccount"
+      initialEmail="user@example.com" // Optional
+    />
+  );
+}
+```
+
+### Using AuthFlowPage with initialView
+
+```jsx
+import { AuthFlowPage } from "@hypership/auth-react";
+
+// Sign in page
+function SignInPage() {
+  return (
+    <AuthFlowPage
+      title="Welcome Back"
+      onAuthSuccess={handleSuccess}
+      backgroundImage="/path/to/image.jpg" // Optional
+    />
+  );
+}
+
+// Registration page
+function RegisterPage() {
+  return (
+    <AuthFlowPage
+      title="Create an Account"
+      onAuthSuccess={handleSuccess}
+      initialView="signUp"
+      backgroundImage="/path/to/image.jpg" // Optional
+    />
+  );
+}
+
+// Password reset page
+function ResetPasswordPage() {
+  return (
+    <AuthFlowPage
+      title="Reset Your Password"
+      onAuthSuccess={handleSuccess}
+      initialView="passwordReset"
+      initialEmail="user@example.com" // Optional pre-filled email
+      backgroundImage="/path/to/image.jpg" // Optional
+    />
+  );
+}
+
+// Account confirmation page
+function ConfirmAccountPage() {
+  // For verification after signup
+  return (
+    <AuthFlowPage
+      title="Verify Your Account"
+      onAuthSuccess={handleSuccess}
+      initialView="confirmAccount"
+      initialEmail="user@example.com" // Pre-fill the email for better UX
+      backgroundImage="/path/to/image.jpg" // Optional
+    />
+  );
+}
+```
 
 ## Using Current User Data
 
@@ -342,6 +451,25 @@ This makes it easy to protect server-side routes and actions while maintaining t
 | apiKey   | string            | Yes      | Your Hypership API key              |
 | theme    | 'light' \| 'dark' | No       | Initial theme (defaults to 'light') |
 | children | ReactNode         | Yes      | Child components                    |
+
+### AuthFlow Props
+
+| Prop          | Type                                                        | Required | Description                                                         |
+| ------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------- |
+| onAuthSuccess | () => void                                                  | Yes      | Callback function after successful authentication                   |
+| initialView   | 'signIn' \| 'signUp' \| 'confirmAccount' \| 'passwordReset' | No       | Initial view to display (defaults to 'signIn')                      |
+| initialEmail  | string                                                      | No       | Pre-populate email field for account confirmation or password reset |
+
+### AuthFlowPage Props
+
+| Prop            | Type                                                        | Required | Description                                                         |
+| --------------- | ----------------------------------------------------------- | -------- | ------------------------------------------------------------------- |
+| onAuthSuccess   | () => void                                                  | Yes      | Callback function after successful authentication                   |
+| initialView     | 'signIn' \| 'signUp' \| 'confirmAccount' \| 'passwordReset' | No       | Initial view to display (defaults to 'signIn')                      |
+| initialEmail    | string                                                      | No       | Pre-populate email field for account confirmation or password reset |
+| title           | string                                                      | No       | Title displayed at the top of the page                              |
+| backgroundImage | string                                                      | No       | URL or path to background image for the right side                  |
+| rightComponent  | ReactNode                                                   | No       | Custom component to display on the right side                       |
 
 ### useHypershipAuth Hook
 
