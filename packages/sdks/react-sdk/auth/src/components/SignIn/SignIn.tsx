@@ -11,6 +11,7 @@ interface SignInProps {
   onAccountConfirmationRequired?: (email: string) => void;
   onForgotPassword?: () => void;
   buttonLabel?: string;
+  highlightColor?: string;
 }
 
 export const SignIn: React.FC<SignInProps> = ({
@@ -18,6 +19,7 @@ export const SignIn: React.FC<SignInProps> = ({
   onAccountConfirmationRequired,
   onForgotPassword,
   buttonLabel = "Sign In",
+  highlightColor,
 }) => {
   const { signIn, isAuthenticated, error, signingIn, theme } =
     useHypershipAuth();
@@ -97,7 +99,7 @@ export const SignIn: React.FC<SignInProps> = ({
             <button
               type="button"
               onClick={() => onForgotPassword && onForgotPassword()}
-              className="text-sm text-primary dark:text-purple-400 hover:text-primary/80 dark:hover:text-purple-300 transition-colors"
+              className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors font-medium"
             >
               Forgot Password?
             </button>
@@ -106,6 +108,7 @@ export const SignIn: React.FC<SignInProps> = ({
             buttonLabel={buttonLabel}
             type="submit"
             loading={signingIn}
+            highlightColor={highlightColor}
           />
           <HypershipPoweredBy />
         </form>

@@ -19,6 +19,11 @@ interface AuthFlowPageProps {
    */
   backgroundImage?: string;
   rightComponent?: React.ReactNode;
+  /**
+   * Highlight color for buttons and links
+   * Defaults to Tailwind blue-600
+   */
+  highlightColor?: string;
 }
 
 export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
@@ -28,6 +33,7 @@ export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
   title = "",
   backgroundImage,
   rightComponent,
+  highlightColor = "#2563eb", // Tailwind blue-600 default
 }) => {
   const showRightSide = backgroundImage || rightComponent;
 
@@ -51,6 +57,7 @@ export const AuthFlowPage: React.FC<AuthFlowPageProps> = ({
             onAuthSuccess={onAuthSuccess}
             initialView={initialView}
             initialEmail={initialEmail}
+            highlightColor={highlightColor}
           />
         </div>
       </div>

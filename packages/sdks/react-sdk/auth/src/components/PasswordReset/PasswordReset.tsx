@@ -9,10 +9,12 @@ import { Alert } from "../Common/Alert/Alert";
 // Props interface that accepts the callback from the parent
 interface PasswordResetProps {
   onPasswordResetSuccess: () => void;
+  highlightColor?: string;
 }
 
 export const PasswordReset: React.FC<PasswordResetProps> = ({
   onPasswordResetSuccess,
+  highlightColor,
 }) => {
   const { passwordReset, passwordResetting } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
@@ -74,6 +76,7 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({
             buttonLabel="Reset Password"
             type="submit"
             loading={passwordResetting}
+            highlightColor={highlightColor}
           />
           <HypershipPoweredBy />
         </form>

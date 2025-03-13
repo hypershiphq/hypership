@@ -11,12 +11,15 @@ interface AuthFlowProps {
   initialView?: "signIn" | "signUp" | "confirmAccount" | "passwordReset";
   /** Optional email to pre-populate for confirmAccount or passwordReset views */
   initialEmail?: string;
+  /** Optional highlight color to use for buttons and links */
+  highlightColor?: string;
 }
 
 export const AuthFlow: React.FC<AuthFlowProps> = ({
   onAuthSuccess,
   initialView = "signIn",
   initialEmail = "",
+  highlightColor,
 }) => {
   const [currentView, setCurrentView] = useState<
     "signIn" | "signUp" | "confirmAccount" | "passwordReset"
@@ -55,6 +58,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
             onForgotPassword={handleForgotPassword}
+            highlightColor={highlightColor}
           />
           <div className="flex flex-col w-full">
             <button
@@ -62,7 +66,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
               className="text-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Don't have an account?{" "}
-              <span className="text-primary dark:text-purple-400 font-medium">
+              <span className="text-gray-700 dark:text-gray-200 font-medium">
                 Sign up
               </span>
             </button>
@@ -76,6 +80,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
               setEmail(email);
               setCurrentView("confirmAccount");
             }}
+            highlightColor={highlightColor}
           />
           <div className="w-full">
             <button
@@ -83,7 +88,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
               className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               Already have an account?{" "}
-              <span className="text-primary dark:text-purple-400 font-medium">
+              <span className="text-gray-700 dark:text-gray-200 font-medium">
                 Sign in
               </span>
             </button>
@@ -98,6 +103,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
               setCurrentView("signIn");
               handleSignInSuccess();
             }}
+            highlightColor={highlightColor}
           />
         </div>
       )}
@@ -105,6 +111,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
         <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
+            highlightColor={highlightColor}
           />
           <div className="flex flex-col items-center gap-2">
             <button

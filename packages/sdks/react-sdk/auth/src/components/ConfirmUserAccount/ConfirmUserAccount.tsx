@@ -10,11 +10,13 @@ import { Alert } from "../Common/Alert/Alert";
 interface ConfirmUserAccountProps {
   onConfirmationSuccess: () => void;
   email?: string;
+  highlightColor?: string;
 }
 
 export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   onConfirmationSuccess,
   email: initialEmail = "",
+  highlightColor = "#3B82F6", // Tailwind blue-500 as default
 }) => {
   const {
     confirmAccount,
@@ -27,10 +29,6 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   const [email, setEmail] = useState<string>(initialEmail);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showSignIn, setShowSignIn] = useState(false);
-
-  const handleOtpChange = (otpValue: string) => {
-    setOtp(otpValue);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,16 +91,22 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
               onChange={setOtp}
               numInputs={6}
               containerStyle="flex justify-between gap-2 w-full"
-              renderInput={(props) => (
-                <input
-                  {...props}
-                  style={{
-                    width: "50px",
-                    height: "60px",
-                  }}
-                  className="flex h-10 w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm transition-all duration-150 outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary-dark/20 focus:border-primary dark:focus:border-primary-dark placeholder:text-gray-400 dark:placeholder:text-gray-500 text-center"
-                />
-              )}
+              renderInput={(props) => {
+                const { style, ...otherProps } = props;
+                return (
+                  <input
+                    {...otherProps}
+                    style={
+                      {
+                        ...style,
+                        width: "50px",
+                        height: "60px",
+                      } as React.CSSProperties
+                    }
+                    className="flex rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm transition-all duration-150 outline-none focus:ring-2 focus:ring-opacity-20 focus:border-opacity-100 placeholder:text-gray-400 dark:placeholder:text-gray-500 text-center"
+                  />
+                );
+              }}
             />
           </div>
 
@@ -111,13 +115,14 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
               type="submit"
               buttonLabel="Verify Account"
               loading={confirmingAccount}
+              highlightColor={highlightColor}
             />
             <div className="text-center">
               <button
                 type="button"
                 onClick={() => confirmAccountCodeResend(email)}
                 disabled={confirmAccountCodeResending}
-                className="text-sm text-primary dark:text-purple-400 hover:text-primary/80 dark:hover:text-purple-300 transition-colors"
+                className="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100 transition-colors font-medium"
               >
                 {confirmAccountCodeResending
                   ? "Sending..."

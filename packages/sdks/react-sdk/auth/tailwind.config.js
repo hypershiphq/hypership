@@ -6,8 +6,8 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#6b46c1", // Purple for light mode primary
-          dark: "#9f7aea", // Lighter purple for dark mode primary
+          DEFAULT: "#2563eb", // Blue-600 for light mode primary (was purple)
+          dark: "#3b82f6", // Blue-500 for dark mode primary (was lighter purple)
         },
         bg: {
           light: "#ffffff",

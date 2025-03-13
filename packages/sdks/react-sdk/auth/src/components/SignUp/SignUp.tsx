@@ -8,10 +8,14 @@ import { Alert } from "../Common/Alert/Alert";
 
 interface SignUpProps {
   onSignUpSuccess: (email: string) => void;
+  highlightColor?: string;
 }
 
-export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
-  const { signUp, signingUp, error } = useHypershipAuth();
+export const SignUp: React.FC<SignUpProps> = ({
+  onSignUpSuccess,
+  highlightColor,
+}) => {
+  const { signUp, error, signingUp } = useHypershipAuth();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -25,8 +29,18 @@ export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!email) {
+      setErrorMessage("Please enter your email address.");
+      return;
+    }
+
+    if (!password) {
+      setErrorMessage("Please enter a password.");
+      return;
+    }
+
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
+      setErrorMessage("Passwords do not match.");
       return;
     }
 
@@ -35,7 +49,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
       onSignUpSuccess(email);
       setErrorMessage(null);
     } catch (err: any) {
-      // Error is handled in the auth context
+      // Error is handled in the AuthContext
     }
   };
 
@@ -84,6 +98,7 @@ export const SignUp: React.FC<SignUpProps> = ({ onSignUpSuccess }) => {
             buttonLabel="Create Account"
             type="submit"
             loading={signingUp}
+            highlightColor={highlightColor}
           />
           <HypershipPoweredBy />
         </form>
