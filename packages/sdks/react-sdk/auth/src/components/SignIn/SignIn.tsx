@@ -9,12 +9,14 @@ import { Alert } from "../Common/Alert/Alert";
 interface SignInProps {
   onSignInSuccess: () => void;
   onAccountConfirmationRequired?: (email: string) => void;
+  onForgotPassword?: () => void;
   buttonLabel?: string;
 }
 
 export const SignIn: React.FC<SignInProps> = ({
   onSignInSuccess,
   onAccountConfirmationRequired,
+  onForgotPassword,
   buttonLabel = "Sign In",
 }) => {
   const { signIn, isAuthenticated, error, signingIn, theme } =
@@ -91,6 +93,15 @@ export const SignIn: React.FC<SignInProps> = ({
             label="Password"
             showStrengthMeter={false}
           />
+          <div className="mb-4 text-left">
+            <button
+              type="button"
+              onClick={() => onForgotPassword && onForgotPassword()}
+              className="text-sm text-primary dark:text-purple-400 hover:text-primary/80 dark:hover:text-purple-300 transition-colors"
+            >
+              Forgot Password?
+            </button>
+          </div>
           <ButtonPrimary
             buttonLabel={buttonLabel}
             type="submit"

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import SignIn from "../SignIn/SignIn";
 import { ConfirmUserAccount } from "../ConfirmUserAccount/ConfirmUserAccount";
 import { PasswordReset } from "../PasswordReset/PasswordReset";
-import { ButtonSecondary } from "../Common/ButtonSecondary/ButtonSecondary";
 import { SignUp } from "../SignUp/SignUp";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
 
@@ -48,16 +47,18 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
           <SignIn
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
+            onForgotPassword={handleForgotPassword}
           />
-          <div className="flex flex-col items-center gap-2">
-            <ButtonSecondary
-              buttonLabel="Don't have an account? Sign up"
+          <div className="flex flex-col w-full">
+            <button
               onClick={() => setCurrentView("signUp")}
-            />
-            <ButtonSecondary
-              buttonLabel="Forgot Password?"
-              onClick={handleForgotPassword}
-            />
+              className="text-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Don't have an account?{" "}
+              <span className="text-primary dark:text-purple-400 font-medium">
+                Sign up
+              </span>
+            </button>
           </div>
         </div>
       )}
@@ -69,11 +70,16 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
               setCurrentView("confirmAccount");
             }}
           />
-          <div className="flex flex-col items-center gap-2">
-            <ButtonSecondary
-              buttonLabel="Already have an account? Sign in"
+          <div className="w-full">
+            <button
               onClick={() => setCurrentView("signIn")}
-            />
+              className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Already have an account?{" "}
+              <span className="text-primary dark:text-purple-400 font-medium">
+                Sign in
+              </span>
+            </button>
           </div>
         </div>
       )}
@@ -94,10 +100,12 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
             onPasswordResetSuccess={() => setCurrentView("signIn")}
           />
           <div className="flex flex-col items-center gap-2">
-            <ButtonSecondary
-              buttonLabel="Back to Sign In"
+            <button
               onClick={() => setCurrentView("signIn")}
-            />
+              className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+            >
+              Back to Sign In
+            </button>
           </div>
         </div>
       )}
