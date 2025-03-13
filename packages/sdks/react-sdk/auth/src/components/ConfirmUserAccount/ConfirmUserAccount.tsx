@@ -59,48 +59,68 @@ export const ConfirmUserAccount: React.FC<ConfirmUserAccountProps> = ({
   }
 
   return (
-    <div className="min-w-[400px] flex justify-center items-center rounded-lg bg-transparent">
-      <form
-        className="w-full p-8 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-        onSubmit={handleSubmit}
-      >
-        <Alert message={errorMessage || error} type="error" />
-        <InputFieldEmail
-          email={email}
-          setEmail={setEmail}
-          placeholder="Enter your email"
-          label="Email"
-        />
-        <div className="mb-4 w-full">
-          <Alert
-            message="Enter the confirmation code sent to your email"
-            type="success"
-          />
-          <OtpInput
-            containerStyle="flex justify-between mt-4"
-            value={otp}
-            onChange={(otp) => handleOtpChange(otp)}
-            numInputs={6}
-            renderInput={(props) => (
-              <input
-                {...props}
-                className="text-xl text-center border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 rounded p-4 mx-1 w-12 h-12 focus:border-primary dark:focus:border-primary-dark focus:outline-none text-gray-800 dark:text-gray-200"
-              />
-            )}
-          />
+    <div className="hypership-container">
+      <div className="w-full">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            Verify your account
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Enter the code sent to your email
+          </p>
         </div>
-        <ButtonPrimary
-          type="submit"
-          buttonLabel="Confirm Account"
-          loading={confirmingAccount}
-        />
-        <ButtonSecondary
-          buttonLabel="Resend confirmation code"
-          loading={confirmAccountCodeResending}
-          onClick={() => confirmAccountCodeResend(email)}
-        />
-        <HypershipPoweredBy />
-      </form>
+
+        <form
+          className="hypership-form w-full p-6 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
+          onSubmit={handleSubmit}
+        >
+          {(errorMessage || error) && (
+            <Alert message={errorMessage || error} type="error" />
+          )}
+
+          <InputFieldEmail
+            email={email}
+            setEmail={setEmail}
+            placeholder="Enter your email"
+            label="Email"
+          />
+
+          <div className="mb-6 w-full">
+            <label className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">
+              Confirmation code
+            </label>
+            <OtpInput
+              containerStyle="flex justify-between"
+              value={otp}
+              onChange={(otp) => handleOtpChange(otp)}
+              numInputs={6}
+              renderInput={(props) => (
+                <input
+                  {...props}
+                  className="w-[40px] h-[40px] text-center border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 text-lg shadow-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary-dark/20 focus:border-primary dark:focus:border-primary-dark"
+                />
+              )}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <ButtonPrimary
+              type="submit"
+              buttonLabel="Verify Account"
+              loading={confirmingAccount}
+            />
+            <div className="text-center">
+              <ButtonSecondary
+                buttonLabel="Resend confirmation code"
+                loading={confirmAccountCodeResending}
+                onClick={() => confirmAccountCodeResend(email)}
+              />
+            </div>
+          </div>
+
+          <HypershipPoweredBy />
+        </form>
+      </div>
     </div>
   );
 };

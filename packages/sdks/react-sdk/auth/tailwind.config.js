@@ -1,13 +1,13 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx,html}"],
   darkMode: "class", // Enable class-based dark mode
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#2563eb", // Blue
-          dark: "#3b82f6",
+          DEFAULT: "#6b46c1", // Purple for light mode primary
+          dark: "#9f7aea", // Lighter purple for dark mode primary
         },
         bg: {
           light: "#ffffff",
@@ -34,7 +34,45 @@ module.exports = {
           dark: "#10b981",
         },
       },
+      animation: {
+        fadeIn: "fadeIn 0.5s ease-in-out forwards",
+      },
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      boxShadow: {
+        sm: "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+        DEFAULT:
+          "0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)",
+        md: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        lg: "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      },
+      borderRadius: {
+        sm: "0.25rem",
+        DEFAULT: "0.375rem",
+        md: "0.5rem",
+        lg: "0.75rem",
+      },
+    },
+  },
+  variants: {
+    extend: {
+      opacity: ["disabled"],
+      cursor: ["disabled"],
     },
   },
   plugins: [],
+  corePlugins: {
+    // Disable features we don't use
+    container: false,
+    objectFit: false,
+    objectPosition: false,
+    overscroll: false,
+    placeholderColor: false,
+    placeholderOpacity: false,
+    tableLayout: false,
+  },
 };

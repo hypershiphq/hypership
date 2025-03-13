@@ -4,6 +4,7 @@ import { InputFieldEmail } from "../Common/InputFieldEmail/InputFieldEmail";
 import { ButtonPrimary } from "../Common/ButtonPrimary/ButtonPrimary";
 import { HypershipPoweredBy } from "../Common/HypershipPoweredBy/HypershipPoweredBy";
 import { useHypershipAuth } from "../../hooks/useHypershipAuth";
+import { Alert } from "../Common/Alert/Alert";
 
 interface SignInProps {
   onSignInSuccess: () => void;
@@ -57,32 +58,47 @@ export const SignIn: React.FC<SignInProps> = ({
   }, [isAuthenticated, onSignInSuccess]);
 
   return (
-    <div className="min-w-[400px] flex justify-center items-center rounded-lg bg-transparent">
-      <form
-        className="w-full p-8 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-        onSubmit={handleSubmit}
-      >
-        <InputFieldEmail
-          email={email}
-          setEmail={setEmail}
-          placeholder="Enter your email"
-          label="Email"
-          theme={theme}
-        />
-        <InputFieldPassword
-          password={password}
-          setPassword={setPassword}
-          placeholder="Enter your password"
-          label="Password"
-          showStrengthMeter={false}
-        />
-        <ButtonPrimary
-          buttonLabel={buttonLabel}
-          type="submit"
-          loading={signingIn}
-        />
-        <HypershipPoweredBy />
-      </form>
+    <div className="hypership-container">
+      <div className="w-full">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            Welcome back
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            Sign in to your account to continue
+          </p>
+        </div>
+
+        <form
+          className="hypership-form w-full p-6 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
+          onSubmit={handleSubmit}
+        >
+          {(errorMessage || error) && (
+            <Alert message={errorMessage || error} type="error" />
+          )}
+
+          <InputFieldEmail
+            email={email}
+            setEmail={setEmail}
+            placeholder="Enter your email"
+            label="Email"
+            theme={theme}
+          />
+          <InputFieldPassword
+            password={password}
+            setPassword={setPassword}
+            placeholder="Enter your password"
+            label="Password"
+            showStrengthMeter={false}
+          />
+          <ButtonPrimary
+            buttonLabel={buttonLabel}
+            type="submit"
+            loading={signingIn}
+          />
+          <HypershipPoweredBy />
+        </form>
+      </div>
     </div>
   );
 };

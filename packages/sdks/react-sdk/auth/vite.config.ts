@@ -38,7 +38,25 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
+        manualChunks: undefined,
+        inlineDynamicImports: true,
+        minifyInternalExports: true,
       },
     },
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: [
+          "console.log",
+          "console.info",
+          "console.debug",
+          "console.trace",
+        ],
+      },
+    },
+    sourcemap: false,
+    reportCompressedSize: true,
   },
 });

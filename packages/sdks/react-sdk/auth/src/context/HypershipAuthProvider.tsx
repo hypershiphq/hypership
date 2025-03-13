@@ -492,7 +492,7 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
             confirmAccountCodeResend,
           }}
         >
-          {children}
+          <div className="hypership-auth-wrapper">{children}</div>
           {showToast && (
             <Toast
               message={toastMessage}

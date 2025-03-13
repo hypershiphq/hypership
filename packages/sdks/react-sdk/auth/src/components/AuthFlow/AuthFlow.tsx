@@ -42,14 +42,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
 
   // Return the appropriate component based on currentView state
   return (
-    <div className="hypership-auth-wrapper">
+    <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto p-4 sm:p-6">
       {currentView === "signIn" && (
-        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
+        <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
           <SignIn
             onSignInSuccess={handleSignInSuccess}
             onAccountConfirmationRequired={handleAccountConfirmationRequired}
           />
-          <div className="flex flex-col items-center gap-2 mt-6">
+          <div className="flex flex-col items-center gap-2">
             <ButtonSecondary
               buttonLabel="Don't have an account? Sign up"
               onClick={() => setCurrentView("signUp")}
@@ -62,14 +62,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "signUp" && (
-        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
+        <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
           <SignUp
             onSignUpSuccess={(email) => {
               setEmail(email);
               setCurrentView("confirmAccount");
             }}
           />
-          <div className="flex flex-col items-center gap-2 mt-6">
+          <div className="flex flex-col items-center gap-2">
             <ButtonSecondary
               buttonLabel="Already have an account? Sign in"
               onClick={() => setCurrentView("signIn")}
@@ -78,7 +78,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "confirmAccount" && (
-        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
+        <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
           <ConfirmUserAccount
             email={email}
             onConfirmationSuccess={() => {
@@ -89,11 +89,11 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onAuthSuccess }) => {
         </div>
       )}
       {currentView === "passwordReset" && (
-        <div className="flex flex-col items-center justify-center text-gray-800 dark:text-gray-200">
+        <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
           <PasswordReset
             onPasswordResetSuccess={() => setCurrentView("signIn")}
           />
-          <div className="flex flex-col items-center gap-2 mt-6">
+          <div className="flex flex-col items-center gap-2">
             <ButtonSecondary
               buttonLabel="Back to Sign In"
               onClick={() => setCurrentView("signIn")}

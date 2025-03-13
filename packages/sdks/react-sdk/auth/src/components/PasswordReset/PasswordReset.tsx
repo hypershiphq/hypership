@@ -46,26 +46,38 @@ export const PasswordReset: React.FC<PasswordResetProps> = ({
   }
 
   return (
-    <div className="min-w-[400px] flex justify-center items-center rounded-lg bg-transparent">
-      <form
-        className="w-full p-8 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
-        onSubmit={handleSubmit}
-      >
-        <Alert message={errorMessage} type="error" />
-        <Alert message={message} type="success" />
-        <InputFieldEmail
-          email={email}
-          setEmail={setEmail}
-          placeholder="Enter your email"
-          label="Email"
-        />
-        <ButtonPrimary
-          buttonLabel="Reset Password"
-          type="submit"
-          loading={passwordResetting}
-        />
-        <HypershipPoweredBy />
-      </form>
+    <div className="hypership-container">
+      <div className="w-full">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100">
+            Reset password
+          </h2>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            We'll send you instructions to reset your password
+          </p>
+        </div>
+
+        <form
+          className="hypership-form w-full p-6 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
+          onSubmit={handleSubmit}
+        >
+          {errorMessage && <Alert message={errorMessage} type="error" />}
+          {message && <Alert message={message} type="success" />}
+
+          <InputFieldEmail
+            email={email}
+            setEmail={setEmail}
+            placeholder="Enter your email"
+            label="Email"
+          />
+          <ButtonPrimary
+            buttonLabel="Reset Password"
+            type="submit"
+            loading={passwordResetting}
+          />
+          <HypershipPoweredBy />
+        </form>
+      </div>
     </div>
   );
 };

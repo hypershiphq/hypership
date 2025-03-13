@@ -154,6 +154,61 @@ function YourComponent() {
 
 Our components use Tailwind CSS for styling. If your project doesn't use Tailwind, don't worry - we bundle all the necessary styles.
 
+### Importing Styles
+
+To use our components with their styles, you only need to:
+
+```jsx
+// In your main entry file (e.g., _app.js, App.js, main.jsx)
+import "@hypership/auth-react/style.css";
+```
+
+That's it! The necessary wrapper class is automatically included in the `HypershipAuthProvider`, so you don't need to add any additional wrappers.
+
+```jsx
+// This is all you need - no extra wrapper required!
+<HypershipAuthProvider apiKey="your-hypership-api-key">
+  <AuthFlow onAuthSuccess={handleSuccess} />
+</HypershipAuthProvider>
+```
+
+### Using the AuthFlowPage Component
+
+The `AuthFlowPage` component provides a complete, styled authentication page:
+
+```jsx
+import { AuthFlowPage } from "@hypership/auth-react";
+
+function LoginPage() {
+  return (
+    <AuthFlowPage
+      title="Welcome to My App"
+      onAuthSuccess={handleSuccess}
+      backgroundImage="/path/to/image.jpg" // Optional
+    />
+  );
+}
+```
+
+### Dark Mode Support
+
+Dark mode is handled automatically through the `ThemeProvider`:
+
+```jsx
+import { ThemeToggle } from "@hypership/auth-react";
+
+function App() {
+  return (
+    <HypershipAuthProvider apiKey="your-hypership-api-key">
+      <div>
+        <ThemeToggle />
+        <AuthFlow onAuthSuccess={handleSuccess} />
+      </div>
+    </HypershipAuthProvider>
+  );
+}
+```
+
 If your project already uses Tailwind CSS, our component styles will integrate seamlessly with your existing design system.
 
 To ensure proper theming, make sure your app's HTML element has the `dark` class when dark mode is active. Our ThemeProvider handles this automatically.

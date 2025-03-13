@@ -16,11 +16,11 @@ export const ButtonSecondary: React.FC<ButtonSecondaryProps> = ({
     <button
       type="button"
       onClick={onClick}
-      className="bg-transparent border-none text-gray-500 dark:text-gray-400 cursor-pointer text-sm py-2 px-4 rounded transition-colors hover:text-gray-700 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="bg-transparent text-gray-500 dark:text-gray-400 cursor-pointer text-sm py-2 px-4 rounded-md transition-all duration-200 ease-in-out hover:text-gray-700 hover:bg-gray-100 dark:hover:text-gray-200 dark:hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700 active:scale-[0.98]"
       disabled={loading}
     >
-      <span className="flex items-center gap-2 justify-center w-full relative">
-        {loading && <Spinner />}
+      <span className="flex items-center gap-1.5 justify-center w-full relative">
+        {loading && <Spinner size={14} />}
         {buttonLabel}
       </span>
     </button>
