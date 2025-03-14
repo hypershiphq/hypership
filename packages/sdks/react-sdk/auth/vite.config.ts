@@ -15,6 +15,7 @@ export default defineConfig({
       entry: {
         index: resolve(__dirname, "src/index.ts"),
         server: resolve(__dirname, "src/server.ts"),
+        styles: resolve(__dirname, "src/styles.ts"),
       },
       formats: ["es"],
     },
@@ -37,7 +38,24 @@ export default defineConfig({
           react: "React",
           "react-dom": "ReactDOM",
         },
+        manualChunks: undefined,
+        minifyInternalExports: true,
       },
     },
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: [
+          "console.log",
+          "console.info",
+          "console.debug",
+          "console.trace",
+        ],
+      },
+    },
+    sourcemap: false,
+    reportCompressedSize: true,
   },
 });

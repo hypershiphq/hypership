@@ -3,6 +3,7 @@ import React from "react";
 interface ToastProps {
   message: string | null;
   type: "success" | "error"; // Type of toast: success or error
+  onClose?: () => void; // Optional callback for when the toast is closed
 }
 
 const SuccessIcon = () => (
@@ -33,8 +34,18 @@ const ErrorIcon = () => (
   </svg>
 );
 
-export const Toast: React.FC<ToastProps> = ({ message, type }) => {
+export const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => {
   if (!message) return null;
+
+  // Auto-dismiss the toast after 3 seconds
+  React.useEffect(() => {
+    if (message && onClose) {
+      const timer = setTimeout(() => {
+        onClose();
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message, onClose]);
 
   // Determine the class and icon based on toast type
   const toastClass =
@@ -45,6 +56,7 @@ export const Toast: React.FC<ToastProps> = ({ message, type }) => {
     <div
       className={`hypership-toast ${toastClass}`}
       style={{ display: "flex", alignItems: "center" }}
+      onClick={onClose} // Allow clicking the toast to dismiss it
     >
       <Icon /> {message}
     </div>

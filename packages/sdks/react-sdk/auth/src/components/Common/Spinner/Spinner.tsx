@@ -4,11 +4,11 @@ interface SpinnerProps {
   size?: number; // Optional size prop to control spinner dimensions
 }
 
-const Spinner: React.FC<SpinnerProps> = ({ size = 22 }) => {
+const Spinner: React.FC<SpinnerProps> = ({ size = 20 }) => {
   return (
     <svg
       data-testid="spinner"
-      className="hypership-spinner"
+      className="animate-spin text-current"
       style={{
         height: `${size}px`,
         width: `${size}px`,
@@ -16,25 +16,20 @@ const Spinner: React.FC<SpinnerProps> = ({ size = 22 }) => {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
+      aria-hidden="true"
     >
       <circle
-        style={{ opacity: 0.2 }}
+        className="opacity-25"
         cx="12"
         cy="12"
         r="10"
         stroke="currentColor"
-        strokeWidth="2"
+        strokeWidth="3"
       />
-      <circle
-        style={{ opacity: 0.75 }}
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeDasharray="50"
-        strokeDashoffset="30"
-        strokeLinecap="round"
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
       />
     </svg>
   );

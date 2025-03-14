@@ -15,4 +15,15 @@ export { ButtonPrimary } from "./components/Common/ButtonPrimary/ButtonPrimary";
 export { ButtonSecondary } from "./components/Common/ButtonSecondary/ButtonSecondary";
 export { ButtonSignInApple } from "./components/Common/ButtonSignInApple/ButtonSignInApple";
 export { ButtonSignInGitHub } from "./components/Common/ButtonSignInGitHub/ButtonSignInGitHub";
+export { ThemeToggle } from "./components/Common/ThemeToggle/ThemeToggle";
+
+// Theme-related exports
+export { ThemeProvider, useTheme } from "./context/ThemeContext";
+export {
+  useThemedStyles,
+  useThemedClassName,
+  useDarkMode,
+} from "./hooks/useThemedStyles";
+export { applyThemeVariables, observeThemeChanges } from "./utils/theming";
+
 export * from "./types/types";

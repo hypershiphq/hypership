@@ -10,6 +10,8 @@ import getHypershipPublicKey from "../utils/getPublicKey";
 import { ToastProvider } from "../components/Common/Toast/ToastProvider";
 import { AuthContextProps, User } from "../types/types";
 import { Toast } from "../components/Common/Toast/Toast";
+import { ThemeProvider } from "./ThemeContext";
+import { observeThemeChanges } from "../utils/theming";
 
 export const AuthContext = createContext<AuthContextProps | undefined>(
   undefined
@@ -18,7 +20,7 @@ export const AuthContext = createContext<AuthContextProps | undefined>(
 interface AuthProviderProps {
   children: ReactNode;
   apiKey?: string; // Make apiKey optional
-  theme?: "light" | "dark"; // Optional theme prop with possible values
+  theme?: "light" | "dark" | "system"; // Optional theme prop
 }
 
 const getAccessToken = () => {
@@ -58,10 +60,10 @@ const setCookie = (
 export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   children,
   apiKey,
-  theme: initialTheme = "light", // Default to "light" if no theme is provided
+  theme: initialTheme = "system", // Default to system theme
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [theme, setTheme] = useState<"light" | "dark">(initialTheme);
+  const [theme, setTheme] = useState<"light" | "dark" | "system">(initialTheme);
   const accessToken = getAccessToken();
   const initializeAuthRan = useRef(false);
 
@@ -91,7 +93,9 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
 
   // Function to toggle theme
   const toggleTheme = () => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+    setTheme((prevTheme) =>
+      prevTheme === "light" ? "dark" : prevTheme === "dark" ? "system" : "light"
+    );
   };
 
   // Helper function to normalize user data
@@ -209,6 +213,13 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
       window.removeEventListener("hashchange", handleUrlChange);
     };
   }, [apiKey, accessToken]);
+
+  // Add effect to observe theme changes
+  useEffect(() => {
+    // Set up observers for theme changes
+    const cleanup = observeThemeChanges();
+    return cleanup;
+  }, []);
 
   const showErrorToast = (errorMessage: string) => {
     setToastMessage(errorMessage);
@@ -455,34 +466,42 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        error,
-        signingIn,
-        signingUp,
-        authenticating,
-        passwordResetting,
-        passwordChanging,
-        confirmingAccount,
-        confirmAccountCodeResending,
-        signIn,
-        signUp,
-        signOut,
-        signInWithGithub,
-        theme,
-        toggleTheme,
-        passwordReset,
-        confirmPasswordResetCode,
-        passwordChange,
-        confirmAccount,
-        confirmAccountCodeResend,
-      }}
-    >
+    <ThemeProvider>
       <ToastProvider>
-        {children}
-        {showToast && <Toast message={toastMessage} type={toastType} />}
+        <AuthContext.Provider
+          value={{
+            user,
+            error,
+            signingIn,
+            signingUp,
+            authenticating,
+            passwordResetting,
+            passwordChanging,
+            confirmingAccount,
+            confirmAccountCodeResending,
+            signIn,
+            signUp,
+            signOut,
+            signInWithGithub,
+            theme,
+            toggleTheme,
+            passwordReset,
+            confirmPasswordResetCode,
+            passwordChange,
+            confirmAccount,
+            confirmAccountCodeResend,
+          }}
+        >
+          <div>{children}</div>
+          {showToast && (
+            <Toast
+              message={toastMessage}
+              type={toastType}
+              onClose={() => setToastMessage(null)}
+            />
+          )}
+        </AuthContext.Provider>
       </ToastProvider>
-    </AuthContext.Provider>
+    </ThemeProvider>
   );
 };

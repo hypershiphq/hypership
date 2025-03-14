@@ -65,13 +65,14 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
   };
 
   return (
-    <div className="hypership-input-group">
-      <label htmlFor={id} className="hypership-label">
+    <div className="mb-4 w-full">
+      <label
+        htmlFor={id}
+        className="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300"
+      >
         {label}
       </label>
-      <div
-        style={{ position: "relative", display: "flex", alignItems: "center" }}
-      >
+      <div className="relative">
         <input
           data-testid="password-input"
           type={isPasswordVisible ? "text" : "password"}
@@ -80,20 +81,12 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
           onChange={handleChange}
           placeholder={placeholder}
           required
-          className="hypership-input"
+          className="w-full h-10 px-3 py-2 text-sm rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 shadow-sm transition-all duration-150 outline-none focus:ring-2 focus:ring-primary/20 dark:focus:ring-primary-dark/20 focus:border-primary dark:focus:border-primary-dark placeholder:text-gray-400 dark:placeholder:text-gray-500 pr-10"
         />
         <button
           type="button"
           onClick={togglePasswordVisibility}
-          style={{
-            position: "absolute",
-            right: "10px",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            padding: 0,
-            outline: "none",
-          }}
+          className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:focus:ring-gray-700"
           aria-label="Toggle password visibility"
           tabIndex={-1}
         >
@@ -103,9 +96,8 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
-              stroke="#9CA3AF"
-              className="size-6"
-              style={{ width: "24px", height: "24px" }}
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-500 dark:text-gray-400"
             >
               <path
                 strokeLinecap="round"
@@ -119,9 +111,8 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
               fill="none"
               viewBox="0 0 24 24"
               strokeWidth="1.5"
-              stroke="#9CA3AF"
-              className="size-6"
-              style={{ width: "24px", height: "24px" }}
+              stroke="currentColor"
+              className="w-5 h-5 text-gray-500 dark:text-gray-400"
             >
               <path
                 strokeLinecap="round"
@@ -137,37 +128,46 @@ export const InputFieldPassword: React.FC<InputFieldPasswordProps> = ({
           )}
         </button>
       </div>
-      {showStrengthMeter && (
-        <div
-          data-testid="password-strength-bar"
-          className="hypership-password-strength-bar"
-        >
-          <div
-            data-testid="password-strength-bar-1"
-            className={`hypership-bar ${
-              passwordStrength >= 1
-                ? passwordStrength === 3
-                  ? "green"
-                  : passwordStrength === 2
-                    ? "yellow"
-                    : "red"
-                : ""
-            }`}
-          ></div>
-          <div
-            data-testid="password-strength-bar-2"
-            className={`hypership-bar ${
-              passwordStrength >= 2
-                ? passwordStrength === 3
-                  ? "green"
-                  : "yellow"
-                : ""
-            }`}
-          ></div>
-          <div
-            data-testid="password-strength-bar-3"
-            className={`hypership-bar ${passwordStrength === 3 ? "green" : ""}`}
-          ></div>
+      {showStrengthMeter && password && (
+        <div className="mt-2 space-y-1">
+          <div data-testid="password-strength-bar" className="flex gap-1">
+            <div
+              data-testid="password-strength-bar-1"
+              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                passwordStrength >= 1
+                  ? passwordStrength === 3
+                    ? "bg-green-500 opacity-100"
+                    : passwordStrength === 2
+                      ? "bg-yellow-500 opacity-100"
+                      : "bg-red-500 opacity-100"
+                  : "bg-gray-200 dark:bg-gray-700 opacity-30"
+              }`}
+            ></div>
+            <div
+              data-testid="password-strength-bar-2"
+              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                passwordStrength >= 2
+                  ? passwordStrength === 3
+                    ? "bg-green-500 opacity-100"
+                    : "bg-yellow-500 opacity-100"
+                  : "bg-gray-200 dark:bg-gray-700 opacity-30"
+              }`}
+            ></div>
+            <div
+              data-testid="password-strength-bar-3"
+              className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                passwordStrength === 3
+                  ? "bg-green-500 opacity-100"
+                  : "bg-gray-200 dark:bg-gray-700 opacity-30"
+              }`}
+            ></div>
+          </div>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {passwordStrength === 0 && "Enter a password"}
+            {passwordStrength === 1 && "Weak password"}
+            {passwordStrength === 2 && "Medium password"}
+            {passwordStrength === 3 && "Strong password"}
+          </p>
         </div>
       )}
     </div>

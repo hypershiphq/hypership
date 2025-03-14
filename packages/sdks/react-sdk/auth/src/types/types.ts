@@ -9,7 +9,7 @@ export interface User {
 
 export interface AuthContextProps {
   user: User | null;
-  theme: "light" | "dark";
+  theme: "light" | "dark" | "system";
   toggleTheme: () => void;
   signingIn: boolean; // Loading state while signing in
   signingUp: boolean; // Loading state while signing up
