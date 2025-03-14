@@ -16,7 +16,6 @@ export { ButtonSecondary } from "./components/Common/ButtonSecondary/ButtonSecon
 export { ButtonSignInApple } from "./components/Common/ButtonSignInApple/ButtonSignInApple";
 export { ButtonSignInGitHub } from "./components/Common/ButtonSignInGitHub/ButtonSignInGitHub";
 export { ThemeToggle } from "./components/Common/ThemeToggle/ThemeToggle";
-export { ThemeExample } from "./components/Common/Example/ThemeExample";
 
 // Theme-related exports
 export { ThemeProvider, useTheme } from "./context/ThemeContext";

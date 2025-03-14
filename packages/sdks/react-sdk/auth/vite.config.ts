@@ -39,7 +39,6 @@ export default defineConfig({
           "react-dom": "ReactDOM",
         },
         manualChunks: undefined,
-        inlineDynamicImports: true,
         minifyInternalExports: true,
       },
     },

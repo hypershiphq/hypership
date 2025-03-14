@@ -74,7 +74,7 @@ export const SignIn: React.FC<SignInProps> = ({
         </div>
 
         <form
-          className="hypership-form w-full p-6 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
+          className="hypership-form w-full p-6 rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all duration-300"
           onSubmit={handleSubmit}
         >
           {(errorMessage || error) && (
