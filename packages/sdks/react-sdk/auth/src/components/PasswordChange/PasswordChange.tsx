@@ -56,7 +56,7 @@ export const PasswordChange: React.FC<PasswordChangeProps> = ({
 
   return (
     <div className="hypership-container">
-      <form className="hypership-form" onSubmit={handleSubmit}>
+      <form className="hypership-form bg-white" onSubmit={handleSubmit}>
         <Alert message={errorMessage || error} type="error" />
         <InputFieldEmail
           email={email}
