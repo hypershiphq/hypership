@@ -49,7 +49,9 @@ export const HypershipAnalyticsProvider: React.FC<HypershipAnalyticsProps> = ({
   useEffect(() => {
     const resolvedApiKey = apiKey || getHypershipPublicKey();
     if (!resolvedApiKey) {
-      throw new Error("HypershipAnalytics: API key is required");
+      throw new Error(
+        "HypershipAnalytics: API key is required. Have you set up your .env file with your Hypership project API key? Check out the quick start guide to learn how."
+      );
     }
     hypershipAnalytics.initialize(resolvedApiKey);
 

@@ -70,7 +70,9 @@ export const HypershipAuthProvider: React.FC<AuthProviderProps> = ({
   // Resolve the API key, trying to get it from getHypershipPublicKey if not provided
   const resolvedApiKey = apiKey || getHypershipPublicKey();
   if (!resolvedApiKey) {
-    throw new Error("HypershipAuthProvider: API key is required");
+    throw new Error(
+      "HypershipAuthProvider: API key is required. Have you set up your .env file with your Hypership project API key? Check out the quick start guide to learn how."
+    );
   }
 
   // Loading states
