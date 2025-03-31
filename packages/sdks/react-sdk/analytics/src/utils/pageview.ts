@@ -37,14 +37,21 @@ class HypershipAnalytics {
     // Update the last page view before making the request
     this.lastPageView = pageViewKey;
 
-    const accessToken = localStorage.getItem("accessToken");
+    // Get access token from cookies
+    const cookies = document.cookie.split(";");
+    const accessTokenCookie = cookies.find((cookie) =>
+      cookie.trim().startsWith("accessToken=")
+    );
+    const accessToken = accessTokenCookie
+      ? decodeURIComponent(accessTokenCookie.split("=")[1].trim())
+      : "";
 
     apiRequest("/analytics", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "hs-public-key": this.publicKey,
-        "hs-user-access-token": accessToken || "",
+        "hs-user-access-token": accessToken,
       },
       body: JSON.stringify(data),
     }).catch((error: unknown) => {

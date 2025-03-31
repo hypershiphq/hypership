@@ -11,6 +11,14 @@ interface EventsProviderProps {
   children: React.ReactNode;
 }
 
+// Helper function to get cookie value
+const getCookie = (name: string): string | null => {
+  if (typeof window === "undefined") return null;
+  const cookies = document.cookie.split(";");
+  const cookie = cookies.find((c) => c.trim().startsWith(`${name}=`));
+  return cookie ? decodeURIComponent(cookie.split("=")[1].trim()) : null;
+};
+
 export const EventsProvider: React.FC<EventsProviderProps> = ({
   publicKey,
   children,
@@ -18,8 +26,8 @@ export const EventsProvider: React.FC<EventsProviderProps> = ({
   // Validate the configuration
   validateConfig(publicKey);
 
-  // Retrieve access token from localStorage
-  const accessToken = localStorage.getItem("accessToken");
+  // Retrieve access token from cookie
+  const accessToken = getCookie("accessToken");
 
   // Function to log events
   const trackEvent = async (key: string, metadata: object) => {
