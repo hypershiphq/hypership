@@ -1,0 +1,68 @@
+{
+  "name": "@hypership/db",
+  "version": "0.0.5",
+  "description": "Hypership DB SDK",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "style": "./dist/style.css",
+  "files": [
+    "dist/**"
+  ],
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./server": {
+      "import": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      },
+      "require": {
+        "types": "./dist/server.d.ts",
+        "default": "./dist/server.js"
+      }
+    },
+    "./dist/*": "./dist/*"
+  },
+  "scripts": {
+    "build": "vite build",
+    "build:watch": "vite build --watch",
+    "dev": "tsup --config tsup.config.ts && npm link",
+    "npm-publish": "npm run build && npm publish --access public"
+  },
+  "type": "module",
+  "author": "Hypership",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.14.8",
+    "@types/react": "^18.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.21",
+    "cssnano": "^7.0.6",
+    "next": "^14.0.0",
+    "postcss": "^8.5.3",
+    "postcss-prefix-selector": "^2.1.0",
+    "react": "^18.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.5.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.3.0",
+    "vite-plugin-lib-inject-css": "^2.2.1"
+  },
+  "peerDependencies": {
+    "next": ">=13.0.0",
+    "react": ">=16.8.0",
+    "react-router-dom": ">=6.0.0"
+  },
+  "dependencies": {
+    "react-otp-input": "^3.1.1"
+  }
+}
