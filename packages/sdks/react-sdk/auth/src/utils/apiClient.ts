@@ -47,9 +47,32 @@ const setAccessToken = (token: string | null) =>
   setCookie("accessToken", token);
 
 /**
- * Gets the public key from cookies
+ * Gets the public key from cookies, fallback to environment variables
  */
-const getPublicKey = () => getCookie("hs-public-key");
+const getPublicKey = () => {
+  const cookieValue = getCookie("hs-public-key");
+  if (cookieValue) {
+    return cookieValue;
+  }
+  
+  // Fallback to environment variables if cookie is empty
+  try {
+    // Check for process.env variables (CRA, Next.js, etc.)
+    const processEnv = (globalThis as any).process?.env;
+    if (processEnv) {
+      return (
+        processEnv.REACT_APP_HYPERSHIP_PUBLIC_KEY ||
+        processEnv.NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY ||
+        processEnv.HYPERSHIP_PUBLIC_KEY ||
+        null
+      );
+    }
+  } catch (e) {
+    // Ignore errors in browser environments where process is not available
+  }
+  
+  return null;
+};
 
 /**
  * Sets the public key as a cookie
