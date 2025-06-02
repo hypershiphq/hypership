@@ -47,8 +47,7 @@ export interface DbListResponse<T = any> {
 }
 
 // Configuration
-let HYPERSHIP_API_BASE =
-  process.env.HYPERSHIP_API_BASE || "http://localhost:3002";
+let HYPERSHIP_API_BASE = "https://backend.hypership.dev/v1";
 let HYPERSHIP_SECRET_KEY = process.env.HYPERSHIP_SECRET_KEY || "";
 
 /**
@@ -287,7 +286,7 @@ class DbQuery<T = any> {
       }
 
       const response = await makeAuthenticatedRequest(
-        `/v1/db/collection/${this.collection}?${queryParams.toString()}`
+        `/db/collection/${this.collection}?${queryParams.toString()}`
       );
 
       if (!response.ok) {
@@ -345,7 +344,7 @@ class DbQuery<T = any> {
    */
   async find(id: string): Promise<DbResponse<T>> {
     try {
-      const response = await makeAuthenticatedRequest(`/v1/db/document/${id}`);
+      const response = await makeAuthenticatedRequest(`/db/document/${id}`);
 
       if (!response.ok) {
         const errorData = await response
@@ -409,7 +408,7 @@ class DbQuery<T = any> {
         requestBody.projectUserId = auth.userId;
       }
 
-      const response = await makeAuthenticatedRequest("/v1/db/create", {
+      const response = await makeAuthenticatedRequest("/db/create", {
         method: "POST",
         body: JSON.stringify(requestBody),
       });
@@ -482,7 +481,7 @@ class DbQuery<T = any> {
         return document;
       });
 
-      const response = await makeAuthenticatedRequest("/v1/db/create-many", {
+      const response = await makeAuthenticatedRequest("/db/create-many", {
         method: "POST",
         body: JSON.stringify({
           documents: documents,
@@ -546,7 +545,7 @@ class DbQuery<T = any> {
    */
   async delete(id: string): Promise<DbResponse<boolean>> {
     try {
-      const response = await makeAuthenticatedRequest(`/v1/db/delete/${id}`, {
+      const response = await makeAuthenticatedRequest(`/db/delete/${id}`, {
         method: "DELETE",
       });
 
@@ -599,7 +598,7 @@ class DbQuery<T = any> {
    */
   async createWithoutUser(data: Omit<T, "_id">): Promise<DbResponse<T>> {
     try {
-      const response = await makeAuthenticatedRequest("/v1/db/create", {
+      const response = await makeAuthenticatedRequest("/db/create", {
         method: "POST",
         body: JSON.stringify({
           collection: this.collection,
@@ -665,7 +664,7 @@ class DbQuery<T = any> {
         data: data,
       }));
 
-      const response = await makeAuthenticatedRequest("/v1/db/create-many", {
+      const response = await makeAuthenticatedRequest("/db/create-many", {
         method: "POST",
         body: JSON.stringify({
           documents: documents,

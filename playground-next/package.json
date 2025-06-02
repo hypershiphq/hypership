@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@hypership/db": "0.0.4",
+    "@hypership/auth-react": "^1.1.0",
+    "@hypership/db": "0.0.7",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
