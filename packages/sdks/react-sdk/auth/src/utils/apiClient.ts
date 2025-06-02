@@ -51,27 +51,27 @@ const setAccessToken = (token: string | null) =>
  */
 const getPublicKey = () => {
   const cookieValue = getCookie("hs-public-key");
-  if (cookieValue) {
-    return cookieValue;
-  }
-  
-  // Fallback to environment variables if cookie is empty
+  if (cookieValue) return cookieValue;
+
   try {
-    // Check for process.env variables (CRA, Next.js, etc.)
-    const processEnv = (globalThis as any).process?.env;
-    if (processEnv) {
+    // Vite
+    if (typeof import.meta !== "undefined" && import.meta.env?.VITE_HYPERSHIP_PUBLIC_KEY) {
+      return import.meta.env.VITE_HYPERSHIP_PUBLIC_KEY;
+    }
+
+    // CRA / Next.js
+    if (typeof process !== "undefined" && process.env) {
       return (
-        processEnv.REACT_APP_HYPERSHIP_PUBLIC_KEY ||
-        processEnv.NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY ||
-        processEnv.HYPERSHIP_PUBLIC_KEY ||
-        null
+        process.env.REACT_APP_HYPERSHIP_PUBLIC_KEY ||
+        process.env.NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY ||
+        process.env.HYPERSHIP_PUBLIC_KEY
       );
     }
   } catch (e) {
-    // Ignore errors in browser environments where process is not available
+    // Ignore in browser-only contexts
   }
-  
-  return null;
+
+  return undefined;
 };
 
 /**
