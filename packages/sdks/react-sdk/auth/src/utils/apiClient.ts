@@ -54,24 +54,17 @@ const getPublicKey = () => {
   if (cookieValue) return cookieValue;
 
   try {
-    // Vite
-    if (typeof import.meta !== "undefined" && import.meta.env?.VITE_HYPERSHIP_PUBLIC_KEY) {
-      return import.meta.env.VITE_HYPERSHIP_PUBLIC_KEY;
-    }
-
-    // CRA / Next.js
-    if (typeof process !== "undefined" && process.env) {
-      return (
-        process.env.REACT_APP_HYPERSHIP_PUBLIC_KEY ||
-        process.env.NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY ||
-        process.env.HYPERSHIP_PUBLIC_KEY
-      );
-    }
+    return (
+      process.env.REACT_APP_HYPERSHIP_PUBLIC_KEY ||
+      process.env.NEXT_PUBLIC_HYPERSHIP_PUBLIC_KEY ||
+      process.env.HYPERSHIP_PUBLIC_KEY ||
+      null
+    );
   } catch (e) {
-    // Ignore in browser-only contexts
+    // Silent fail
   }
 
-  return undefined;
+  return null;
 };
 
 /**
