@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@hypership/auth-react": "^1.1.0",
-    "@hypership/db": "0.0.7",
+    "@hypership/db": "0.0.8",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
