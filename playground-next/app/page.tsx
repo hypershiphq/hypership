@@ -7,6 +7,9 @@ interface Book {
   year: number;
   author?: string;
   genre?: string;
+  description?: string;
+  rating?: number;
+  tags?: string[];
 }
 
 export default async function HomePage() {
@@ -75,6 +78,49 @@ export default async function HomePage() {
     const firstBook = await db<Book>("books").sort({ year: 1 }).first();
 
     console.log("First book result:", firstBook);
+
+    // Test 7: Update document (standard method)
+    let updatedBook = null;
+    if (allBooks.success && allBooks.data.length > 0) {
+      const bookToUpdate = allBooks.data[0];
+      if (bookToUpdate._id) {
+        console.log(`📝 Updating book with ID: ${bookToUpdate._id}`);
+        updatedBook = await db<Book>("books").update(bookToUpdate._id, {
+          genre: "Updated Fiction",
+          author: "Updated Author",
+        });
+        console.log("Updated book result:", updatedBook);
+      }
+    }
+
+    // Test 8: Test field deletion with null values
+    let fieldDeletionTest = null;
+    if (updatedBook && updatedBook.success && updatedBook.data?._id) {
+      const bookId = updatedBook.data._id;
+      console.log(
+        `🗑️ Testing field deletion with null values for book ID: ${bookId}`
+      );
+
+      // First, add some extra fields
+      console.log("Adding extra fields...");
+      const bookWithExtraFields = await db<Book>("books").update(bookId, {
+        genre: "Mystery", // Update existing field
+        description: "A fascinating book", // Add new field
+        rating: 5, // Add another new field
+        tags: ["classic", "literature"], // Add array field
+      });
+      console.log("Book with extra fields:", bookWithExtraFields);
+
+      // Then, try to delete some fields by passing null
+      console.log("Attempting to delete fields with null values...");
+      fieldDeletionTest = await db<Book>("books").update(bookId, {
+        description: null, // Should delete this field
+        rating: null, // Should delete this field
+        tags: null, // Should delete this field
+        genre: "Final Genre", // Should update this field normally
+      } as any);
+      console.log("Field deletion test result:", fieldDeletionTest);
+    }
 
     return (
       <div className="min-h-screen bg-gray-50 py-8 px-4">
@@ -253,6 +299,72 @@ export default async function HomePage() {
                 )}
               </div>
             </div>
+
+            {/* Updated Book */}
+            {updatedBook && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-700 mb-3">
+                  7. Updated Book (standard method)
+                </h2>
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  {updatedBook.success ? (
+                    <div className="text-green-600">
+                      ✅ Updated book: <strong>{updatedBook.data?.name}</strong>
+                      <pre className="mt-2 text-sm bg-white p-2 rounded">
+                        {JSON.stringify(updatedBook.data, null, 2)}
+                      </pre>
+                    </div>
+                  ) : (
+                    <div className="text-red-600">
+                      ❌ Failed to update book: {updatedBook.error}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Field Deletion Test */}
+            {fieldDeletionTest && (
+              <div className="mb-8">
+                <h2 className="text-xl font-semibold text-gray-700 mb-3">
+                  8. Field Deletion Test (null values should delete fields)
+                </h2>
+                <div className="bg-gray-100 p-4 rounded-lg">
+                  {fieldDeletionTest.success ? (
+                    <div className="space-y-3">
+                      <div className="text-green-600">
+                        ✅ Field deletion test completed successfully
+                      </div>
+                      <div className="text-sm">
+                        <div className="font-semibold mb-2">
+                          Final document after null updates:
+                        </div>
+                        <pre className="bg-white p-2 rounded text-xs overflow-x-auto">
+                          {JSON.stringify(fieldDeletionTest.data, null, 2)}
+                        </pre>
+                      </div>
+                      <div className="text-sm text-blue-600">
+                        <div className="font-semibold">Expected behavior:</div>
+                        <ul className="list-disc ml-6 mt-1">
+                          <li>
+                            Fields with null values (description, rating, tags)
+                            should be deleted
+                          </li>
+                          <li>
+                            Field "genre" should be updated to "Final Genre"
+                          </li>
+                          <li>Other fields should remain unchanged</li>
+                        </ul>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-red-600">
+                      ❌ Field deletion test failed: {fieldDeletionTest.error}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             <div className="text-center text-gray-500 mt-8">
               <p>Test completed! Check the console for detailed logs.</p>

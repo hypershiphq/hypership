@@ -6,6 +6,7 @@ export {
   currentUser,
   authServer,
   handleAuthHeaders,
+  updateDocument,
   type AuthResult,
   type DbDocument,
   type DbResponse,

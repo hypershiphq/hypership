@@ -530,14 +530,71 @@ class DbQuery<T = any> {
   }
 
   /**
-   * Update a document by ID (not implemented in backend yet)
+   * Update a document by ID (using the standard authentication)
    */
   async update(id: string, data: Partial<T>): Promise<DbResponse<T>> {
-    return {
-      data: null,
-      error: "Update endpoint not implemented yet",
-      success: false,
-    };
+    try {
+      const response = await makeAuthenticatedRequest(`/db/update/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify({
+          data: data,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response
+          .json()
+          .catch(() => ({ message: "Unknown error" }));
+        return {
+          data: null,
+          error: errorData.message || `HTTP ${response.status}`,
+          success: false,
+        };
+      }
+
+      const result = await response.json();
+
+      // Handle the actual API response format
+      if (result.status === "success" && result.data) {
+        const doc = result.data;
+
+        // Map document to include _id and flatten the data structure
+        const mappedDocument = {
+          _id: doc.id, // Map 'id' to '_id' for consistency
+          ...doc.data, // Spread the actual document data
+          createdAt: doc.createdAt,
+          updatedAt: doc.updatedAt,
+        };
+
+        return {
+          data: mappedDocument,
+          success: true,
+        };
+      }
+
+      return {
+        data: null,
+        error: "Unexpected response format",
+        success: false,
+      };
+    } catch (error) {
+      return {
+        data: null,
+        error: error instanceof Error ? error.message : "Unknown error",
+        success: false,
+      };
+    }
+  }
+
+  /**
+   * Update a document using Bearer token authentication (project API key)
+   */
+  async updateDocument(
+    id: string,
+    data: Partial<T>,
+    projectUserId?: string
+  ): Promise<DbResponse<T>> {
+    return updateDocument<T>(id, data, projectUserId);
   }
 
   /**
@@ -773,3 +830,75 @@ export const hypership = {
 
 // Default export is the db function
 export default db;
+
+/**
+ * Update a document using the new API endpoint with Bearer token authentication
+ */
+export async function updateDocument<T = any>(
+  documentId: string,
+  updateData: Partial<T>,
+  projectUserId?: string
+): Promise<DbResponse<T>> {
+  try {
+    const requestBody: any = {
+      data: updateData,
+    };
+
+    if (projectUserId) {
+      requestBody.projectUserId = projectUserId;
+    }
+
+    const response = await makeAuthenticatedRequest(
+      `/api/db/update/${documentId}`,
+      {
+        method: "PATCH",
+        body: JSON.stringify(requestBody),
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response
+        .json()
+        .catch(() => ({ message: "Unknown error" }));
+      return {
+        data: null,
+        error: errorData.message || `HTTP ${response.status}`,
+        success: false,
+      };
+    }
+
+    const result = await response.json();
+
+    // Handle the API response format
+    if (result.status === "success" && result.data) {
+      const doc = result.data;
+
+      // Map document to include _id and flatten the data structure
+      const mappedDocument = {
+        _id: doc.id, // Map 'id' to '_id' for consistency
+        ...doc.data, // Spread the actual document data
+        collection: doc.collection,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+        ...(doc.projectUserId && { projectUserId: doc.projectUserId }),
+      };
+
+      return {
+        data: mappedDocument,
+        success: true,
+      };
+    }
+
+    return {
+      data: null,
+      error: "Unexpected response format",
+      success: false,
+    };
+  } catch (error) {
+    return {
+      data: null,
+      error: error instanceof Error ? error.message : "Unknown error",
+      success: false,
+    };
+  }
+}

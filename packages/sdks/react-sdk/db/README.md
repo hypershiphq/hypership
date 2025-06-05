@@ -255,7 +255,7 @@ initDb({
   apiBase: "http://localhost:3002", // optional, defaults to env var
   secretKey: "your-secret-key-here", // required
 });
-````
+```
 
 ## Basic Usage
 
@@ -425,13 +425,23 @@ const newUsers = await db("users").createMany([
 
 #### `.update(id: string, data: Partial<T>): Promise<DbResponse<T>>`
 
-⚠️ **Not yet implemented** - Update a document by ID.
+Update a document by ID.
 
 ```typescript
-// Will return an error until backend endpoint is implemented
 const updated = await db("users").update("abc123", {
   name: "James Crowson",
   role: "CEO",
+});
+```
+
+**Field Deletion**: Pass `null` as the value to delete a field from the document:
+
+```typescript
+// Remove the 'description' and 'tags' fields from the document
+const updated = await db("books").update("book123", {
+  title: "Updated Title", // Normal update
+  description: null,      // Delete this field
+  tags: null,            // Delete this field
 });
 ```
 
@@ -441,6 +451,99 @@ Delete a document by ID.
 
 ```typescript
 const deleted = await db("users").delete("abc123");
+```
+
+### updateDocument
+
+Update a document using secret key authentication.
+
+```typescript
+import { updateDocument } from "@hypership/db";
+
+const result = await updateDocument<T>(
+  documentId: string,
+  updateData: Partial<T>,
+  projectUserId?: string
+);
+```
+
+**Parameters:**
+- `documentId` (string): The ID of the document to update
+- `updateData` (Partial<T>): Fields to add or update (will be merged with existing data)
+- `projectUserId` (string, optional): Optional user ID for tracking
+
+**Returns:** `Promise<DbResponse<T>>`
+
+**Authentication:** Uses standard secret key authentication (hs-secret-key header)
+
+**API Endpoint:** `PATCH /api/db/update/{documentId}`
+
+**Example:**
+```typescript
+// Initialize with secret key
+initDb({
+  secretKey: "your-secret-key"
+});
+
+// Update a document
+const result = await updateDocument("doc-id-123", {
+  name: "Updated Name",
+  status: "active"
+}, "user-123");
+
+if (result.success) {
+  console.log("Updated document:", result.data);
+} else {
+  console.error("Update failed:", result.error);
+}
+```
+
+**Field Deletion**: Pass `null` as the value to delete a field from the document:
+
+```typescript
+// Remove fields by passing null
+const result = await updateDocument("doc-id-123", {
+  name: "Updated Name",    // Normal update
+  description: null,       // Delete this field
+  tags: null,             // Delete this field
+}, "user-123");
+```
+
+### Standard Update vs updateDocument
+
+The package provides two update methods:
+
+1. **Standard Update** (uses standard hs-secret-key authentication):
+```typescript
+const result = await db("collection").update(id, data);
+```
+
+2. **updateDocument Function** (also uses hs-secret-key authentication but different endpoint):
+```typescript
+const result = await updateDocument(id, data, userId);
+```
+
+Both methods use the same authentication mechanism but may target different API endpoints.
+
+## Configuration
+
+### initDb
+
+Initialize the database package with API configuration.
+
+```typescript
+initDb({
+  apiBase?: string;    // Optional: API base URL
+  secretKey: string;   // Required: Secret key for hs-secret-key auth
+});
+```
+
+**Example:**
+```typescript
+initDb({
+  apiBase: "https://api.hypership.dev",
+  secretKey: process.env.HYPERSHIP_SECRET_KEY!
+});
 ```
 
 ## Backend API Endpoints
@@ -554,3 +657,4 @@ const user = await db<User>("users").create({
 ## License
 
 MIT
+````
