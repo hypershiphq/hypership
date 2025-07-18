@@ -16,7 +16,7 @@ export const Alert: React.FC<AlertProps> = ({ message, type }) => {
 
   return (
     <div
-      className={`mb-4 text-sm p-3 rounded-md border ${alertClass} shadow-sm animate-fadeIn transition-all duration-200`}
+      className={`mb-4 text-sm p-3 rounded-md border ${alertClass} shadow-sm`}
       role="alert"
     >
       <div className="flex items-center">

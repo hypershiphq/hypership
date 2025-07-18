@@ -54,7 +54,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
     <div className="hypership-auth-wrapper">
       <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto p-4 sm:p-6">
         {currentView === "signIn" && (
-          <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
+          <div className="w-full space-y-6 ">
             <SignIn
               onSignInSuccess={handleSignInSuccess}
               onAccountConfirmationRequired={handleAccountConfirmationRequired}
@@ -64,7 +64,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
             <div className="flex flex-col w-full">
               <button
                 onClick={() => setCurrentView("signUp")}
-                className="text-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-center text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white "
               >
                 Don't have an account?{" "}
                 <span className="text-gray-700 dark:text-gray-200 font-medium">
@@ -75,7 +75,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
           </div>
         )}
         {currentView === "signUp" && (
-          <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
+          <div className="w-full space-y-6 ">
             <SignUp
               onSignUpSuccess={(email) => {
                 setEmail(email);
@@ -86,7 +86,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
             <div className="w-full">
               <button
                 onClick={() => setCurrentView("signIn")}
-                className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white "
               >
                 Already have an account?{" "}
                 <span className="text-gray-700 dark:text-gray-200 font-medium">
@@ -97,7 +97,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
           </div>
         )}
         {currentView === "confirmAccount" && (
-          <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
+          <div className="w-full space-y-6 ">
             <ConfirmUserAccount
               email={email}
               onConfirmationSuccess={() => {
@@ -109,7 +109,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
           </div>
         )}
         {currentView === "passwordReset" && (
-          <div className="w-full space-y-6 opacity-0 transform translate-y-2 animate-[fadeIn_0.5s_ease-in-out_forwards]">
+          <div className="w-full space-y-6 ">
             <PasswordReset
               onPasswordResetSuccess={() => setCurrentView("signIn")}
               highlightColor={highlightColor}
@@ -117,7 +117,7 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({
             <div className="flex flex-col items-center gap-2">
               <button
                 onClick={() => setCurrentView("signIn")}
-                className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
+                className="text-center w-full text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white "
               >
                 Back to Sign In
               </button>
